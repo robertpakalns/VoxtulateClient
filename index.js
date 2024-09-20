@@ -128,7 +128,7 @@ autoUpdater.on("update-available", () => dialog.showMessageBox(mainWindow, {
     message: "A new version is available. It will be downloaded and installed."
 }))
 
-autoUpdater.on("update-downloaded", () => dialog.showMessageBox(w, {
+autoUpdater.on("update-downloaded", () => dialog.showMessageBox(mainWindow, {
     type: "info",
     title: "Update Downloaded",
     message: "The update has been downloaded. It will be installed on restart."
