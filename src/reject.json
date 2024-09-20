@@ -1,0 +1,8 @@
+{
+    "urls": [
+        "*://*.adinplay.com/*",
+        "*://*.google-analytics.com/*",
+        "*://*.googletagmanager.com/*",
+        "*://matomo.voxiom.io/*"
+    ]
+}

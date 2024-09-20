@@ -1,0 +1,137 @@
+@font-face {
+    font-family: "Roboto-Mono";
+    src: url("../../assets/fonts/RobotoMono.ttf") format("truetype");
+    font-display: swap;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: "Roboto-Mono", monospace;
+}
+
+body {
+    background: black;
+    color: white;
+    font-size: 1rem;
+}
+
+section {
+    display: grid;
+    grid-template-columns: repeat(2, 400px);
+}
+
+main {
+    margin: 10px;
+}
+
+h1 {
+    font-size: 0.75rem;
+    color: gray;
+}
+
+.block {
+    margin-bottom: 20px;
+}
+
+.content {
+    margin: 5px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.subText {
+    font-size: 0.6rem;
+    color: gray;
+}
+
+input[type="text"],
+input[type="url"] {
+    background: transparent;
+    color: white;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid gray;
+}
+
+input[type="checkbox"] {
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border: 2px solid #4CAF50;
+    border-radius: 3px;
+}
+
+input[type="checkbox"]:hover {
+    box-shadow: 0 0 5px #4CAF50;
+}
+
+input[type="checkbox"]:checked {
+    background-color: #4CAF50;
+}
+
+button {
+    background: transparent;
+    color: rgb(252, 222, 55);
+    outline: none;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    text-shadow: 0 0 10px #4CAF50;
+}
+
+#currentURL {
+    font-size: 0.75rem;
+    color: gray;
+}
+
+textarea {
+    resize: none;
+    width: 100%;
+    height: 175px;
+    background: transparent;
+    border: 2px solid gray;
+    outline: none;
+    color: white;
+}
+
+#restart {
+    color: #f44336;
+}
+
+footer {
+    margin-bottom: 10px;
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+    font-size: 3rem;
+}
+
+input[type="checkbox"]:disabled {
+    opacity: 20%;
+    cursor: not-allowed;
+}
+
+input[type="checkbox"]:disabled:hover {
+    box-shadow: none;
+}
+
+textarea:disabled {
+    opacity: 20%;
+    cursor: not-allowed;
+}
+
+.info {
+    font-size: 0.5rem;
+    color: gray;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px;
+}

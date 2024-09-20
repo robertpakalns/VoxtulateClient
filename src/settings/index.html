@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <div class="info">To apply settings, restart the client</div>
+    <section>
+        <main>
+
+            <h1>Client</h1>
+            <div class="block">
+                <div class="content">
+                    <input type="checkbox" id="fpsUncap">
+                    <div>Unlimited FPS</div>
+                </div>
+                <div class="content">
+                    <input type="checkbox" id="adblocker">
+                    <div>Enable Adblocker</div>
+                </div>
+            </div>
+
+            <h1>Game Interface</h1>
+            <div class="block">
+                <div class="content">
+                    <input type="checkbox" id="enableCrosshair">
+                    <div>Enable Crosshair</div>
+                    <input type="url" id="crosshairURL">
+                </div>
+                <div class="content">
+                    <input type="checkbox" id="console">
+                    <div>Enable Mini Console</div>
+                    <div class="subText">FPS, Coordinates, Latency</div>
+                </div>
+            </div>
+
+            <h1>Fast Join</h1>
+            <div class="block">
+                <div class="content">
+                    <button id="joinLink">Join</button>
+                    <input type="text" id="joinLinkURL">
+                </div>
+                <div class="content">
+                    <button id="copyURL">Copy</button>
+                    <div id="currentURL"></div>
+                </div>
+            </div>
+
+            <h1>Client Settings</h1>
+            <div class="block">
+                <div class="content">
+                    <button id="importClientSettings">Import</button>
+                    <button id="exportClientSettings">Export</button>
+                </div>
+            </div>
+
+            <h1>Game Settings</h1>
+            <div class="block">
+                <div class="content">
+                    <button id="importGameSettings">Import</button>
+                    <button id="exportGameSettings">Export</button>
+                </div>
+            </div>
+
+            <h1>Custom Styles</h1>
+            <div class="block">
+                <div class="content">
+                    <input type="checkbox" id="enableStyles">
+                    <div>Enable Custom Styles</div>
+                </div>
+                <div class="content">
+                    <input type="checkbox" id="customStyles">
+                    <div>Custom Styles</div>
+                    <div class="subText">Client Styles By Default</div>
+                </div>
+            </div>
+
+        </main>
+
+        <main>
+            <h1>CSS</h1>
+            <textarea id="customCSS"></textarea>
+            <h1>JS</h1>
+            <textarea id="customJS"></textarea>
+        </main>
+
+    </section>
+
+    <footer>
+        <button id="clearSettings">Clear Settings</button>
+        <button id="restart">Restart Client</button>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

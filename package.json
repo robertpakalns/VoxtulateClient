@@ -1,0 +1,49 @@
+{
+  "name": "voxtulate-client",
+  "version": "1.0.0",
+  "description": "Unofficial Voxiom client, for real Voxtulators",
+  "author": "robertpakalns",
+  "main": "index.js",
+  "scripts": {
+    "dev": "electron .",
+    "build": "electron-builder --publish never",
+    "publish": "electron-builder --win --x64 --publish always"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robertpakalns/VoxtulateClient.git"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "electron-updater": "^6.3.4"
+  },
+  "devDependencies": {
+    "electron": "^10.4.7",
+    "electron-builder": "^25.0.5"
+  },
+  "build": {
+    "appId": "voxtulate.client",
+    "productName": "Voxtulate Client",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "robertpakalns",
+        "repo": "VoxtulateClient"
+      }
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": {
+        "target": "nsis"
+      }
+    },
+    "nsis": {
+      "oneClick": true,
+      "deleteAppDataOnUninstall": true,
+      "runAfterFinish": true
+    }
+  }
+}
