@@ -25,11 +25,11 @@ An unofficial Voxiom.io client, for real Voxtulators
 
 ### Credits
 - Vanced Voxiom Client (NamekujiLSDs)
- - [Website](https://namekujilsds.github.io/VVC)
- - [Discord](https://discord.com/invite/EcZytWAJkn)
+  * [Website](https://namekujilsds.github.io/VVC)
+  * [Discord](https://discord.com/invite/EcZytWAJkn)
 - Voxiom.io (ThriveR)
- - [Website](https://voxiom.io)
- - [Discord](https://discord.com/invite/GBFtRcY)
+  * [Website](https://voxiom.io)
+  * [Discord](https://discord.com/invite/GBFtRcY)
 
 by robertpakalns
 Powered by Tricko
