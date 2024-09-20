@@ -1,6 +1,6 @@
 {
   "name": "voxtulate-client",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Unofficial Voxiom client, for real Voxtulators",
   "author": "robertpakalns",
   "main": "index.js",
