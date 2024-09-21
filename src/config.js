@@ -2,7 +2,7 @@ const fs = require("fs")
 const path = require("path")
 const os = require("os")
 
-const example = {
+const defaultConfig = {
     client: {
         adblocker: true,
         fpsUncap: true
@@ -77,6 +77,8 @@ class Config {
     constructor() {
         this.file = configPath
         this.config = JSON.parse(fs.readFileSync(this.file, "utf8"))
+
+        this.fillDefaults()
     }
 
     get(key) {
@@ -89,7 +91,18 @@ class Config {
     }
 
     default() {
-        this.config = example
+        this.config = defaultConfig
+        fs.writeFileSync(this.file, JSON.stringify(this.config, null, 2))
+    }
+
+    fillDefaults(source = defaultConfig, target = this.config) {
+        for (const key in source) if (source.hasOwnProperty(key)) {
+            if (target[key] === undefined) target[key] = source[key]
+            else if (typeof source[key] === "object" && source[key] !== null) {
+                if (typeof target[key] !== "object" || target[key] === null) target[key] = {}
+                this.fillDefaults(source[key], target[key])
+            }
+        }
         fs.writeFileSync(this.file, JSON.stringify(this.config, null, 2))
     }
 }

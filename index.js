@@ -47,7 +47,7 @@ const createMain = async () => {
     const swapper = JSON.parse(fs.readFileSync(path.join(__dirname, "src/swapper.json"), "utf8"))
 
     const { adblocker } = config.get("client")
-    const { enable: enableSwapper, content } = config.get("swapper")
+    const { enable: enableSwapper, content = {} } = config.get("swapper")
 
     webContents.session.webRequest.onBeforeRequest(({ url }, callback) => {
         if (adblocker && reject.some(el => url.includes(el))) return callback({ cancel: true })
