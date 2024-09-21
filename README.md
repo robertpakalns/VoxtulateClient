@@ -1,27 +1,30 @@
 # Voxtulate Client
-An unofficial Voxiom.io client, for real Voxtulators
+An unofficial Voxiom.io client, designed for true Voxtulators
+
+### Client Safety 
+
+All Voxtulate Client source code is publicly available in the [GitHub repository](https://github.com/robertpakalns/VoxtulateClient). If you have concerns about the safety of your private information while using the Voxtulate Client, feel free to inspect the source code. Trust in the client is based on your trust in the developer.
 
 ### Current Features
 - Adblocker
 - Unlimited FPS
-- Custom crosshair
-- CSS/JS customization
-- Client side CSS/JS customization
-- Settings window (press F1 to open)
-- Chromium developer tools (press F12 to open)
-- Minimized console (FPS, coordinates, and latency)
+- Custom Crosshair
+- Resource Swapper
+- CSS/JS Customization
+- Client-Side CSS/JS Customization
+- Settings window (`F1`)
+- Chromium Developer Tools (`F12`)
+- Minimized Console (FPS, Coordinates, Latency)
 
 ### Future features
-- Better client side side CSS/JS
-- Resouce swapper
-- Advanced inventory sorting
-- Key binding options for client features
-- Automatically apply client settings without relaunching
+- Improved Client-Side CSS/JS
+- Advanced Inventory Sorting
+- Keybinding Options For Client Features
+- Automatically Apply Client Settings Without Relaunching
 
 ### Development questions
 - How to automatically toggle settings without relaunching the client? The question concerns features that theoretically should not require a relaunch.
 - Renderer processes automatically set `description` name instead of `build.productName` from `package.json`. The name `Voxtulate Client` looks better than `Unofficial Voxiom client, for real Voxtulators`.
-
 
 ### Credits
 - Vanced Voxiom Client (NamekujiLSDs)
@@ -32,4 +35,7 @@ An unofficial Voxiom.io client, for real Voxtulators
   * [Discord](https://discord.com/invite/GBFtRcY)
 
 by robertpakalns
+
+[Community Server](https://discord.gg/yPjrUrvSzv)
+
 Powered by Tricko
