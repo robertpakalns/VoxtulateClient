@@ -11,6 +11,7 @@
     <div class="info">To apply settings, restart the client</div>
     <section>
         <main>
+            <header>Main Settings</header>
 
             <h1>Client</h1>
             <div class="block">
@@ -35,6 +36,18 @@
                     <input type="checkbox" id="console">
                     <div>Enable Mini Console</div>
                     <div class="subText">FPS, Coordinates, Latency</div>
+                </div>
+                <div class="content">
+                    <input type="checkbox" id="fullscreen">
+                    <div>Fullscreen On Start</div>
+                </div>
+            </div>
+
+            <h1>Resource Swapper</h1>
+            <div class="block">
+                <div class="content">
+                    <input type="checkbox" id="enableSwapper">
+                    <div>Enable Resource Swapper</div>
                 </div>
             </div>
 
@@ -66,6 +79,11 @@
                 </div>
             </div>
 
+        </main>
+
+        <main>
+            <header>Custom CSS/JS</header>
+
             <h1>Custom Styles</h1>
             <div class="block">
                 <div class="content">
@@ -79,9 +97,6 @@
                 </div>
             </div>
 
-        </main>
-
-        <main>
             <h1>CSS</h1>
             <textarea id="customCSS"></textarea>
             <h1>JS</h1>
@@ -91,7 +106,8 @@
     </section>
 
     <footer>
-        <button id="clearSettings">Clear Settings</button>
+        <button id="defaultSettings">Default Settings</button>
+        <button id="openConfigs">Open Configs</button>
         <button id="restart">Restart Client</button>
     </footer>
 

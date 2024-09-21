@@ -1,8 +1,8 @@
-const { app, BrowserWindow, ipcMain, dialog, session } = require("electron")
+const { app, BrowserWindow, ipcMain, dialog, protocol } = require("electron")
 const { autoUpdater } = require("electron-updater")
 const fs = require("fs")
 const path = require("path")
-const { Config, appDataPath } = require("./src/config.js")
+const { Config, configPath } = require("./src/config.js")
 const config = new Config
 
 let mainWindow, settingsWindow
@@ -11,14 +11,15 @@ const createMain = async () => {
     mainWindow = new BrowserWindow({
         height: 600,
         width: 800,
+        fullscreen: config.get("fullscreen"),
         title: `Voxtulate Client v${app.getVersion()}`,
         icon: path.join(__dirname, "assets/icon.ico"),
         webPreferences: {
-            preload: path.join(__dirname, "src/ui/script.js")
+            preload: path.join(__dirname, "src/ui/script.js"),
+            webSecurity: false
         }
     })
 
-    mainWindow.maximize()
     mainWindow.setMenu(null)
     mainWindow.loadURL("https://voxiom.io")
     mainWindow.on("page-title-updated", e => e.preventDefault())
@@ -42,7 +43,18 @@ const createMain = async () => {
 
     ipcMain.on("update-url-request", e => e.reply("update-url", webContents.getURL()))
 
-    if (config.get("client.adblocker")) session.defaultSession.webRequest.onBeforeRequest(JSON.parse(fs.readFileSync(path.join(__dirname, "src/reject.json"), "utf8")), (_, c) => c({ cancel: true }))
+    const reject = JSON.parse(fs.readFileSync(path.join(__dirname, "src/reject.json"), "utf8"))
+    const swapper = JSON.parse(fs.readFileSync(path.join(__dirname, "src/swapper.json"), "utf8"))
+
+    const { adblocker } = config.get("client")
+    const { enable: enableSwapper, content } = config.get("swapper")
+
+    webContents.session.webRequest.onBeforeRequest(({ url }, callback) => {
+        if (adblocker && reject.some(el => url.includes(el))) return callback({ cancel: true })
+
+        const swappedUrl = enableSwapper && content[swapper[url]]
+        return swappedUrl ? callback({ redirectURL: swappedUrl }) : callback({})
+    })
 
     webContents.on("did-finish-load", () => {
         if (config.get("styles.enable") && config.get("styles.custom")) {
@@ -50,15 +62,20 @@ const createMain = async () => {
             webContents.executeJavaScript(config.get("styles.js"))
         }
     })
+
+    webContents.on("new-window", (e, url) => {
+        e.preventDefault()
+        mainWindow.loadURL(url)
+    })
 }
 
 const settingsModal = () => {
     if (settingsWindow) return settingsWindow.show()
 
     settingsWindow = new BrowserWindow({
-        height: 550,
-        width: 810,
-        resizable: false,
+        height: 600,
+        width: 800,
+        // resizable: false,
         title: `Voxtulate Client v${app.getVersion()} | Settings`,
         icon: path.join(__dirname, "assets/icon.ico"),
         parent: mainWindow,
@@ -68,7 +85,7 @@ const settingsModal = () => {
         }
     })
 
-    settingsWindow.setMenu(null)
+    // settingsWindow.setMenu(null)
     settingsWindow.loadFile(path.join(__dirname, "src/settings/index.html"))
 
     settingsWindow.webContents.on("did-finish-load", () => settingsWindow.show())
@@ -86,6 +103,9 @@ if (config.get("client.fpsUncap")) app.commandLine.appendSwitch("disable-frame-r
 app.commandLine.appendSwitch("disable-gpu-vsync")
 
 app.on("ready", () => {
+
+    protocol.registerFileProtocol("file", ({ url }, c) => c({ path: path.normalize(decodeURIComponent(new URL(url).pathname)) }))
+
     createMain()
     autoUpdater.checkForUpdates()
 
@@ -102,7 +122,7 @@ app.on("ready", () => {
     })
     ipcMain.on("export-client-settings", async () => {
         const { canceled, filePath } = await dialog.showSaveDialog(filters)
-        if (!canceled && filePath) fs.writeFileSync(filePath, fs.readFileSync(path.join(appDataPath, "config.json")))
+        if (!canceled && filePath) fs.writeFileSync(filePath, fs.readFileSync(configPath))
     })
     ipcMain.on("import-game-settings", async () => {
         const { canceled, filePaths } = await dialog.showOpenDialog(filters)
@@ -113,24 +133,21 @@ app.on("ready", () => {
         if (!canceled && filePath) mainWindow.webContents.send("get-game-settings", filePath)
     })
 
+    ipcMain.on("change-custom-css", (_, code) => mainWindow.webContents.insertCSS(code))
+    ipcMain.on("change-custom-js", (_, code) => mainWindow.webContents.executeJavaScript(code))
+
     ipcMain.on("relaunch", () => {
         app.relaunch()
         app.exit()
     })
-
-    ipcMain.on("change-custom-css", (_, code) => mainWindow.webContents.insertCSS(code))
-    ipcMain.on("change-custom-js", (_, code) => mainWindow.webContents.executeJavaScript(code))
 })
 
-autoUpdater.on("update-available", () => dialog.showMessageBox(mainWindow, {
-    type: "info",
-    title: "Update Available",
-    message: "A new version is available. It will be downloaded and installed."
-}))
-
-autoUpdater.on("update-downloaded", () => dialog.showMessageBox(mainWindow, {
-    type: "info",
-    title: "Update Downloaded",
-    message: "The update has been downloaded. It will be installed on restart."
+const message = text => dialog.showMessageBox({
+    icon: path.join(__dirname, "assets/icon.ico"),
+    title: `Voxtulate Client v${app.getVersion()} | Info`,
+    message: text
 })
+
+autoUpdater.on("update-available", () => message("A new version is available. It will be downloaded and installed."))
+autoUpdater.on("update-downloaded", () => message("The update has been downloaded. It will be installed on restart.")
     .then(() => autoUpdater.quitAndInstall()))

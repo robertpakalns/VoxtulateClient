@@ -1,5 +1,5 @@
-const { ipcRenderer } = require("electron")
-const { Config } = require("../config.js")
+const { ipcRenderer, shell } = require("electron")
+const { Config, configPath } = require("../config.js")
 
 const config = new Config()
 const el = id => ({
@@ -36,6 +36,8 @@ document.addEventListener("DOMContentLoaded", () => {
     el("enableStyles").element.checked = config.get("styles.enable")
     el("customStyles").element.checked = config.get("styles.custom")
     el("console").element.checked = config.get("console")
+    el("fullscreen").element.checked = config.get("fullscreen")
+    el("enableSwapper").element.checked = config.get("swapper.enable")
 
     el("crosshairURL").element.value = config.get("crosshair.url") ?? ""
     el("customCSS").element.value = config.get("styles.css") ?? ""
@@ -71,23 +73,22 @@ el("customStyles").event("click", e => {
 })
 
 el("console").event("change", e => config.set("console", e.target.checked))
+el("fullscreen").event("change", e => config.set("fullscreen", e.target.checked))
+el("enableSwapper").event("change", e => config.set("swapper.enable", e.target.checked))
 
 el("customCSS").event("input", e => config.set("styles.css", e.target.value))
 el("customJS").event("input", e => config.set("styles.js", e.target.value))
 
-el("clearSettings").event("click", () => {
-    config.clear()
-    el("fpsUncap").element.checked = true
-    el("adblocker").element.checked = true
-    el("console").element.checked = true
-    el("enableStyles").element.checked = true
+el("defaultSettings").event("click", () => {
+    config.default()
 
-    el("enableCrosshair").element.checked = false
-    el("customStyles").element.checked = false
+    const checkboxes = ["fpsUncap", "adblocker", "console", "enableStyles"]
+    const uncheckBoxes = ["enableCrosshair", "customStyles", "fullscreen", "enableSwapper"]
+    const emptyInputs = ["crosshairURL", "joinLinkURL", "customCSS", "customJS"]
 
-    el("crosshairURL").element.value = ""
-    el("joinLinkURL").element.value = ""
-    el("customCSS").element.value = ""
-    el("customJS").element.value = ""
+    checkboxes.forEach(id => el(id).element.checked = true)
+    uncheckBoxes.forEach(id => el(id).element.checked = false)
+    emptyInputs.forEach(id => el(id).element.value = "")
 })
+el("openConfigs").event("click", () => shell.openPath(configPath))
 el("restart").event("click", () => ipcRenderer.send("relaunch"))

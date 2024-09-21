@@ -2,6 +2,10 @@
     text-decoration: none;
 }
 
+::-webkit-scrollbar {
+    display: none;
+}
+
 a[href="https://discord.gg/GBFtRcY"],
 a[href="https://cuberealm.io"],
 .hCYBep,
@@ -18,6 +22,10 @@ a[href="https://cuberealm.io"],
 .cLzJor,
 .ewFvVb {
     display: none !important;
+}
+
+.vox-dropdown .Dropdown-menu {
+    max-height: 400px;
 }
 
 .voxiomCreate {
