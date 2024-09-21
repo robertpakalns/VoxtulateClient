@@ -24,16 +24,16 @@ class Voxiom {
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    const base64bg = fs.readFileSync(path.join(__dirname, "../../assets/bg.webp")).toString("base64")
-    const base64Font = fs.readFileSync(path.join(__dirname, "../../assets/fonts/Roboto.ttf")).toString("base64")
+    const bgURL = path.join(__dirname, "../../assets/bg.webp").replace(/\\/g, "/")
+    const fontURL = path.join(__dirname, "../../assets/fonts/Roboto.ttf").replace(/\\/g, "/")
 
     if (config.get("styles.enable") && !config.get("styles.custom")) {
         const css = document.createElement("style")
         css.id = "clientStyles"
         const cssText = fs.readFileSync(path.join(__dirname, "../../src/ui/style.css"), "utf8") + `
-            @font-face { font-family: "Roboto"; src: url("data:font/ttf; base64, ${base64Font}") format("truetype") }
+            @font-face { font-family: "Roboto"; src: url(${fontURL}) format("truetype") }
             * { font-family: "Roboto", sans-serif }
-            .bNczYf { background: url("data:image/webp; base64, ${base64bg}") }
+            .bNczYf { background: url(${bgURL}) }
             body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"] { display: ${config.get("console") ? "none" : "block"} !important }`
         css.textContent = cssText
         document.head.appendChild(css)
