@@ -20,7 +20,8 @@ a[href="https://cuberealm.io"],
 .ioTKAc,
 .biWqsQ,
 .cLzJor,
-.ewFvVb {
+.ewFvVb,
+.kLCLJb {
     display: none !important;
 }
 
@@ -49,10 +50,11 @@ a[href="https://cuberealm.io"],
     font-size: 10px;
 }
 
-.eHnkoG div,
+/* .eHnkoG div,
 .eHkThH div {
     max-height: 400px;
-}
+    opacity: 30%;
+} */
 
 .bNczYf {
     background-size: cover !important;
@@ -77,7 +79,12 @@ a[href="https://cuberealm.io"],
 .cJa-dgF,
 .bhZAzR,
 .lbyvRf,
-.gJPUVb {
+.gJPUVb,
+.dtXnOV,
+.dFbRBI,
+.czueTf,
+.dXMIIa,
+.bccMWL {
     border: none !important;
     background: none !important;
 }
@@ -96,7 +103,7 @@ a[href="https://cuberealm.io"],
 
 .lpfJAq *,
 .lpdfTz * {
-    max-height: 450px !important;
+    max-height: 400px !important;
 }
 
 .eQfmzq {
@@ -127,4 +134,21 @@ a[href="https://cuberealm.io"],
 
 .faeaXa[style*="rgb(211, 84, 0)"] {
     filter: drop-shadow(0 0 10px rgb(211, 84, 0));
+}
+
+img[src="/./package/ea55824826de52b7ccc3.png"] {
+    margin-bottom: 20px;
+    width: auto;
+    height: 200px;
+    filter: drop-shadow(0 0 20px black);
+    pointer-events: none;
+}
+
+.kqMamr[style*="font-size: 10px"],
+.dZDPlS * {
+    font-size: 12px !important;
+}
+
+.ekaCUa {
+    height: 100%;
 }

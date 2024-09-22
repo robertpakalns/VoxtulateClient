@@ -23,9 +23,11 @@ class Voxiom {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    window.trustedTypes?.createPolicy("default", { createHTML: i => i })
 
     const bgURL = path.join(__dirname, "../../assets/bg.webp").replace(/\\/g, "/")
     const fontURL = path.join(__dirname, "../../assets/fonts/Roboto.ttf").replace(/\\/g, "/")
+    const textURL = path.join(__dirname, "../../assets/text.webp").replace(/\\/g, "/")
 
     if (config.get("styles.enable") && !config.get("styles.custom")) {
         const css = document.createElement("style")
@@ -34,7 +36,9 @@ document.addEventListener("DOMContentLoaded", () => {
             @font-face { font-family: "Roboto"; src: url(${fontURL}) format("truetype") }
             * { font-family: "Roboto", sans-serif }
             .bNczYf { background: url(${bgURL}) }
-            body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"] { display: ${config.get("console") ? "none" : "block"} !important }`
+            body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"] { display: ${config.get("console") ? "none" : "block"} !important }
+            img[src="/./package/ea55824826de52b7ccc3.png"] { content: url(${textURL}) }
+            .lpfJAq, .lpdfTz { opacity: ${config.get("chatOpacity")}% }`
         css.textContent = cssText
         document.head.appendChild(css)
 
@@ -57,12 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (config.get("crosshair.enable")) {
         const img = document.createElement("img")
         img.src = config.get("crosshair.url")
-        Object.assign(img.style, {
-            left: "50vw",
-            top: "50vh",
-            position: "fixed",
-            transform: "translate(-50%, -50%)"
-        })
+        Object.assign(img.style, { left: "50vw", top: "50vh", position: "fixed", transform: "translate(-50%, -50%)" })
         document.body.prepend(img)
     }
 

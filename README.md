@@ -25,6 +25,7 @@ All Voxtulate Client source code is publicly available in the [GitHub repository
 ### Development questions
 - How to automatically toggle settings without relaunching the client? The question concerns features that theoretically should not require a relaunch.
 - Renderer processes automatically set `description` name instead of `build.productName` from `package.json`. The name `Voxtulate Client` looks better than `Unofficial Voxiom client, for real Voxtulators`.
+- `disabling mouse acceleration is not supported` message from `https://voxiom.io/package/c88d6619469a22a797eb.js` script while clicking on in-game canvas.
 
 ### Credits
 - Vanced Voxiom Client (NamekujiLSDs)
