@@ -18,7 +18,7 @@ const defaultConfig = {
         css: ""
     },
     console: true,
-    chatOpacity: 1,
+    chatOpacity: "100",
     fullscreen: false,
     swapper: {
         enable: true,
