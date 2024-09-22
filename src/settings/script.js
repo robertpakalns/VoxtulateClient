@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
     el("crosshairURL").element.value = config.get("crosshair.url") ?? ""
     el("customCSS").element.value = config.get("styles.css") ?? ""
     el("customJS").element.value = config.get("styles.js") ?? ""
+    el("chatOpacity").element.value = config.get("chatOpacity") ?? "100"
 
     toggleElements()
 
@@ -75,6 +76,7 @@ el("customStyles").event("click", e => {
 el("console").event("change", e => config.set("console", e.target.checked))
 el("fullscreen").event("change", e => config.set("fullscreen", e.target.checked))
 el("enableSwapper").event("change", e => config.set("swapper.enable", e.target.checked))
+el("chatOpacity").event("input", e => config.set("chatOpacity", e.target.value))
 
 el("customCSS").event("input", e => config.set("styles.css", e.target.value))
 el("customJS").event("input", e => config.set("styles.js", e.target.value))
@@ -89,6 +91,8 @@ el("defaultSettings").event("click", () => {
     checkboxes.forEach(id => el(id).element.checked = true)
     uncheckBoxes.forEach(id => el(id).element.checked = false)
     emptyInputs.forEach(id => el(id).element.value = "")
+
+    el("chatOpacity").element.value = "100"
 })
 el("openConfigs").event("click", () => shell.openPath(configPath))
 el("restart").event("click", () => ipcRenderer.send("relaunch"))

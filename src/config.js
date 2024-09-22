@@ -1,6 +1,6 @@
+const os = require("os")
 const fs = require("fs")
 const path = require("path")
-const os = require("os")
 
 const defaultConfig = {
     client: {
@@ -18,9 +18,10 @@ const defaultConfig = {
         css: ""
     },
     console: true,
+    chatOpacity: 1,
     fullscreen: false,
     swapper: {
-        enable: false,
+        enable: true,
         content: {
             CAR_MP3: null,
             TAR_MP3: null,
@@ -62,7 +63,7 @@ const defaultConfig = {
             RED_SOLDIER_PNG: null,
             BLUE_SOLDIER_PNG: null,
             INDICATOR_PNG: null,
-            SPRAY_PNG: null,
+            SPRAY_PNG: path.join(__dirname, "../assets/spray.png"),
             TEXTURE_PNG: null
         }
     }

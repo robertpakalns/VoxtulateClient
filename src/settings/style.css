@@ -124,6 +124,10 @@ input[type="checkbox"]:disabled:hover {
     box-shadow: none;
 }
 
+input[type="range"] {
+    width: 70px;
+}
+
 textarea:disabled {
     opacity: 20%;
     cursor: not-allowed;
