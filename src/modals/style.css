@@ -149,3 +149,44 @@ header {
     font-size: 1.5rem;
     text-align: center;
 }
+
+table {
+    border-collapse: collapse;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #4CAF50;
+}
+
+td {
+    padding: 5px 20px;
+}
+
+td:first-child {
+    border-radius: 15px 0 0 15px;
+}
+
+td:last-child {
+    border-radius: 0 15px 15px 0;
+}
+
+a {
+    text-decoration: none;
+    color: #00A1E4;
+}
+
+.page {
+    width: 800px;
+    text-align: left;
+    margin: auto;
+}
+
+.page main {
+    padding: 20px 0;
+    width: fit-content;
+    margin: auto;
+}
+
+p {
+    margin: 0 20px;
+}
