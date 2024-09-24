@@ -1,5 +1,5 @@
 const { ipcRenderer, shell } = require("electron")
-const { Config, configPath } = require("../config.js")
+const { Config, configPath } = require("../../config.js")
 
 const config = new Config()
 const el = id => ({

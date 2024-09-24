@@ -5,7 +5,7 @@ const path = require("path")
 const { Config, configPath } = require("./src/config.js")
 const config = new Config
 
-let mainWindow, settingsWindow
+let mainWindow, settingsWindow, infoWindow
 
 const createMain = async () => {
     mainWindow = new BrowserWindow({
@@ -31,6 +31,7 @@ const createMain = async () => {
         if (["F1", "F5", "F11", "F12"].includes(key)) e.preventDefault()
 
         if (key === "F1") settingsModal()
+        if (key === "F2") infoModal()
         if (key === "F5") webContents.reload()
         if (key === "F11") mainWindow.setFullScreen(!mainWindow.isFullScreen())
         if (key === "F12") webContents.toggleDevTools()
@@ -86,7 +87,7 @@ const settingsModal = () => {
     })
 
     settingsWindow.setMenu(null)
-    settingsWindow.loadFile(path.join(__dirname, "src/settings/index.html"))
+    settingsWindow.loadFile(path.join(__dirname, "src/modals/settings/index.html"))
 
     settingsWindow.webContents.on("did-finish-load", () => settingsWindow.show())
     settingsWindow.webContents.on("before-input-event", (e, { key }) => {
@@ -97,6 +98,36 @@ const settingsModal = () => {
     })
     settingsWindow.on("blur", () => settingsWindow.hide())
     settingsWindow.on("close", () => settingsWindow = null)
+}
+
+const infoModal = () => {
+    if (infoWindow) return infoWindow.show()
+
+    infoWindow = new BrowserWindow({
+        height: 600,
+        width: 800,
+        resizable: false,
+        title: `Voxtulate Client v${app.getVersion()} | Info`,
+        icon: path.join(__dirname, "assets/icon.ico"),
+        parent: mainWindow,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false
+        }
+    })
+
+    infoWindow.setMenu(null)
+    infoWindow.loadFile(path.join(__dirname, "src/modals/info/index.html"))
+
+    infoWindow.webContents.on("did-finish-load", () => infoWindow.show())
+    infoWindow.webContents.on("before-input-event", (e, { key }) => {
+        if (key === "Escape") {
+            e.preventDefault()
+            infoWindow.close()
+        }
+    })
+    infoWindow.on("blur", () => infoWindow.hide())
+    infoWindow.on("close", () => infoWindow = null)
 }
 
 if (config.get("client.fpsUncap")) app.commandLine.appendSwitch("disable-frame-rate-limit")
