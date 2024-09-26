@@ -43,6 +43,7 @@ const createMain = async () => {
     })
 
     ipcMain.on("update-url-request", e => e.reply("update-url", webContents.getURL()))
+    webContents.on("did-navigate-in-page", () => settingsWindow?.webContents.send("update-url", webContents.getURL()))
 
     const reject = JSON.parse(fs.readFileSync(path.join(__dirname, "src/reject.json"), "utf8"))
     const swapper = JSON.parse(fs.readFileSync(path.join(__dirname, "src/swapper.json"), "utf8"))
@@ -175,7 +176,7 @@ app.on("ready", () => {
 
 const message = text => dialog.showMessageBox({
     icon: path.join(__dirname, "assets/icon.ico"),
-    title: `Voxtulate Client v${app.getVersion()} | Info`,
+    title: `Voxtulate Client v${app.getVersion()} | Update`,
     message: text
 })
 
