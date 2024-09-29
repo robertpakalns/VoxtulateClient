@@ -6,7 +6,6 @@ const { Config, configPath, defaultConfig } = require("./src/config.js")
 const config = new Config
 
 let mainWindow, settingsWindow, infoWindow
-// const { content: keybinding } = config.get("keybinding")
 const keybinding = config.get("keybinding.enable") ? config.get("keybinding.content") : defaultConfig.keybinding.content
 
 const createMain = async () => {
@@ -106,7 +105,7 @@ const infoModal = () => {
     infoWindow = new BrowserWindow({
         height: 600,
         width: 800,
-        // resizable: false,
+        resizable: false,
         title: `Voxtulate Client v${app.getVersion()} | Info`,
         icon: path.join(__dirname, "assets/icon.ico"),
         parent: mainWindow,
@@ -116,7 +115,7 @@ const infoModal = () => {
         }
     })
 
-    // infoWindow.setMenu(null)
+    infoWindow.setMenu(null)
     infoWindow.loadFile(path.join(__dirname, "src/modals/info/index.html"))
 
     infoWindow.webContents.on("did-finish-load", () => infoWindow.show())
