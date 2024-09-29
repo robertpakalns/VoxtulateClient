@@ -1,6 +1,5 @@
 const { shell } = require("electron")
 const { Config, defaultConfig } = require("../../config.js")
-const e = require("express")
 const config = new Config()
 
 const createEl = (tag, attrs = {}, className = "", append = []) => {
