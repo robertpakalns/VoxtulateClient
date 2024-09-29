@@ -47,14 +47,6 @@
                 </div>
             </div>
 
-            <h1>Resource Swapper</h1>
-            <div class="block">
-                <div class="content">
-                    <input type="checkbox" id="enableSwapper">
-                    <div>Enable Resource Swapper</div>
-                </div>
-            </div>
-
             <h1>Fast Join</h1>
             <div class="block">
                 <div class="content">
@@ -105,6 +97,52 @@
             <textarea id="customCSS"></textarea>
             <h1>JS</h1>
             <textarea id="customJS"></textarea>
+        </main>
+
+        <main>
+            <header>Resource Swapper</header>
+            <div class="block">
+                <div class="content">
+                    <input type="checkbox" id="enableSwapper">
+                    <div>Enable Resource Swapper</div>
+                </div>
+            </div>
+
+            <table id="swapperTable">
+                <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td>Source</td>
+                    </tr>
+                </thead>
+                <tbody id="swapperBody">
+                    <!-- script.js is responsible for creating the swapperBody content -->
+                </tbody>
+            </table>
+        </main>
+
+        <main>
+            <header>Custom Keybinding</header>
+
+            <div class="block">
+                <div class="content">
+                    <input type="checkbox" id="enableKeybinding">
+                    <div>Enable Custom Keybinding</div>
+                </div>
+            </div>
+
+            <table id="keybindingTable">
+                <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td>Key</td>
+                    </tr>
+                </thead>
+                <tbody id="keybindingBody">
+                    <!-- script.js is responsible for creating the keybindingBody content -->
+                </tbody>
+            </table>
+            <div class="subText">Setting multiple options to the same hotkey can lead to unpredictable client behavior</div>
         </main>
 
     </section>

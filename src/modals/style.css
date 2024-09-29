@@ -115,25 +115,24 @@ footer button {
     font-size: 1rem;
 }
 
-input[type="checkbox"]:disabled {
-    opacity: 20%;
-    cursor: not-allowed;
-}
-
-input[type="checkbox"]:disabled:hover {
-    box-shadow: none;
-}
-
 input[type="range"] {
     width: 70px;
 }
 
-textarea:disabled {
+.disabled,
+input:disabled,
+textarea:disabled,
+input:disabled {
     opacity: 20%;
     cursor: not-allowed;
 }
 
+input:disabled:hover {
+    box-shadow: none;
+}
+
 .info {
+    margin: 3px;
     font-size: 0.5rem;
     color: gray;
     position: absolute;
@@ -155,7 +154,7 @@ table {
 }
 
 tbody tr:nth-child(odd) {
-    background-color: #4CAF50;
+    background-color: #1a1a1a;
 }
 
 td {
@@ -189,4 +188,29 @@ a {
 
 p {
     margin: 0 20px;
+}
+
+.swapperInput {
+    width: 100%;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.file-upload-label {
+    color: gold;
+    cursor: pointer;
+}
+
+.file-upload-label:hover {
+    text-shadow: 0 0 10px #4CAF50;
+}
+
+table {
+    font-size: 0.75rem;
+}
+
+thead {
+    font-weight: 900;
 }
