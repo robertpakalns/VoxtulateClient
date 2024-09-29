@@ -2,10 +2,12 @@ const { app, BrowserWindow, ipcMain, dialog, protocol } = require("electron")
 const { autoUpdater } = require("electron-updater")
 const fs = require("fs")
 const path = require("path")
-const { Config, configPath } = require("./src/config.js")
+const { Config, configPath, defaultConfig } = require("./src/config.js")
 const config = new Config
 
 let mainWindow, settingsWindow, infoWindow
+// const { content: keybinding } = config.get("keybinding")
+const keybinding = config.get("keybinding.enable") ? config.get("keybinding.content") : defaultConfig.keybinding.content
 
 const createMain = async () => {
     mainWindow = new BrowserWindow({
@@ -27,16 +29,16 @@ const createMain = async () => {
     const { webContents } = mainWindow
 
     webContents.on("will-prevent-unload", e => e.preventDefault())
-    webContents.on("before-input-event", async (e, { key, type }) => {
-        if (["F1", "F5", "F11", "F12"].includes(key)) e.preventDefault()
+    webContents.on("before-input-event", async (e, { code, type }) => {
+        if ([keybinding.Settings, keybinding.Reload, keybinding.Fullscreen, keybinding.DevTools].includes(code)) e.preventDefault()
 
-        if (key === "F1") settingsModal()
-        if (key === "F2") infoModal()
-        if (key === "F5") webContents.reload()
-        if (key === "F11") mainWindow.setFullScreen(!mainWindow.isFullScreen())
-        if (key === "F12") webContents.toggleDevTools()
+        if (code === keybinding.Settings) settingsModal()
+        if (code === keybinding.Info) infoModal()
+        if (code === keybinding.Reload) webContents.reload()
+        if (code === keybinding.Fullscreen) mainWindow.setFullScreen(!mainWindow.isFullScreen())
+        if (code === keybinding.DevTools) webContents.toggleDevTools()
 
-        if (key === "Escape" && type === "keyUp") {
+        if (code === "Escape" && type === "keyUp") {
             if (!await webContents.executeJavaScript("document.querySelector('.faouwN') !== null")) e.preventDefault()
             webContents.executeJavaScript(`document.querySelector(".enmYtp") ? document.querySelector("canvas").requestPointerLock() : document.exitPointerLock()`)
         }
@@ -76,7 +78,7 @@ const settingsModal = () => {
 
     settingsWindow = new BrowserWindow({
         height: 600,
-        width: 800,
+        width: 810,
         resizable: false,
         title: `Voxtulate Client v${app.getVersion()} | Settings`,
         icon: path.join(__dirname, "assets/icon.ico"),
@@ -91,14 +93,11 @@ const settingsModal = () => {
     settingsWindow.loadFile(path.join(__dirname, "src/modals/settings/index.html"))
 
     settingsWindow.webContents.on("did-finish-load", () => settingsWindow.show())
-    settingsWindow.webContents.on("before-input-event", (e, { key }) => {
-        if (key === "Escape") {
-            e.preventDefault()
-            settingsWindow.close()
-        }
-    })
+    settingsWindow.webContents.on("before-input-event", (_, { code }) => code === keybinding.Close_Modal && settingsWindow.hide())
     settingsWindow.on("blur", () => settingsWindow.hide())
     settingsWindow.on("close", () => settingsWindow = null)
+
+    ipcMain.on("reload", () => settingsWindow.webContents.reload())
 }
 
 const infoModal = () => {
@@ -107,7 +106,7 @@ const infoModal = () => {
     infoWindow = new BrowserWindow({
         height: 600,
         width: 800,
-        resizable: false,
+        // resizable: false,
         title: `Voxtulate Client v${app.getVersion()} | Info`,
         icon: path.join(__dirname, "assets/icon.ico"),
         parent: mainWindow,
@@ -117,16 +116,11 @@ const infoModal = () => {
         }
     })
 
-    infoWindow.setMenu(null)
+    // infoWindow.setMenu(null)
     infoWindow.loadFile(path.join(__dirname, "src/modals/info/index.html"))
 
     infoWindow.webContents.on("did-finish-load", () => infoWindow.show())
-    infoWindow.webContents.on("before-input-event", (e, { key }) => {
-        if (key === "Escape") {
-            e.preventDefault()
-            infoWindow.close()
-        }
-    })
+    infoWindow.webContents.on("before-input-event", (_, { code }) => code === keybinding.Close_Modal && infoWindow.hide())
     infoWindow.on("blur", () => infoWindow.hide())
     infoWindow.on("close", () => infoWindow = null)
 }

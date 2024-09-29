@@ -20,8 +20,19 @@ const defaultConfig = {
     console: true,
     chatOpacity: "100",
     fullscreen: false,
+    keybinding: {
+        enable: false,
+        content: {
+            Close_Modal: "Escape",
+            Settings: "F1",
+            Info: "F2",
+            Reload: "F5",
+            Fullscreen: "F11",
+            DevTools: "F12"
+        }
+    },
     swapper: {
-        enable: true,
+        enable: false,
         content: {
             CAR_MP3: null,
             TAR_MP3: null,
@@ -108,4 +119,4 @@ class Config {
     }
 }
 
-module.exports = { Config, configPath }
+module.exports = { Config, configPath, defaultConfig }

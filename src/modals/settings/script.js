@@ -1,48 +1,54 @@
 const { ipcRenderer, shell } = require("electron")
 const { Config, configPath } = require("../../config.js")
-
 const config = new Config()
+
 const el = id => ({
-    element: document.getElementById(id),
-    event(type, callback) {
-        this.element.addEventListener(type, callback)
-    }
+    get element() { return document.getElementById(id) },
+    get checked() { return this.element.checked },
+    set checked(value) { this.element.checked = value },
+    get value() { return this.element.value },
+    set value(val) { this.element.value = val },
+    event(type, callback) { this.element.addEventListener(type, callback) },
+    class(name, toggle) { this.element.classList.toggle(name, toggle) }
 })
 
 const toggleElements = () => {
-    const enableStylesChecked = el("enableStyles").element.checked
-    const customStylesChecked = el("customStyles").element.checked
+    const styles = el("enableStyles").checked
+    const custom = el("customStyles").checked
+    const swapper = el("enableSwapper").checked
+    const keybinding = el("enableKeybinding").checked
 
-    el("customStyles").element.disabled = !enableStylesChecked
+    el("swapperTable").class("disabled", !swapper)
+    el("keybindingTable").class("disabled", !keybinding)
 
-    if (!enableStylesChecked) {
-        el("customCSS").element.disabled = true
-        el("customJS").element.disabled = true
-    }
-    else {
-        el("customCSS").element.disabled = !customStylesChecked
-        el("customJS").element.disabled = !customStylesChecked
-        if (!customStylesChecked) {
-            el("customCSS").element.disabled = true
-            el("customJS").element.disabled = true
-        }
-    }
+    el("customStyles").element.disabled = !styles
+    el("customCSS").element.disabled = !(styles && custom)
+    el("customJS").element.disabled = !(styles && custom)
+    el("swapperTable").element.querySelectorAll("input").forEach(el => el.disabled = !swapper)
+    el("keybindingTable").element.querySelectorAll("input").forEach(el => el.disabled = !keybinding)
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    el("fpsUncap").element.checked = config.get("client.fpsUncap")
-    el("adblocker").element.checked = config.get("client.adblocker")
-    el("enableCrosshair").element.checked = config.get("crosshair.enable")
-    el("enableStyles").element.checked = config.get("styles.enable")
-    el("customStyles").element.checked = config.get("styles.custom")
-    el("console").element.checked = config.get("console")
-    el("fullscreen").element.checked = config.get("fullscreen")
-    el("enableSwapper").element.checked = config.get("swapper.enable")
+    el("fpsUncap").checked = config.get("client.fpsUncap")
+    el("adblocker").checked = config.get("client.adblocker")
+    el("enableCrosshair").checked = config.get("crosshair.enable")
+    el("enableStyles").checked = config.get("styles.enable")
+    el("customStyles").checked = config.get("styles.custom")
+    el("console").checked = config.get("console")
+    el("fullscreen").checked = config.get("fullscreen")
+    el("enableSwapper").checked = config.get("swapper.enable")
+    el("enableKeybinding").checked = config.get("keybinding.enable")
 
-    el("crosshairURL").element.value = config.get("crosshair.url") ?? ""
-    el("customCSS").element.value = config.get("styles.css") ?? ""
-    el("customJS").element.value = config.get("styles.js") ?? ""
-    el("chatOpacity").element.value = config.get("chatOpacity") ?? "100"
+    el("crosshairURL").value = config.get("crosshair.url") ?? ""
+    el("customCSS").value = config.get("styles.css") ?? ""
+    el("customJS").value = config.get("styles.js") ?? ""
+    el("chatOpacity").value = config.get("chatOpacity") ?? "100"
+
+    const { content: c1 } = config.get("swapper")
+    for (const swap in c1) swapperRow(swap, c1[swap])
+
+    const { content: c2 } = config.get("keybinding")
+    for (const key in c2) keybindingRow(key, c2[key])
 
     toggleElements()
 
@@ -56,7 +62,7 @@ el("adblocker").event("change", e => config.set("client.adblocker", e.target.che
 el("enableCrosshair").event("change", e => config.set("crosshair.enable", e.target.checked))
 el("crosshairURL").event("input", e => config.set("crosshair.url", e.target.value))
 
-el("joinLink").event("click", () => ipcRenderer.send("join-game", el("joinLinkURL").element.value))
+el("joinLink").event("click", () => ipcRenderer.send("join-game", el("joinLinkURL").value))
 el("copyURL").event("click", () => navigator.clipboard.writeText(el("currentURL").element.innerText))
 
 el("importClientSettings").event("click", () => ipcRenderer.send("import-client-settings"))
@@ -75,7 +81,16 @@ el("customStyles").event("click", e => {
 
 el("console").event("change", e => config.set("console", e.target.checked))
 el("fullscreen").event("change", e => config.set("fullscreen", e.target.checked))
-el("enableSwapper").event("change", e => config.set("swapper.enable", e.target.checked))
+el("enableSwapper").event("change", e => {
+    config.set("swapper.enable", e.target.checked)
+    toggleElements()
+})
+
+el("enableKeybinding").event("change", e => {
+    config.set("keybinding.enable", e.target.checked)
+    toggleElements()
+})
+
 el("chatOpacity").event("input", e => config.set("chatOpacity", e.target.value))
 
 el("customCSS").event("input", e => config.set("styles.css", e.target.value))
@@ -83,16 +98,56 @@ el("customJS").event("input", e => config.set("styles.js", e.target.value))
 
 el("defaultSettings").event("click", () => {
     config.default()
-
-    const checkboxes = ["fpsUncap", "adblocker", "console", "enableStyles"]
-    const uncheckBoxes = ["enableCrosshair", "customStyles", "fullscreen", "enableSwapper"]
-    const emptyInputs = ["crosshairURL", "joinLinkURL", "customCSS", "customJS"]
-
-    checkboxes.forEach(id => el(id).element.checked = true)
-    uncheckBoxes.forEach(id => el(id).element.checked = false)
-    emptyInputs.forEach(id => el(id).element.value = "")
-
-    el("chatOpacity").element.value = "100"
+    ipcRenderer.send("reload")
 })
 el("openConfigs").event("click", () => shell.openPath(configPath))
 el("restart").event("click", () => ipcRenderer.send("relaunch"))
+
+const tableBody = document.querySelector("#swapperBody")
+const keybindingBody = document.querySelector("#keybindingBody")
+
+const createEl = (tag, attrs = {}, className = "", append = []) => {
+    const elem = document.createElement(tag)
+    if (className) elem.classList.add(className)
+    Object.keys(attrs).forEach(attr => elem[attr] = attrs[attr])
+    elem.append(...append)
+    return elem
+}
+
+const swapperRow = (name, value) => {
+    const _inputChild = createEl("input", { type: "url", value }, "swapperInput")
+    _inputChild.addEventListener("input", e => config.set(`swapper.content.${name}`, e.target.value))
+
+    const _fileChild = createEl("input", { type: "file", id: `file-upload-${name}` }, "swapperInput")
+    const _fileLabel = createEl("label", { textContent: "File", htmlFor: _fileChild.id }, "file-upload-label")
+
+    _fileChild.addEventListener("change", ({ target: { files: [file] } }) => {
+        if (file) {
+            const { path } = file
+            config.set(`swapper.content.${name}`, path)
+            _inputChild.value = path
+        }
+    })
+
+    const _name = createEl("td", { textContent: name })
+    const _input = createEl("td", {}, "", [_inputChild])
+    const _file = createEl("td", {}, "", [_fileChild, _fileLabel])
+
+    const tr = createEl("tr", {}, "", [_name, _input, _file])
+    tableBody.appendChild(tr)
+}
+
+const keybindingRow = (name, key) => {
+    const _inputChild = createEl("input", { type: "text", value: key }, "keybindingInput")
+    _inputChild.addEventListener("keydown", e => {
+        e.preventDefault()
+        _inputChild.value = e.code
+        config.set(`keybinding.content.${name}`, e.code)
+    })
+
+    const _name = createEl("td", { textContent: name })
+    const _input = createEl("td", {}, "", [_inputChild])
+    const tr = createEl("tr", {}, "", [_name, _input])
+
+    keybindingBody.appendChild(tr)
+}
