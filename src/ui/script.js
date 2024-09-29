@@ -1,4 +1,4 @@
-const { ipcRenderer } = require("electron")
+const { ipcRenderer, shell } = require("electron")
 const { Config } = require("../config.js")
 const fs = require("fs")
 const path = require("path")
@@ -77,6 +77,14 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             else this.text("")
         }, 50)
+
+    document.addEventListener("click", e => {
+        const el = e.target.closest(".dELrkI")
+        if (el) {
+            e.preventDefault()
+            shell.openPath(el.href)
+        }
+    })
 })
 
 ipcRenderer.on("set-game-settings", (_, data) => localStorage.setItem("persist:root", JSON.parse(data)))
