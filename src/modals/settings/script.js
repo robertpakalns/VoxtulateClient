@@ -28,6 +28,13 @@ const toggleElements = () => {
     el("keybindingTable").element.querySelectorAll("input").forEach(el => el.disabled = !keybinding)
 }
 
+const updateStyles = () => {
+    const enable = el("enableStyles").checked
+    const custom = el("customStyles").checked
+    ipcRenderer.send("change-custom-css", enable, custom, el("customCSS").value)
+    ipcRenderer.send("change-custom-js", enable, custom, el("customJS").value)
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     el("fpsUncap").checked = config.get("client.fpsUncap")
     el("adblocker").checked = config.get("client.adblocker")
@@ -59,11 +66,18 @@ document.addEventListener("DOMContentLoaded", () => {
 el("fpsUncap").event("change", e => config.set("client.fpsUncap", e.target.checked))
 el("adblocker").event("change", e => config.set("client.adblocker", e.target.checked))
 
-el("enableCrosshair").event("change", e => config.set("crosshair.enable", e.target.checked))
-el("crosshairURL").event("input", e => config.set("crosshair.url", e.target.value))
+el("enableCrosshair").event("change", e => {
+    config.set("crosshair.enable", e.target.checked)
+    ipcRenderer.send("change-crosshair-data", el("enableCrosshair").checked, el("crosshairURL").value)
+})
+el("crosshairURL").event("input", e => {
+    config.set("crosshair.url", e.target.value)
+    ipcRenderer.send("change-crosshair-data", el("enableCrosshair").checked, el("crosshairURL").value)
+})
 
 el("joinLink").event("click", () => ipcRenderer.send("join-game", el("joinLinkURL").value))
-el("copyURL").event("click", () => navigator.clipboard.writeText(el("currentURL").element.innerText))
+
+document.querySelectorAll(".copy").forEach(el => el.addEventListener("click", e => navigator.clipboard.writeText(e.target.innerText)))
 
 el("importClientSettings").event("click", () => ipcRenderer.send("import-client-settings"))
 el("exportClientSettings").event("click", () => ipcRenderer.send("export-client-settings"))
@@ -71,15 +85,20 @@ el("importGameSettings").event("click", () => ipcRenderer.send("import-game-sett
 el("exportGameSettings").event("click", () => ipcRenderer.send("export-game-settings"))
 
 el("enableStyles").event("click", e => {
-    config.set("styles.enable", e.target.checked)
+    updateStyles()
     toggleElements()
+    config.set("styles.enable", e.target.checked)
 })
 el("customStyles").event("click", e => {
-    config.set("styles.custom", e.target.checked)
+    updateStyles()
     toggleElements()
+    config.set("styles.custom", e.target.checked)
 })
 
-el("console").event("change", e => config.set("console", e.target.checked))
+el("console").event("change", e => {
+    config.set("console", e.target.checked)
+    ipcRenderer.send("set-custom-console", e.target.checked)
+})
 el("fullscreen").event("change", e => config.set("fullscreen", e.target.checked))
 el("enableSwapper").event("change", e => {
     config.set("swapper.enable", e.target.checked)
@@ -91,10 +110,19 @@ el("enableKeybinding").event("change", e => {
     toggleElements()
 })
 
-el("chatOpacity").event("input", e => config.set("chatOpacity", e.target.value))
+el("chatOpacity").event("input", e => {
+    config.set("chatOpacity", e.target.value)
+    ipcRenderer.send("change-chat-opacity", e.target.value)
+})
 
-el("customCSS").event("input", e => config.set("styles.css", e.target.value))
-el("customJS").event("input", e => config.set("styles.js", e.target.value))
+el("customCSS").event("input", e => {
+    config.set("styles.css", e.target.value)
+    ipcRenderer.send("change-custom-css", el("enableStyles").checked, el("customStyles").checked, el("customCSS").value)
+})
+el("customJS").event("input", e => {
+    config.set("styles.js", e.target.value)
+    ipcRenderer.send("change-custom-js", el("enableStyles").checked, el("customStyles").checked, el("customJS").value)
+})
 
 el("defaultSettings").event("click", () => {
     config.default()

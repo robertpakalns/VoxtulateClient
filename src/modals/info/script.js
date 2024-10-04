@@ -32,4 +32,6 @@ document.addEventListener("DOMContentLoaded", () => {
     for (const key in userKeybinding) keybindingRow(key, defaultKeybinding[key], userKeybinding[key])
     if (!config.get("keybinding.enable")) document.querySelectorAll("#keybindingBody tr td:nth-child(3)").forEach(el => el.style.opacity = "0.2")
     else document.querySelectorAll("#keybindingBody tr td:nth-child(2)").forEach(el => el.style.opacity = "0.2")
+
+    document.querySelectorAll(".copy").forEach(el => el.addEventListener("click", e => navigator.clipboard.writeText(e.target.innerText)))
 })

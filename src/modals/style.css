@@ -85,10 +85,10 @@ button:hover {
     text-shadow: 0 0 10px #4CAF50;
 }
 
-#currentURL {
+/* #currentURL {
     font-size: 0.75rem;
     color: gray;
-}
+} */
 
 textarea {
     resize: none;
@@ -213,4 +213,30 @@ table {
 
 thead {
     font-weight: 900;
+}
+
+.copy {
+    user-select: none;
+    font-size: 0.75rem;
+    border-radius: 5px;
+    display: inline-block;
+    cursor: pointer;
+    outline: none;
+    padding: 2px 5px;
+
+    color: #ffe4e1;
+
+    background: rgba(255, 255, 255, 0.1);
+    transition: background-color 0.1s ease;
+
+}
+
+.copy:hover {
+
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.copy:active {
+
+    background: rgba(255, 255, 255, 0.5);
 }
