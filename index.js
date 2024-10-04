@@ -59,13 +59,6 @@ const createMain = async () => {
         return swappedUrl ? callback({ redirectURL: swappedUrl }) : callback({})
     })
 
-    webContents.on("did-finish-load", () => {
-        if (config.get("styles.enable") && config.get("styles.custom")) {
-            webContents.insertCSS(config.get("styles.css"))
-            webContents.executeJavaScript(config.get("styles.js"))
-        }
-    })
-
     webContents.on("new-window", (e, url) => {
         e.preventDefault()
         mainWindow.loadURL(url)
@@ -158,8 +151,11 @@ app.on("ready", () => {
         if (!canceled && filePath) mainWindow.webContents.send("get-game-settings", filePath)
     })
 
-    ipcMain.on("change-custom-css", (_, code) => mainWindow.webContents.insertCSS(code))
-    ipcMain.on("change-custom-js", (_, code) => mainWindow.webContents.executeJavaScript(code))
+    ipcMain.on("change-crosshair-data", (_, ...args) => mainWindow.webContents.send("change-crosshair", ...args))
+    ipcMain.on("change-chat-opacity", (_, ...args) => mainWindow.webContents.send("change-opacity", ...args))
+    ipcMain.on("set-custom-console", (_, ...args) => mainWindow.webContents.send("set-console", ...args))
+    ipcMain.on("change-custom-css", (_, ...args) => mainWindow.webContents.send("change-css", ...args))
+    ipcMain.on("change-custom-js", (_, ...args) => mainWindow.webContents.send("change-js", ...args))
 
     ipcMain.on("relaunch", () => {
         app.relaunch()

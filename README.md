@@ -5,7 +5,7 @@ An unofficial Voxiom.io client, designed for true Voxtulators
 
 All Voxtulate Client source code is publicly available in the [GitHub repository](https://github.com/robertpakalns/VoxtulateClient). If you have concerns about the safety of your private information while using the Voxtulate Client, feel free to inspect the source code. Trust in the client is based on your trust in the developer.
 
-### Keybindings
+### Default Keybinding
 `Escape` - Close Modal (Settings, Info) Window
 `F1` - Open Settings Window
 `F2` - Open Info Window
@@ -29,12 +29,11 @@ All Voxtulate Client source code is publicly available in the [GitHub repository
 ### Future Features
 - Improved Client-Side CSS/JS
 - Advanced Inventory Sorting
-- Automatically Apply Client Settings Without Relaunching
 
 ### Development Questions (Electron.js)
-- How to automatically toggle settings without relaunching the client? The question concerns features that theoretically should not require a relaunch.
 - Renderer processes automatically set `description` name instead of `build.productName` from `package.json`. The name `Voxtulate Client` looks better than `Unofficial Voxiom client, for real Voxtulators`.
 - `disabling mouse acceleration is not supported` message from `https://voxiom.io/package/c88d6619469a22a797eb.js` script while clicking on in-game canvas.
+- I would like to rewrite the whole client using Tauri. The only problem I get there is FPS uncap. If I resolve this issue, I will definitely move on Tauri.
 
 ### Used Technologies
 - Electron
