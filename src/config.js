@@ -17,6 +17,7 @@ const defaultConfig = {
         js: "",
         css: ""
     },
+    inventorySorting: true,
     console: true,
     chatOpacity: "100",
     fullscreen: false,
@@ -32,7 +33,7 @@ const defaultConfig = {
         }
     },
     swapper: {
-        enable: false,
+        enable: true,
         content: {
             CAR_MP3: null,
             TAR_MP3: null,

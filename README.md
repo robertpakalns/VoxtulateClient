@@ -2,16 +2,15 @@
 An unofficial Voxiom.io client, designed for true Voxtulators
 
 ### Client Safety 
-
 All Voxtulate Client source code is publicly available in the [GitHub repository](https://github.com/robertpakalns/VoxtulateClient). If you have concerns about the safety of your private information while using the Voxtulate Client, feel free to inspect the source code. Trust in the client is based on your trust in the developer.
 
 ### Default Keybinding
-`Escape` - Close Modal (Settings, Info) Window
-`F1` - Open Settings Window
-`F2` - Open Info Window
-`F5` - Reload Page
-`F11` - Toggle Fullscreen Mode
-`F12` - Toggle Chromium Developer Tools
+- `Escape` - Close Modal (Settings, Info) Window
+- `F1` - Open Settings Window
+- `F2` - Open Info Window
+- `F5` - Reload Page
+- `F11` - Toggle Fullscreen Mode
+- `F12` - Toggle Chromium Developer Tools
 
 ### Current Features
 - Adblocker
@@ -21,14 +20,11 @@ All Voxtulate Client source code is publicly available in the [GitHub repository
 - Info window (`F2`)
 - CSS/JS Customization
 - Settings window (`F1`)
+- Advanced Inventory Sorting
 - Chromium Developer Tools (`F12`)
 - Client-Side CSS/JS Customization
 - Keybinding Option For Client Features
 - Minimized Console (FPS, Coordinates, Latency)
-
-### Future Features
-- Improved Client-Side CSS/JS
-- Advanced Inventory Sorting
 
 ### Development Questions (Electron.js)
 - Renderer processes automatically set `description` name instead of `build.productName` from `package.json`. The name `Voxtulate Client` looks better than `Unofficial Voxiom client, for real Voxtulators`.
