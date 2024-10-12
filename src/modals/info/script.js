@@ -1,14 +1,7 @@
 const { shell } = require("electron")
 const { Config, defaultConfig } = require("../../config.js")
 const config = new Config()
-
-const createEl = (tag, attrs = {}, className = "", append = []) => {
-    const elem = document.createElement(tag)
-    if (className) elem.classList.add(className)
-    Object.keys(attrs).forEach(attr => elem[attr] = attrs[attr])
-    elem.append(...append)
-    return elem
-}
+const { createEl } = require("../../functions.js")
 
 const { content: userKeybinding } = config.get("keybinding")
 const { content: defaultKeybinding } = defaultConfig.keybinding

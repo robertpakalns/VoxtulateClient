@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, protocol } = require("electron")
+const { app, BrowserWindow, ipcMain, dialog, protocol, session } = require("electron")
 const { autoUpdater } = require("electron-updater")
 const fs = require("fs")
 const path = require("path")
@@ -38,7 +38,7 @@ const createMain = async () => {
         if (code === keybinding.DevTools) webContents.toggleDevTools()
 
         if (code === "Escape" && type === "keyUp") {
-            if (!await webContents.executeJavaScript("document.querySelector('.faouwN') !== null")) e.preventDefault()
+            // if (!await webContents.executeJavaScript("document.querySelector('.faouwN') !== null")) e.preventDefault()
             webContents.executeJavaScript(`document.querySelector(".enmYtp") ? document.querySelector("canvas").requestPointerLock() : document.exitPointerLock()`)
         }
     })
@@ -118,7 +118,7 @@ const infoModal = () => {
 }
 
 if (config.get("client.fpsUncap")) app.commandLine.appendSwitch("disable-frame-rate-limit")
-app.commandLine.appendSwitch("disable-gpu-vsync")
+for (const el of ["disable-gpu-vsync", "in-process-gpu", "enable-quic", "enable-gpu-rasterization", "enable-pointer-lock-options"]) app.commandLine.appendSwitch(el)
 
 app.on("ready", () => {
 
@@ -157,6 +157,10 @@ app.on("ready", () => {
     ipcMain.on("change-custom-css", (_, ...args) => mainWindow.webContents.send("change-css", ...args))
     ipcMain.on("change-custom-js", (_, ...args) => mainWindow.webContents.send("change-js", ...args))
 
+    ipcMain.on("clear-data", () => session.defaultSession.clearStorageData([], error => {
+        if (error) console.error("Error: ", error)
+        else console.log("Data cleared")
+    }))
     ipcMain.on("relaunch", () => {
         app.relaunch()
         app.exit()

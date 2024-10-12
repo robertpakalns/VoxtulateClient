@@ -3,24 +3,9 @@ const { Config } = require("../config.js")
 const fs = require("fs")
 const path = require("path")
 const config = new Config()
+const { createEl, creationTime, Voxiom, createVoxiomSelect } = require("../functions.js")
 
-class Voxiom {
-    constructor(t, c, p) {
-        this.element = document.createElement(t)
-        this.element.className = c
-        p.appendChild(this.element)
-    }
-
-    do(c, i) {
-        setInterval(c.bind(this), i)
-        return this
-    }
-
-    text(i) {
-        this.element.innerHTML = i
-        return this
-    }
-}
+let skinSettings, inventoryData
 
 const enableStyles = () => {
     const { enable, custom, css, js } = config.get("styles")
@@ -48,7 +33,21 @@ const enableStyles = () => {
     .voxiomCreate { margin: 20px; position: absolute; font-weight: 900 }
     .voxiomConsole { font-family: "Consolas", monospace; top: 0; left: 0; font-size: 10px; opacity: ${config.get("console") ? "100%" : "0%"} }
     .voxiomBlocks { margin: auto; width: 100%; position: absolute; bottom: 35%; text-align: center; font-size: 10px }
-    .voxiomCrosshair { top: 50vh; left: 50vw; position: fixed; transform: translate(-50%, -50%) }`
+    .voxiomCrosshair { top: 50vh; left: 50vw; position: fixed; transform: translate(-50%, -50%) }
+    .voxiomSkins { background: #646464; padding: 0 10px; line-height: 38px; cursor: pointer }
+    .voxiomInput { height: 100%; color: white; background: #646464; border: none; outline: none; }
+    .voxiomInput::placeholder { color: rgba(255, 255, 255, 0.5) }
+    .iRauPR { flex-wrap: wrap; gap: 10px }
+    .iRauPR > * { height: 38px }
+    .voxiomSkinName { width: 100%; position: absolute; bottom: 0; left: 0; text-align:center; font-size: 12px; color: gray }
+    .voxiomSkinID { position: absolute; top: 0; right: 0; font-size: 12px; color: gray }
+    
+    .voxiomSelectMenu.active { display: block }
+    .active { display: block }
+    .voxiomSelect { padding: 0 10px; background: #646464; color: white; line-height: 38px; position: relative; cursor: pointer; z-index: 1000 }
+    .voxiomSelectMenu { display: none; cursor: pointer; width: calc(100% + 20px); margin-left: -10px; text-align: center }
+    .option { background: #323232 }
+    .option:hover { background: #646464 }`
 
     document.head.append(enableScript, enableStyles, clientStyles)
 
@@ -76,6 +75,102 @@ const enableStyles = () => {
     })
 }
 
+const advancedInventory = () => {
+    const market = JSON.parse(fs.readFileSync(path.join(__dirname, "../market.json"), "utf8"))
+
+    const _fetch = window.fetch
+    window.fetch = (...args) => _fetch(...args).then(r => {
+        if (args[0] === "/profile/myinv") return r.json().then(data => {
+
+            const { name, id, rotation = "all", creation = "default" } = skinSettings
+
+            const newContent = data
+            newContent.data = newContent.data
+                .map(el => ({ ...el, name: market.data[el.type - 1].name, rotation: market.data[el.type - 1].rotation }))
+                .filter(el =>
+                    (name ? el.name.toLowerCase().includes(name.toLowerCase()) : true) &&
+                    (id ? el.type.toString().includes(id) : true) &&
+                    (rotation === "all" || (el.rotation === (rotation === "true")))
+                )
+                .sort((a, b) => creation === "newest" ? b.creation_time - a.creation_time : creation === "oldest" ? a.creation_time - b.creation_time : null)
+
+            inventoryData = newContent
+
+            return new Response(JSON.stringify(newContent))
+        })
+        return r
+    })
+
+    setInterval(() => {
+        if (document.querySelector(".iRauPR") && !document.querySelector("#voxiomFilter")) {
+
+            skinSettings = JSON.parse(sessionStorage.getItem("skinSettings")) || {
+                name: "", id: "", rotation: "all", defaults: true, creation: "default"
+            }
+
+            setInterval(() => {
+                document.querySelectorAll(".kiKVOk").forEach((el, index) => {
+                    const isDefault = el.textContent === "Common" || el.textContent === "Default"
+                    const location = window.location.pathname === "/loadouts" || window.location.pathname === "/loadouts/inventory"
+
+                    if (skinSettings.defaults === false && isDefault) el.parentElement.parentElement.parentElement.parentElement.remove()
+                    if (!el.parentElement.parentElement.querySelector(".voxiomSkinName")) {
+                        const _name = createEl("div", { textContent: location && !isDefault ? creationTime(inventoryData.data[index / 2].creation_time) : "" }, "voxiomSkinName")
+                        const _id = createEl("div", { textContent: location && !isDefault ? inventoryData.data[index / 2].type : "" }, "voxiomSkinID")
+
+                        el.parentElement.parentElement.append(_name, _id)
+                    }
+                })
+            }, 50)
+
+            const _name = createEl("div", { id: "voxiomFilter" }, "voxiomSkins", [
+                createEl("input", { placeholder: "Filter by name", value: skinSettings.name }, "voxiomInput")
+            ])
+            _name.querySelector("input").addEventListener("input", e => skinSettings.name = e.target.value)
+
+            const _id = createEl("div", {}, "voxiomSkins", [
+                createEl("input", { placeholder: "Filter by ID", type: "number", value: skinSettings.id }, "voxiomInput")
+            ])
+            _id.querySelector("input").addEventListener("input", e => skinSettings.id = e.target.value)
+
+            const rotationOptions = [
+                { value: "all", text: "Rotation: all" },
+                { value: true, text: "Rotation: true" },
+                { value: false, text: "Rotation: false" }
+            ]
+            const _rotation = createVoxiomSelect(rotationOptions, skinSettings, `Rotation: ${skinSettings.rotation}`, "rotation")
+
+            const defaultsOptions = [
+                { value: true, text: "Defaults: true" },
+                { value: false, text: "Defaults: false" }
+            ]
+            const _defaults = createVoxiomSelect(defaultsOptions, skinSettings, `Defaults: ${skinSettings.defaults}`, "defaults")
+
+            const creationOptions = [
+                { value: "default", text: "Creation date: default" },
+                { value: "newest", text: "Creation date: newest" },
+                { value: "oldest", text: "Creation date: oldest" }
+            ]
+            const _creation = createVoxiomSelect(creationOptions, skinSettings, `Creation date: ${skinSettings.creation}`, "creation")
+
+            const _apply = createEl("div", { textContent: "Apply" }, "voxiomSkins")
+            _apply.addEventListener("click", () => {
+                sessionStorage.setItem("skinSettings", JSON.stringify(skinSettings))
+                window.location.reload()
+            })
+
+            const _clear = createEl("div", { textContent: "Clear" }, "voxiomSkins")
+            _clear.addEventListener("click", () => {
+                skinSettings = null
+                sessionStorage.removeItem("skinSettings")
+                window.location.reload()
+            })
+
+            document.querySelector(".iRauPR").append(_name, _id, _rotation, _defaults, _creation, _apply, _clear)
+        }
+    }, 50)
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     window.trustedTypes?.createPolicy("default", { createHTML: i => i })
 
@@ -97,6 +192,11 @@ document.addEventListener("DOMContentLoaded", () => {
     new Voxiom("div", "voxiomBlocks voxiomCreate", document.body)
         .do(function () { this.text(document.querySelector(".biWqsQ")?.innerText.match(/Current mode: (\w+)/)[1] || "") }, 50)
 
+    setInterval(() => document.querySelectorAll(".cJoQGw").forEach(el => {
+        const [r, g, b] = getComputedStyle(el).borderColor.match(/\d+/g).map(Number)
+        el.style.background = `radial-gradient(circle, rgba(${r}, ${g}, ${b}, 0.3), rgba(${r}, ${g}, ${b}, 0.1))`
+    }), 50)
+
     document.addEventListener("click", e => {
         const el = e.target.closest(".dELrkI")
         if (el) {
@@ -104,6 +204,8 @@ document.addEventListener("DOMContentLoaded", () => {
             shell.openPath(el.href)
         }
     })
+
+    if (config.get("inventorySorting")) advancedInventory()
 })
 
 ipcRenderer.on("set-game-settings", (_, data) => localStorage.setItem("persist:root", JSON.parse(data)))

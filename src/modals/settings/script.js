@@ -1,16 +1,7 @@
 const { ipcRenderer, shell } = require("electron")
 const { Config, configPath } = require("../../config.js")
 const config = new Config()
-
-const el = id => ({
-    get element() { return document.getElementById(id) },
-    get checked() { return this.element.checked },
-    set checked(value) { this.element.checked = value },
-    get value() { return this.element.value },
-    set value(val) { this.element.value = val },
-    event(type, callback) { this.element.addEventListener(type, callback) },
-    class(name, toggle) { this.element.classList.toggle(name, toggle) }
-})
+const { el, createEl } = require("../../functions.js")
 
 const toggleElements = () => {
     const styles = el("enableStyles").checked
@@ -65,6 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 el("fpsUncap").event("change", e => config.set("client.fpsUncap", e.target.checked))
 el("adblocker").event("change", e => config.set("client.adblocker", e.target.checked))
+el("inventorySorting").event("change", e => config.set("inventorySorting", e.target.checked))
 
 el("enableCrosshair").event("change", e => {
     config.set("crosshair.enable", e.target.checked)
@@ -134,14 +126,6 @@ el("restart").event("click", () => ipcRenderer.send("relaunch"))
 const tableBody = document.querySelector("#swapperBody")
 const keybindingBody = document.querySelector("#keybindingBody")
 
-const createEl = (tag, attrs = {}, className = "", append = []) => {
-    const elem = document.createElement(tag)
-    if (className) elem.classList.add(className)
-    Object.keys(attrs).forEach(attr => elem[attr] = attrs[attr])
-    elem.append(...append)
-    return elem
-}
-
 const swapperRow = (name, value) => {
     const _inputChild = createEl("input", { type: "url", value }, "swapperInput")
     _inputChild.addEventListener("input", e => config.set(`swapper.content.${name}`, e.target.value))
@@ -179,3 +163,8 @@ const keybindingRow = (name, key) => {
 
     keybindingBody.appendChild(tr)
 }
+
+el("clearData").event("click", () => {
+    ipcRenderer.send("clear-data")
+    ipcRenderer.send("relaunch")
+})

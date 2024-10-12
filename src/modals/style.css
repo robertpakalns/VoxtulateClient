@@ -85,11 +85,6 @@ button:hover {
     text-shadow: 0 0 10px #4CAF50;
 }
 
-/* #currentURL {
-    font-size: 0.75rem;
-    color: gray;
-} */
-
 textarea {
     resize: none;
     width: 100%;
@@ -100,7 +95,7 @@ textarea {
     color: white;
 }
 
-#restart {
+.relaunch {
     color: #f44336;
 }
 
