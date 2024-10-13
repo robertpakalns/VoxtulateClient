@@ -45,9 +45,10 @@ const enableStyles = () => {
     .voxiomSelectMenu.active { display: block }
     .active { display: block }
     .voxiomSelect { padding: 0 10px; background: #646464; color: white; line-height: 38px; position: relative; cursor: pointer; z-index: 1000 }
-    .voxiomSelectMenu { display: none; cursor: pointer; width: calc(100% + 20px); margin-left: -10px; text-align: center }
+    .voxiomSelectMenu { display: none; cursor: pointer; width: calc(100% + 20px); margin-left: -10px; text-align: center; z-index: 1001 }
     .option { background: #323232 }
-    .option:hover { background: #646464 }`
+    .option:hover { background: #646464 }
+    .UOSSK { display: none }`
 
     document.head.append(enableScript, enableStyles, clientStyles)
 
@@ -82,19 +83,25 @@ const advancedInventory = () => {
     window.fetch = (...args) => _fetch(...args).then(r => {
         if (args[0] === "/profile/myinv") return r.json().then(data => {
 
-            const { name, id, rotation = "all", creation = "default" } = skinSettings
+            const { name, id, rotation = "all", creation = "default", model = "all", rarity = "all" } = skinSettings
 
             const newContent = data
             newContent.data = newContent.data
-                .map(el => ({ ...el, name: market.data[el.type - 1].name, rotation: market.data[el.type - 1].rotation }))
+                .map(el => {
+                    const skin = market.data[el.type - 1]
+                    return { ...el, name: skin.name, rotation: skin.rotation, model: skin.type, rarity: skin.rarity }
+                })
                 .filter(el =>
                     (name ? el.name.toLowerCase().includes(name.toLowerCase()) : true) &&
                     (id ? el.type.toString().includes(id) : true) &&
-                    (rotation === "all" || (el.rotation === (rotation === "true")))
+                    (rotation === "all" || (el.rotation === (rotation === "true"))) &&
+                    (model === "all" || el.model === model) &&
+                    (rarity === "all" || el.rarity === rarity)
                 )
                 .sort((a, b) => creation === "newest" ? b.creation_time - a.creation_time : creation === "oldest" ? a.creation_time - b.creation_time : null)
 
             inventoryData = newContent
+            console.log(newContent)
 
             return new Response(JSON.stringify(newContent))
         })
@@ -105,7 +112,7 @@ const advancedInventory = () => {
         if (document.querySelector(".iRauPR") && !document.querySelector("#voxiomFilter")) {
 
             skinSettings = JSON.parse(sessionStorage.getItem("skinSettings")) || {
-                name: "", id: "", rotation: "all", defaults: true, creation: "default"
+                name: "", id: "", rotation: "all", defaults: true, creation: "default", model: "all", rarity: "all"
             }
 
             setInterval(() => {
@@ -122,6 +129,36 @@ const advancedInventory = () => {
                     }
                 })
             }, 50)
+
+            const modelOptions = [
+                { value: "all", text: "All Items" },
+                { value: "CAR", text: "Combat Assault Rifle" },
+                { value: "TAR", text: "Tactical Assault Rifle" },
+                { value: "SAR", text: "Surge Assault Rifle" },
+                { value: "EAR", text: "Elite Assault Rifle" },
+                { value: "BSG", text: "Burst Shotgun" },
+                { value: "LSMG", text: "Light Submachine Gun" },
+                { value: "CSMG", text: "Compact Submachine Gun" },
+                { value: "LSR", text: "Light Sniper Rifle" },
+                { value: "HSR", text: "Heavy Sniper Rifle" },
+                { value: "SP", text: "Strike Pistol" },
+                { value: "MP", text: "Magnum Pistol" },
+                { value: "S", text: "Shovel" },
+                { value: "SPRAY", text: "Spray" }
+            ]
+            const _model = createVoxiomSelect(modelOptions, skinSettings, modelOptions.find(el => el.value === skinSettings.model).text, "model")
+
+            const rarityOptions = [
+                { value: "all", text: "All Rarities" },
+                { value: "Common", text: "Common" },
+                { value: "Noteworthy", text: "Noteworthy" },
+                { value: "Precious", text: "Precious" },
+                { value: "Magnificent", text: "Magnificent" },
+                { value: "Extraordinary", text: "Extraordinary" },
+                { value: "Covert", text: "Covert" },
+                { value: "Artifact", text: "Artifact" }
+            ]
+            const _rarity = createVoxiomSelect(rarityOptions, skinSettings, rarityOptions.find(el => el.value === skinSettings.rarity).text, "rarity")
 
             const _name = createEl("div", { id: "voxiomFilter" }, "voxiomSkins", [
                 createEl("input", { placeholder: "Filter by name", value: skinSettings.name }, "voxiomInput")
@@ -166,7 +203,7 @@ const advancedInventory = () => {
                 window.location.reload()
             })
 
-            document.querySelector(".iRauPR").append(_name, _id, _rotation, _defaults, _creation, _apply, _clear)
+            document.querySelector(".iRauPR").append(_model, _rarity, _name, _id, _rotation, _defaults, _creation, _apply, _clear)
         }
     }, 50)
 }
