@@ -13,7 +13,7 @@ const createMain = async () => {
         height: 600,
         width: 800,
         fullscreen: config.get("fullscreen"),
-        title: `Voxtulate Client v${app.getVersion()}`,
+        title: "Voxtulate Client",
         icon: path.join(__dirname, "assets/icon.ico"),
         webPreferences: {
             preload: path.join(__dirname, "src/ui/script.js"),
@@ -37,10 +37,7 @@ const createMain = async () => {
         if (code === keybinding.Fullscreen) mainWindow.setFullScreen(!mainWindow.isFullScreen())
         if (code === keybinding.DevTools) webContents.toggleDevTools()
 
-        if (code === "Escape" && type === "keyUp") {
-            // if (!await webContents.executeJavaScript("document.querySelector('.faouwN') !== null")) e.preventDefault()
-            webContents.executeJavaScript(`document.querySelector(".enmYtp") ? document.querySelector("canvas").requestPointerLock() : document.exitPointerLock()`)
-        }
+        if (code === "Escape" && type === "keyUp") webContents.executeJavaScript(`document.querySelector(".enmYtp") ? document.querySelector("canvas").requestPointerLock() : document.exitPointerLock()`)
     })
 
     ipcMain.on("update-url-request", e => e.reply("update-url", webContents.getURL()))
@@ -71,8 +68,8 @@ const settingsModal = () => {
     settingsWindow = new BrowserWindow({
         height: 600,
         width: 810,
-        resizable: false,
-        title: `Voxtulate Client v${app.getVersion()} | Settings`,
+        // resizable: false,
+        title: "Voxtulate Client | Settings",
         icon: path.join(__dirname, "assets/icon.ico"),
         parent: mainWindow,
         webPreferences: {
@@ -81,7 +78,7 @@ const settingsModal = () => {
         }
     })
 
-    settingsWindow.setMenu(null)
+    // settingsWindow.setMenu(null)
     settingsWindow.loadFile(path.join(__dirname, "src/modals/settings/index.html"))
 
     settingsWindow.webContents.on("did-finish-load", () => settingsWindow.show())
@@ -99,7 +96,7 @@ const infoModal = () => {
         height: 600,
         width: 800,
         resizable: false,
-        title: `Voxtulate Client v${app.getVersion()} | Info`,
+        title: "Voxtulate Client | Info",
         icon: path.join(__dirname, "assets/icon.ico"),
         parent: mainWindow,
         webPreferences: {
@@ -127,10 +124,10 @@ app.on("ready", () => {
     createMain()
     autoUpdater.checkForUpdates()
 
-    ipcMain.on("join-game", (_, url) => {
+    ipcMain.on("join-game", (_, url) => setTimeout(() => {
         mainWindow.loadURL(url)
         settingsWindow?.close()
-    })
+    }, 100))
 
     const filters = { filters: [{ name: "JSON Files", extensions: ["json"] }] }
 
@@ -157,21 +154,14 @@ app.on("ready", () => {
     ipcMain.on("change-custom-css", (_, ...args) => mainWindow.webContents.send("change-css", ...args))
     ipcMain.on("change-custom-js", (_, ...args) => mainWindow.webContents.send("change-js", ...args))
 
-    ipcMain.on("clear-data", () => session.defaultSession.clearStorageData([], error => {
-        if (error) console.error("Error: ", error)
-        else console.log("Data cleared")
-    }))
+    ipcMain.on("clear-data", () => session.defaultSession.clearStorageData([]))
     ipcMain.on("relaunch", () => {
         app.relaunch()
         app.exit()
     })
 })
 
-const message = text => dialog.showMessageBox({
-    icon: path.join(__dirname, "assets/icon.ico"),
-    title: `Voxtulate Client v${app.getVersion()} | Update`,
-    message: text
-})
+const message = message => dialog.showMessageBox({ icon: path.join(__dirname, "assets/icon.ico"), title: "Voxtulate Client | Update", message })
 
 autoUpdater.on("update-available", () => message("A new version is available. It will be downloaded and installed."))
 autoUpdater.on("update-downloaded", () => message("The update has been downloaded. It will be installed on restart.")
