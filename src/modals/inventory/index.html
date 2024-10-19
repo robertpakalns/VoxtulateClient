@@ -1,0 +1,134 @@
+<div id="voxiomInventory">
+    <div id="model" class="voxiomSelect" style="width: 200px">
+        <div class="selected">All Items</div>
+        <div class="voxiomSelectMenu">
+            <div class="option" data-value="">All Items</div>
+            <div class="option" data-value="CAR">Combat Assault Rifle</div>
+            <div class="option" data-value="TAR">Tactical Assault Rifle</div>
+            <div class="option" data-value="SAR">Surge Assault Rifle</div>
+            <div class="option" data-value="EAR">Elite Assault Rifle</div>
+            <div class="option" data-value="BSG">Burst Shotgun</div>
+            <div class="option" data-value="LSMG">Light Submachine Gun</div>
+            <div class="option" data-value="CSMG">Compact Submachine Gun</div>
+            <div class="option" data-value="LSR">Light Sniper Rifle</div>
+            <div class="option" data-value="HSR">Heavy Sniper Rifle</div>
+            <div class="option" data-value="SP">Strike Pistol</div>
+            <div class="option" data-value="MP">Magnum Pistol</div>
+            <div class="option" data-value="S">Shovel</div>
+            <div class="option" data-value="SPRAY">Spray</div>
+        </div>
+    </div>
+
+    <div id="rarity" class="voxiomSelect" style="width: 110px">
+        <div class="selected">All Rarities</div>
+        <div class="voxiomSelectMenu">
+            <div class="option" data-value="">All Rarities</div>
+            <div class="option" data-value="Common">Common</div>
+            <div class="option" data-value="Noteworthy">Noteworthy</div>
+            <div class="option" data-value="Precious">Precious</div>
+            <div class="option" data-value="Magnificent">Magnificent</div>
+            <div class="option" data-value="Extraordinary">Extraordinary</div>
+            <div class="option" data-value="Covert">Covert</div>
+            <div class="option" data-value="Artifact">Artifact</div>
+        </div>
+    </div>
+
+    <div id="name" class="voxiomSelect" style="width: 150px">
+        <input type="text" placeholder="Filter by name" />
+    </div>
+
+    <div id="id" class="voxiomSelect" style="width: 100px">
+        <input type="number" placeholder="Filter by ID" />
+    </div>
+
+    <div id="rotation" class="voxiomSelect" style="width: 120px">
+        <div class="selected">Rotation: all</div>
+        <div class="voxiomSelectMenu">
+            <div class="option" data-value="">Rotation: all</div>
+            <div class="option" data-value="true">Rotation: true</div>
+            <div class="option" data-value="false">Rotation: false</div>
+        </div>
+    </div>
+
+    <div id="defaults" class="voxiomSelect" style="width: 120px">
+        <div class="selected">Defaults: true</div>
+        <div class="voxiomSelectMenu">
+            <div class="option" data-value="true">Defaults: true</div>
+            <div class="option" data-value="false">Defaults: false</div>
+        </div>
+    </div>
+
+    <div id="creation" class="voxiomSelect" style="width: 170px">
+        <div class="selected">Creation date: default</div>
+        <div class="voxiomSelectMenu">
+            <div class="option" data-value="">Creation date: default</div>
+            <div class="option" data-value="true">Creation date: newest</div>
+            <div class="option" data-value="false">Creation date: oldest</div>
+        </div>
+    </div>
+
+    <div class="voxiomSelect" id="apply">
+        <div class="selected">Apply</div>
+    </div>
+    <div class="voxiomSelect" id="clear">
+        <div class="selected">Clear</div>
+    </div>
+</div>
+
+<style>
+    #voxiomInventory {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        height: 80px;
+    }
+
+    .voxiomSelect {
+        height: 40px;
+        background: #646464;
+        position: relative;
+        cursor: pointer;
+        padding: 0 10px;
+    }
+
+    .voxiomSelectMenu {
+        display: none;
+        margin-left: -10px;
+        width: 100%;
+        position: absolute;
+        z-index: 1000;
+    }
+
+    .voxiomSelectMenu.active {
+        display: block;
+    }
+
+    .selected {
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+    .option {
+        padding: 10px;
+        border-top: 1px solid #646464;
+        background: #323232;
+    }
+
+    .option:hover {
+        background: #646464;
+    }
+
+    input {
+        width: 100%;
+        height: 100%;
+        background: #646464;
+        outline: none;
+        border: none;
+        color: white;
+    }
+
+    input::placeholder {
+        color: lightgray;
+    }
+</style>

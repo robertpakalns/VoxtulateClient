@@ -16,7 +16,7 @@ const createEl = (tag, attrs = {}, className = "", append = []) => {
     return elem
 }
 
-const creationTime = date => new Date(date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) || "eee"
+const creationTime = date => new Date(date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
 
 class Voxiom {
     constructor(t, c, p) {
@@ -36,35 +36,4 @@ class Voxiom {
     }
 }
 
-function createVoxiomSelect(options, settings, title, value) {
-    const _text = createEl("div", { textContent: title })
-
-    const _cont = createEl("div", {}, "voxiomSelect", [_text, createEl("div", {}, "voxiomSelectMenu")])
-
-    options.forEach(option => {
-        const optionDiv = createEl("div", { textContent: option.text }, "option")
-        optionDiv.dataset.value = option.value
-
-        optionDiv.addEventListener("click", e => {
-            e.stopPropagation()
-            _text.textContent = option.text
-            settings[value] = option.value
-            _cont.querySelector(".voxiomSelectMenu").classList.remove("active")
-        })
-
-        _cont.querySelector(".voxiomSelectMenu").appendChild(optionDiv)
-    })
-
-    _cont.addEventListener("click", e => {
-        e.stopPropagation()
-        _cont.querySelector(".voxiomSelectMenu").classList.toggle("active")
-    })
-
-    document.addEventListener("click", e => {
-        if (!_cont.contains(e.target)) _cont.querySelector(".voxiomSelectMenu").classList.remove("active")
-    })
-
-    return _cont
-}
-
-module.exports = { el, createEl, creationTime, Voxiom, createVoxiomSelect }
+module.exports = { el, createEl, creationTime, Voxiom }

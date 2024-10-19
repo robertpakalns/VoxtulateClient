@@ -1,6 +1,6 @@
 const { ipcRenderer, shell } = require("electron")
 const { Config, configPath } = require("../../config.js")
-const config = new Config()
+const config = new Config
 const { el, createEl } = require("../../functions.js")
 
 const toggleElements = () => {
@@ -36,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     el("fullscreen").checked = config.get("fullscreen")
     el("enableSwapper").checked = config.get("swapper.enable")
     el("enableKeybinding").checked = config.get("keybinding.enable")
+    el("inventorySorting").checked = config.get("inventorySorting")
 
     el("crosshairURL").value = config.get("crosshair.url") ?? ""
     el("customCSS").value = config.get("styles.css") ?? ""

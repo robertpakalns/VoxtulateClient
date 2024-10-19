@@ -2,8 +2,8 @@ const { ipcRenderer, shell } = require("electron")
 const { Config } = require("../config.js")
 const fs = require("fs")
 const path = require("path")
-const config = new Config()
-const { createEl, creationTime, Voxiom, createVoxiomSelect } = require("../functions.js")
+const config = new Config
+const { createEl, creationTime, Voxiom } = require("../functions.js")
 
 let skinSettings, inventoryData
 
@@ -40,15 +40,7 @@ const enableStyles = () => {
     .iRauPR { flex-wrap: wrap; gap: 10px }
     .iRauPR > * { height: 38px }
     .voxiomSkinName { width: 100%; position: absolute; bottom: 0; left: 0; text-align:center; font-size: 12px; color: gray }
-    .voxiomSkinID { position: absolute; top: 0; right: 0; font-size: 12px; color: gray }
-    
-    .voxiomSelectMenu.active { display: block }
-    .active { display: block }
-    .voxiomSelect { padding: 0 10px; background: #646464; color: white; line-height: 38px; position: relative; cursor: pointer; z-index: 1000 }
-    .voxiomSelectMenu { display: none; cursor: pointer; width: calc(100% + 20px); margin-left: -10px; text-align: center; z-index: 1001 }
-    .option { background: #323232 }
-    .option:hover { background: #646464 }
-    .UOSSK { display: none }`
+    .UOSSK { display: ${config.get("inventorySorting") ? "none" : "block"} }`
 
     document.head.append(enableScript, enableStyles, clientStyles)
 
@@ -83,7 +75,7 @@ const advancedInventory = () => {
     window.fetch = (...args) => _fetch(...args).then(r => {
         if (args[0] === "/profile/myinv") return r.json().then(data => {
 
-            const { name, id, rotation = "all", creation = "default", model = "all", rarity = "all" } = skinSettings
+            const { name, id, rotation = "", creation = "", model = "", rarity = "" } = skinSettings
 
             const newContent = data
             newContent.data = newContent.data
@@ -92,16 +84,15 @@ const advancedInventory = () => {
                     return { ...el, name: skin.name, rotation: skin.rotation, model: skin.type, rarity: skin.rarity }
                 })
                 .filter(el =>
-                    (name ? el.name.toLowerCase().includes(name.toLowerCase()) : true) &&
-                    (id ? el.type.toString().includes(id) : true) &&
-                    (rotation === "all" || (el.rotation === (rotation === "true"))) &&
-                    (model === "all" || el.model === model) &&
-                    (rarity === "all" || el.rarity === rarity)
+                    (!name || el.name.toLowerCase().includes(name.toLowerCase())) &&
+                    (!id || el.type.toString().includes(id)) &&
+                    (rotation === "" || el.rotation === (rotation === "true")) &&
+                    (model === "" || el.model === model) &&
+                    (rarity === "" || el.rarity === rarity)
                 )
-                .sort((a, b) => creation === "newest" ? b.creation_time - a.creation_time : creation === "oldest" ? a.creation_time - b.creation_time : null)
+                .sort((a, b) => creation === "" ? 0 : creation === "true" ? b.creation_time - a.creation_time : a.creation_time - b.creation_time)
 
             inventoryData = newContent
-            console.log(newContent)
 
             return new Response(JSON.stringify(newContent))
         })
@@ -109,10 +100,10 @@ const advancedInventory = () => {
     })
 
     setInterval(() => {
-        if (document.querySelector(".iRauPR") && !document.querySelector("#voxiomFilter")) {
+        if (document.querySelector(".iRauPR") && !document.querySelector("#voxiomInventory")) {
 
             skinSettings = JSON.parse(sessionStorage.getItem("skinSettings")) || {
-                name: "", id: "", rotation: "all", defaults: true, creation: "default", model: "all", rarity: "all"
+                name: "", id: "", rotation: "", defaults: true, creation: "", model: "", rarity: ""
             }
 
             setInterval(() => {
@@ -120,90 +111,48 @@ const advancedInventory = () => {
                     const isDefault = el.textContent === "Common" || el.textContent === "Default"
                     const location = window.location.pathname === "/loadouts" || window.location.pathname === "/loadouts/inventory"
 
-                    if (skinSettings.defaults === false && isDefault) el.parentElement.parentElement.parentElement.parentElement.remove()
+                    if (skinSettings.defaults === "false" && isDefault) el.parentElement.parentElement.parentElement.parentElement.remove()
                     if (!el.parentElement.parentElement.querySelector(".voxiomSkinName")) {
-                        const _name = createEl("div", { textContent: location && !isDefault ? creationTime(inventoryData.data[index / 2].creation_time) : "" }, "voxiomSkinName")
-                        const _id = createEl("div", { textContent: location && !isDefault ? inventoryData.data[index / 2].type : "" }, "voxiomSkinID")
-
-                        el.parentElement.parentElement.append(_name, _id)
+                        const skin = inventoryData.data[index / 2]
+                        const _name = createEl("div", { textContent: location && !isDefault ? `${skin.type} | ${creationTime(skin.creation_time)}` : "" }, "voxiomSkinName")
+                        el.parentElement.parentElement.appendChild(_name)
                     }
                 })
             }, 50)
 
-            const modelOptions = [
-                { value: "all", text: "All Items" },
-                { value: "CAR", text: "Combat Assault Rifle" },
-                { value: "TAR", text: "Tactical Assault Rifle" },
-                { value: "SAR", text: "Surge Assault Rifle" },
-                { value: "EAR", text: "Elite Assault Rifle" },
-                { value: "BSG", text: "Burst Shotgun" },
-                { value: "LSMG", text: "Light Submachine Gun" },
-                { value: "CSMG", text: "Compact Submachine Gun" },
-                { value: "LSR", text: "Light Sniper Rifle" },
-                { value: "HSR", text: "Heavy Sniper Rifle" },
-                { value: "SP", text: "Strike Pistol" },
-                { value: "MP", text: "Magnum Pistol" },
-                { value: "S", text: "Shovel" },
-                { value: "SPRAY", text: "Spray" }
-            ]
-            const _model = createVoxiomSelect(modelOptions, skinSettings, modelOptions.find(el => el.value === skinSettings.model).text, "model")
+            document.querySelector(".iRauPR").innerHTML = fs.readFileSync(path.join(__dirname, "../../src/modals/inventory/index.html"), "utf8")
 
-            const rarityOptions = [
-                { value: "all", text: "All Rarities" },
-                { value: "Common", text: "Common" },
-                { value: "Noteworthy", text: "Noteworthy" },
-                { value: "Precious", text: "Precious" },
-                { value: "Magnificent", text: "Magnificent" },
-                { value: "Extraordinary", text: "Extraordinary" },
-                { value: "Covert", text: "Covert" },
-                { value: "Artifact", text: "Artifact" }
-            ]
-            const _rarity = createVoxiomSelect(rarityOptions, skinSettings, rarityOptions.find(el => el.value === skinSettings.rarity).text, "rarity")
+            document.querySelectorAll(".voxiomSelect").forEach(select => {
+                const menu = select.querySelector(".voxiomSelectMenu")
+                const selected = select.querySelector(".selected")
+                const options = select.querySelectorAll(".option")
 
-            const _name = createEl("div", { id: "voxiomFilter" }, "voxiomSkins", [
-                createEl("input", { placeholder: "Filter by name", value: skinSettings.name }, "voxiomInput")
-            ])
-            _name.querySelector("input").addEventListener("input", e => skinSettings.name = e.target.value)
+                selected?.addEventListener("click", () => menu?.classList.toggle("active"))
+                options.forEach(option => {
+                    if (option.dataset.value === skinSettings[select.id]) selected.textContent = option.textContent
+                    option.addEventListener("click", () => {
+                        selected.textContent = option.textContent
+                        skinSettings[select.id] = option.dataset.value
+                        menu.classList.remove("active")
+                    })
+                })
+            })
 
-            const _id = createEl("div", {}, "voxiomSkins", [
-                createEl("input", { placeholder: "Filter by ID", type: "number", value: skinSettings.id }, "voxiomInput")
-            ])
-            _id.querySelector("input").addEventListener("input", e => skinSettings.id = e.target.value)
+            document.addEventListener("click", e => document.querySelectorAll(".voxiomSelectMenu.active").forEach(menu => {
+                if (!menu.parentNode.contains(e.target)) menu.classList.remove("active")
+            }))
 
-            const rotationOptions = [
-                { value: "all", text: "Rotation: all" },
-                { value: true, text: "Rotation: true" },
-                { value: false, text: "Rotation: false" }
-            ]
-            const _rotation = createVoxiomSelect(rotationOptions, skinSettings, `Rotation: ${skinSettings.rotation}`, "rotation")
+            document.querySelector("#name").addEventListener("input", e => skinSettings.name = e.target.value)
+            document.querySelector("#id").addEventListener("input", e => skinSettings.id = e.target.value)
 
-            const defaultsOptions = [
-                { value: true, text: "Defaults: true" },
-                { value: false, text: "Defaults: false" }
-            ]
-            const _defaults = createVoxiomSelect(defaultsOptions, skinSettings, `Defaults: ${skinSettings.defaults}`, "defaults")
-
-            const creationOptions = [
-                { value: "default", text: "Creation date: default" },
-                { value: "newest", text: "Creation date: newest" },
-                { value: "oldest", text: "Creation date: oldest" }
-            ]
-            const _creation = createVoxiomSelect(creationOptions, skinSettings, `Creation date: ${skinSettings.creation}`, "creation")
-
-            const _apply = createEl("div", { textContent: "Apply" }, "voxiomSkins")
-            _apply.addEventListener("click", () => {
+            document.querySelector("#apply").addEventListener("click", () => {
                 sessionStorage.setItem("skinSettings", JSON.stringify(skinSettings))
                 window.location.reload()
             })
-
-            const _clear = createEl("div", { textContent: "Clear" }, "voxiomSkins")
-            _clear.addEventListener("click", () => {
-                skinSettings = null
+            document.querySelector("#clear").addEventListener("click", () => {
                 sessionStorage.removeItem("skinSettings")
                 window.location.reload()
             })
-
-            document.querySelector(".iRauPR").append(_model, _rarity, _name, _id, _rotation, _defaults, _creation, _apply, _clear)
         }
     }, 50)
 }
@@ -221,7 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (t && t.innerHTML != "") {
                 const c = t.innerHTML
                 const [_, x, y, z] = c.match(/Player Block Position:<br>\s*x: ([^<]+) y: ([^<]+) z: ([^<]+)/)
-                this.text(`${parseInt(c.match(/FPS: ([\d]+)/)[1])} FPS<br>${x} ${y} ${z}<br>${(c.match(/Latency: ([\d]+ms)/)[1])}`)
+                this.text(`${parseInt(c.match(/FPS: ([\d]+)/)[1])} FPS < br > ${x} ${y} ${z} <br>${(c.match(/Latency: ([\d]+ms)/)[1])}`)
             }
             else this.text("")
         }, 50)

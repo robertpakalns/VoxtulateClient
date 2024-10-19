@@ -1,6 +1,6 @@
 const { shell } = require("electron")
 const { Config, defaultConfig } = require("../../config.js")
-const config = new Config()
+const config = new Config
 const { createEl } = require("../../functions.js")
 
 const { content: userKeybinding } = config.get("keybinding")

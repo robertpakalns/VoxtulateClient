@@ -33,9 +33,9 @@ All Voxtulate Client source code is publicly available in the [GitHub repository
 
 ### Used Technologies
 - Electron
- * `electron@10.4.7`
- * `electron-updater@6.3.4`
- * `electron-builder@25.0.5`
+  * `electron@10.4.7`
+  * `electron-updater@6.3.4`
+  * `electron-builder@25.0.5`
 
 ### Credits
 - Vanced Voxiom Client (NamekujiLSDs)
