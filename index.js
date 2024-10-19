@@ -68,7 +68,7 @@ const settingsModal = () => {
     settingsWindow = new BrowserWindow({
         height: 600,
         width: 810,
-        // resizable: false,
+        resizable: false,
         title: "Voxtulate Client | Settings",
         icon: path.join(__dirname, "assets/icon.ico"),
         parent: mainWindow,
@@ -78,7 +78,7 @@ const settingsModal = () => {
         }
     })
 
-    // settingsWindow.setMenu(null)
+    settingsWindow.setMenu(null)
     settingsWindow.loadFile(path.join(__dirname, "src/modals/settings/index.html"))
 
     settingsWindow.webContents.on("did-finish-load", () => settingsWindow.show())
