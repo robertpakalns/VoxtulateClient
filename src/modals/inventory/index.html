@@ -34,11 +34,11 @@
     </div>
 
     <div id="name" class="voxiomSelect" style="width: 150px">
-        <input type="text" placeholder="Filter by name" />
+        <input class="input" type="text" placeholder="Filter by name" />
     </div>
 
     <div id="id" class="voxiomSelect" style="width: 100px">
-        <input type="number" placeholder="Filter by ID" />
+        <input class="input" type="number" placeholder="Filter by ID" />
     </div>
 
     <div id="rotation" class="voxiomSelect" style="width: 120px">
@@ -84,7 +84,7 @@
     }
 
     .voxiomSelect {
-        height: 40px;
+        height: 39px;
         background: #646464;
         position: relative;
         cursor: pointer;
@@ -119,7 +119,7 @@
         background: #646464;
     }
 
-    input {
+    .input {
         width: 100%;
         height: 100%;
         background: #646464;
@@ -128,7 +128,15 @@
         color: white;
     }
 
-    input::placeholder {
+    .input::placeholder {
         color: lightgray;
+    }
+
+    #apply {
+        background: #4CAF50;
+    }
+
+    #clear {
+        background: #f44336;
     }
 </style>

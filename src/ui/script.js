@@ -3,9 +3,9 @@ const { Config } = require("../config.js")
 const fs = require("fs")
 const path = require("path")
 const config = new Config
-const { createEl, creationTime, Voxiom } = require("../functions.js")
+const { createEl, creationTime, Voxiom, timeLeft } = require("../functions.js")
 
-let skinSettings, inventoryData
+let skinSettings, inventoryData, marketData, listedData
 
 const enableStyles = () => {
     const { enable, custom, css, js } = config.get("styles")
@@ -38,9 +38,11 @@ const enableStyles = () => {
     .voxiomInput { height: 100%; color: white; background: #646464; border: none; outline: none; }
     .voxiomInput::placeholder { color: rgba(255, 255, 255, 0.5) }
     .iRauPR { flex-wrap: wrap; gap: 10px }
-    .iRauPR > * { height: 38px }
+
     .voxiomSkinName { width: 100%; position: absolute; bottom: 0; left: 0; text-align:center; font-size: 12px; color: gray }
-    .UOSSK { display: ${config.get("inventorySorting") ? "none" : "block"} }`
+    .UOSSK { display: ${config.get("inventorySorting") ? "none" : "block"} }
+    .hYnMmT { display: ${config.get("inventorySorting") ? "none" : "block"} }
+    .gem { margin-left: 2px; height: 10px }`
 
     document.head.append(enableScript, enableStyles, clientStyles)
 
@@ -66,17 +68,19 @@ const enableStyles = () => {
         updateStyleRule(clientStyles.sheet, ".voxiomCrosshair", "display", enable ? "block" : "none")
         crosshair.src = url
     })
+
+    setInterval(() => updateStyleRule(clientStyles.sheet, ".iRauPR", "display", window.location.pathname === "/loadouts/sales" ? "none" : "block"), 50);
 }
 
 const advancedInventory = () => {
+    const inventoryPage = fs.readFileSync(path.join(__dirname, "../../src/modals/inventory/index.html"), "utf8")
     const market = JSON.parse(fs.readFileSync(path.join(__dirname, "../market.json"), "utf8"))
+    const gemPath = path.join(__dirname, "../../assets/gem.png")
 
     const _fetch = window.fetch
     window.fetch = (...args) => _fetch(...args).then(r => {
         if (args[0] === "/profile/myinv") return r.json().then(data => {
-
             const { name, id, rotation = "", creation = "", model = "", rarity = "" } = skinSettings
-
             const newContent = data
             newContent.data = newContent.data
                 .map(el => {
@@ -91,11 +95,18 @@ const advancedInventory = () => {
                     (rarity === "" || el.rarity === rarity)
                 )
                 .sort((a, b) => creation === "" ? 0 : creation === "true" ? b.creation_time - a.creation_time : a.creation_time - b.creation_time)
-
             inventoryData = newContent
-
             return new Response(JSON.stringify(newContent))
         })
+        if (args[0] === "/market/public") return r.json().then(data => {
+            marketData = data
+            return new Response(JSON.stringify(data))
+        })
+        if (args[0] === "/market/my_listed_items") return r.json().then(data => {
+            listedData = data
+            return new Response(JSON.stringify(data))
+        })
+
         return r
     })
 
@@ -107,20 +118,29 @@ const advancedInventory = () => {
             }
 
             setInterval(() => {
-                document.querySelectorAll(".kiKVOk").forEach((el, index) => {
-                    const isDefault = el.textContent === "Common" || el.textContent === "Default"
-                    const location = window.location.pathname === "/loadouts" || window.location.pathname === "/loadouts/inventory"
+                document.querySelectorAll(".kiKVOk").forEach((el, i) => {
+                    const isDefault = ["Common", "Default"].includes(el.textContent)
+
+                    const isInventory = ["/loadouts", "/loadouts/inventory"].includes(window.location.pathname)
+                    const isMarket = window.location.pathname === "/loadouts/market"
+                    const isSales = window.location.pathname === "/loadouts/sales"
 
                     if (skinSettings.defaults === "false" && isDefault) el.parentElement.parentElement.parentElement.parentElement.remove()
                     if (!el.parentElement.parentElement.querySelector(".voxiomSkinName")) {
-                        const skin = inventoryData.data[index / 2]
-                        const _name = createEl("div", { textContent: location && !isDefault ? `${skin.type} | ${creationTime(skin.creation_time)}` : "" }, "voxiomSkinName")
+                        const skin = isInventory ? inventoryData.data[i / 2] : isMarket ? marketData.data.market_items[i / 2] : listedData.data.player_market_items[i / 2]
+                        const _image = isMarket || isSales ? createEl("img", { src: gemPath }, "gem") : ""
+                        const _name = createEl("div", {
+                            textContent: isInventory && !isDefault ? `${skin.type} | ${creationTime(skin.creation_time)}` :
+                                isSales ? `${timeLeft(new Date(skin.listed_time).getTime() + 1209600000)} | ${skin.price}` :
+                                    isMarket ? `${timeLeft(new Date(skin.listed_time).getTime() + 1209600000)} | ${skin.price}` : ""
+                        }, "voxiomSkinName", [_image])
+
                         el.parentElement.parentElement.appendChild(_name)
                     }
                 })
             }, 50)
 
-            document.querySelector(".iRauPR").innerHTML = fs.readFileSync(path.join(__dirname, "../../src/modals/inventory/index.html"), "utf8")
+            if (["/loadouts", "/loadouts/inventory"].includes(window.location.pathname)) document.querySelector(".iRauPR").innerHTML = inventoryPage
 
             document.querySelectorAll(".voxiomSelect").forEach(select => {
                 const menu = select.querySelector(".voxiomSelectMenu")
@@ -142,14 +162,14 @@ const advancedInventory = () => {
                 if (!menu.parentNode.contains(e.target)) menu.classList.remove("active")
             }))
 
-            document.querySelector("#name").addEventListener("input", e => skinSettings.name = e.target.value)
-            document.querySelector("#id").addEventListener("input", e => skinSettings.id = e.target.value)
+            document.querySelector("#name")?.addEventListener("input", e => skinSettings.name = e.target.value)
+            document.querySelector("#id")?.addEventListener("input", e => skinSettings.id = e.target.value)
 
-            document.querySelector("#apply").addEventListener("click", () => {
+            document.querySelector("#apply")?.addEventListener("click", () => {
                 sessionStorage.setItem("skinSettings", JSON.stringify(skinSettings))
                 window.location.reload()
             })
-            document.querySelector("#clear").addEventListener("click", () => {
+            document.querySelector("#clear")?.addEventListener("click", () => {
                 sessionStorage.removeItem("skinSettings")
                 window.location.reload()
             })
@@ -170,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (t && t.innerHTML != "") {
                 const c = t.innerHTML
                 const [_, x, y, z] = c.match(/Player Block Position:<br>\s*x: ([^<]+) y: ([^<]+) z: ([^<]+)/)
-                this.text(`${parseInt(c.match(/FPS: ([\d]+)/)[1])} FPS < br > ${x} ${y} ${z} <br>${(c.match(/Latency: ([\d]+ms)/)[1])}`)
+                this.text(`${parseInt(c.match(/FPS: ([\d]+)/)[1])} FPS<br>${x} ${y} ${z}<br>${(c.match(/Latency: ([\d]+ms)/)[1])}`)
             }
             else this.text("")
         }, 50)
