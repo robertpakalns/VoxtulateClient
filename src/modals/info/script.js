@@ -2,6 +2,7 @@ const { shell } = require("electron")
 const { Config, defaultConfig } = require("../../config.js")
 const config = new Config
 const { createEl } = require("../../functions.js")
+const { version } = require("../../../package.json")
 
 const { content: userKeybinding } = config.get("keybinding")
 const { content: defaultKeybinding } = defaultConfig.keybinding
@@ -17,6 +18,8 @@ const keybindingRow = (name, defaultKey, userKey) => {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    document.querySelector("#version").textContent = version
+
     document.querySelectorAll(".url").forEach(el => el.addEventListener("click", e => {
         e.preventDefault()
         shell.openPath(el.href)

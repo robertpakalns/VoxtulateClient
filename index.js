@@ -4,6 +4,7 @@ const fs = require("fs")
 const path = require("path")
 const { Config, configPath, defaultConfig } = require("./src/config.js")
 const config = new Config
+const DiscordRPC = require("./src/discord.js")
 
 let mainWindow, settingsWindow, infoWindow
 const keybinding = config.get("keybinding.enable") ? config.get("keybinding.content") : defaultConfig.keybinding.content
@@ -20,6 +21,8 @@ const createMain = async () => {
             webSecurity: false
         }
     })
+
+    const rpc = new DiscordRPC()
 
     mainWindow.setMenu(null)
     mainWindow.loadURL("https://voxiom.io")
@@ -41,7 +44,11 @@ const createMain = async () => {
     })
 
     ipcMain.on("update-url-request", e => e.reply("update-url", webContents.getURL()))
-    webContents.on("did-navigate-in-page", () => settingsWindow?.webContents.send("update-url", webContents.getURL()))
+    webContents.on("did-navigate-in-page", () => {
+        const fullUrl = webContents.getURL()
+        settingsWindow?.webContents.send("update-url", fullUrl)
+        rpc.setJoinURL(fullUrl.replace('https://voxiom.io/', 'voxtulate://'))
+    })
 
     const reject = JSON.parse(fs.readFileSync(path.join(__dirname, "src/reject.json"), "utf8"))
     const swapper = JSON.parse(fs.readFileSync(path.join(__dirname, "src/swapper.json"), "utf8"))
@@ -117,11 +124,22 @@ const infoModal = () => {
 if (config.get("client.fpsUncap")) app.commandLine.appendSwitch("disable-frame-rate-limit")
 for (const el of ["disable-gpu-vsync", "in-process-gpu", "enable-quic", "enable-gpu-rasterization", "enable-pointer-lock-options"]) app.commandLine.appendSwitch(el)
 
+
+const message = message => dialog.showMessageBox({ icon: path.join(__dirname, "assets/icon.ico"), title: "Voxtulate Client | Update", message })
+
 app.on("ready", () => {
-
     protocol.registerFileProtocol("file", ({ url }, c) => c({ path: path.normalize(decodeURIComponent(new URL(url).pathname)) }))
-
     createMain()
+
+    const deepLink = process.argv.find(arg => arg.startsWith("voxtulate://"))
+    if (deepLink) mainWindow.loadURL(`https://voxiom.io/${decodeURIComponent(deepLink.slice(12)).replace(/\/$/, "").replace(/\/#/g, "#")}`)
+    app.setAsDefaultProtocolClient("voxtulate")
+
+    if (config.get("firstJoin")) {
+        message("Welcome to Voxtulate Client! Press F1 and F2 for more information. Have a good game!")
+        config.set("firstJoin", false)
+    }
+
     autoUpdater.checkForUpdates()
 
     ipcMain.on("join-game", (_, url) => setTimeout(() => {
@@ -130,6 +148,7 @@ app.on("ready", () => {
     }, 100))
 
     const filters = { filters: [{ name: "JSON Files", extensions: ["json"] }] }
+    const { webContents } = mainWindow
 
     ipcMain.on("import-client-settings", async () => {
         const { canceled, filePaths } = await dialog.showOpenDialog(filters)
@@ -141,18 +160,18 @@ app.on("ready", () => {
     })
     ipcMain.on("import-game-settings", async () => {
         const { canceled, filePaths } = await dialog.showOpenDialog(filters)
-        if (!canceled && filePaths.length > 0) mainWindow.webContents.send("set-game-settings", JSON.stringify(fs.readFileSync(filePaths[0], "utf8")))
+        if (!canceled && filePaths.length > 0) webContents.send("set-game-settings", JSON.stringify(fs.readFileSync(filePaths[0], "utf8")))
     })
     ipcMain.on("export-game-settings", async () => {
         const { canceled, filePath } = await dialog.showSaveDialog(filters)
-        if (!canceled && filePath) mainWindow.webContents.send("get-game-settings", filePath)
+        if (!canceled && filePath) webContents.send("get-game-settings", filePath)
     })
 
-    ipcMain.on("change-crosshair-data", (_, ...args) => mainWindow.webContents.send("change-crosshair", ...args))
-    ipcMain.on("change-chat-opacity", (_, ...args) => mainWindow.webContents.send("change-opacity", ...args))
-    ipcMain.on("set-custom-console", (_, ...args) => mainWindow.webContents.send("set-console", ...args))
-    ipcMain.on("change-custom-css", (_, ...args) => mainWindow.webContents.send("change-css", ...args))
-    ipcMain.on("change-custom-js", (_, ...args) => mainWindow.webContents.send("change-js", ...args))
+    ipcMain.on("change-crosshair-data", (_, ...args) => webContents.send("change-crosshair", ...args))
+    ipcMain.on("change-chat-opacity", (_, ...args) => webContents.send("change-opacity", ...args))
+    ipcMain.on("set-custom-console", (_, ...args) => webContents.send("set-console", ...args))
+    ipcMain.on("change-custom-css", (_, ...args) => webContents.send("change-css", ...args))
+    ipcMain.on("change-custom-js", (_, ...args) => webContents.send("change-js", ...args))
 
     ipcMain.on("clear-data", () => session.defaultSession.clearStorageData([]))
     ipcMain.on("relaunch", () => {
@@ -160,8 +179,6 @@ app.on("ready", () => {
         app.exit()
     })
 })
-
-const message = message => dialog.showMessageBox({ icon: path.join(__dirname, "assets/icon.ico"), title: "Voxtulate Client | Update", message })
 
 autoUpdater.on("update-available", () => message("A new version is available. It will be downloaded and installed."))
 autoUpdater.on("update-downloaded", () => message("The update has been downloaded. It will be installed on restart.")

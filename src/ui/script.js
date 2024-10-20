@@ -3,7 +3,7 @@ const { Config } = require("../config.js")
 const fs = require("fs")
 const path = require("path")
 const config = new Config
-const { createEl, creationTime, Voxiom, timeLeft } = require("../functions.js")
+const { el, createEl, creationTime, Voxiom, timeLeft } = require("../functions.js")
 
 let skinSettings, inventoryData, marketData, listedData
 
@@ -68,8 +68,6 @@ const enableStyles = () => {
         updateStyleRule(clientStyles.sheet, ".voxiomCrosshair", "display", enable ? "block" : "none")
         crosshair.src = url
     })
-
-    setInterval(() => updateStyleRule(clientStyles.sheet, ".iRauPR", "display", window.location.pathname === "/loadouts/sales" ? "none" : "block"), 50);
 }
 
 const advancedInventory = () => {
@@ -78,76 +76,71 @@ const advancedInventory = () => {
     const gemPath = path.join(__dirname, "../../assets/gem.png")
 
     const _fetch = window.fetch
-    window.fetch = (...args) => _fetch(...args).then(r => {
-        if (args[0] === "/profile/myinv") return r.json().then(data => {
+    window.fetch = (...args) => _fetch(...args).then(r => r.json().then(data => {
+        const [url] = args
+        if (url === "/profile/myinv") {
             const { name, id, rotation = "", creation = "", model = "", rarity = "" } = skinSettings
-            const newContent = data
-            newContent.data = newContent.data
-                .map(el => {
+            const newData = {
+                ...data,
+                data: data.data.map(el => {
                     const skin = market.data[el.type - 1]
                     return { ...el, name: skin.name, rotation: skin.rotation, model: skin.type, rarity: skin.rarity }
-                })
-                .filter(el =>
+                }).filter(el =>
                     (!name || el.name.toLowerCase().includes(name.toLowerCase())) &&
                     (!id || el.type.toString().includes(id)) &&
                     (rotation === "" || el.rotation === (rotation === "true")) &&
                     (model === "" || el.model === model) &&
                     (rarity === "" || el.rarity === rarity)
-                )
-                .sort((a, b) => creation === "" ? 0 : creation === "true" ? b.creation_time - a.creation_time : a.creation_time - b.creation_time)
-            inventoryData = newContent
-            return new Response(JSON.stringify(newContent))
-        })
-        if (args[0] === "/market/public") return r.json().then(data => {
-            marketData = data
-            return new Response(JSON.stringify(data))
-        })
-        if (args[0] === "/market/my_listed_items") return r.json().then(data => {
-            listedData = data
-            return new Response(JSON.stringify(data))
-        })
+                ).sort((a, b) => !creation ? 0 : creation === "true" ? b.creation_time - a.creation_time : a.creation_time - b.creation_time)
+            }
+            inventoryData = newData
+            return new Response(JSON.stringify(newData))
+        }
+        if (url === "/market/public") marketData = data
+        if (url === "/market/my_listed_items") listedData = data
+        return new Response(JSON.stringify(data))
+    }))
 
-        return r
-    })
+    skinSettings = JSON.parse(sessionStorage.getItem("skinSettings")) || {
+        name: "", id: "", rotation: "", defaults: true, creation: "", model: "", rarity: ""
+    }
 
     setInterval(() => {
-        if (document.querySelector(".iRauPR") && !document.querySelector("#voxiomInventory")) {
+        const { pathname } = window.location
+        const isInventory = ["/loadouts", "/loadouts/inventory"].includes(pathname) && !document.querySelector(".dzKqCZ")
+        const isMarket = pathname === "/loadouts/market" || (pathname === "/loadouts" && document.querySelector(".dzKqCZ"))
+        const isSales = pathname === "/loadouts/sales"
+        if (!isInventory && !isMarket && !isSales) return
 
-            skinSettings = JSON.parse(sessionStorage.getItem("skinSettings")) || {
-                name: "", id: "", rotation: "", defaults: true, creation: "", model: "", rarity: ""
+        document.querySelectorAll(".kiKVOk").forEach((el, i) => {
+            const isDefault = ["Common", "Default"].includes(el.textContent)
+
+            if (skinSettings.defaults === "false" && isDefault) el.parentElement.parentElement.parentElement.parentElement.remove()
+            if (!el.parentElement.parentElement.querySelector(".voxiomSkinName")) {
+                const skin = isInventory ? inventoryData.data[i / 2] : isMarket ? marketData.data.market_items[i / 2] : listedData.data.player_market_items[i / 2]
+                const _image = isMarket || isSales ? createEl("img", { src: gemPath }, "gem") : ""
+                const _name = createEl("div", {
+                    textContent: isInventory && !isDefault ? `${skin.type} | ${creationTime(skin.creation_time)}` :
+                        isSales ? `${timeLeft(new Date(skin.listed_time).getTime() + 1209600000)} | ${skin.price}` :
+                            isMarket ? `${timeLeft(new Date(skin.listed_time).getTime() + 1209600000)} | ${skin.price}` : ""
+                }, "voxiomSkinName", [_image])
+
+                el.parentElement.parentElement.appendChild(_name)
             }
+        })
 
-            setInterval(() => {
-                document.querySelectorAll(".kiKVOk").forEach((el, i) => {
-                    const isDefault = ["Common", "Default"].includes(el.textContent)
+        if (document.querySelector(".iRauPR") &&
+            ["/loadouts", "/loadouts/inventory"].includes(window.location.pathname) &&
+            !document.querySelector("#voxiomInventory")) {
 
-                    const isInventory = ["/loadouts", "/loadouts/inventory"].includes(window.location.pathname)
-                    const isMarket = window.location.pathname === "/loadouts/market"
-                    const isSales = window.location.pathname === "/loadouts/sales"
-
-                    if (skinSettings.defaults === "false" && isDefault) el.parentElement.parentElement.parentElement.parentElement.remove()
-                    if (!el.parentElement.parentElement.querySelector(".voxiomSkinName")) {
-                        const skin = isInventory ? inventoryData.data[i / 2] : isMarket ? marketData.data.market_items[i / 2] : listedData.data.player_market_items[i / 2]
-                        const _image = isMarket || isSales ? createEl("img", { src: gemPath }, "gem") : ""
-                        const _name = createEl("div", {
-                            textContent: isInventory && !isDefault ? `${skin.type} | ${creationTime(skin.creation_time)}` :
-                                isSales ? `${timeLeft(new Date(skin.listed_time).getTime() + 1209600000)} | ${skin.price}` :
-                                    isMarket ? `${timeLeft(new Date(skin.listed_time).getTime() + 1209600000)} | ${skin.price}` : ""
-                        }, "voxiomSkinName", [_image])
-
-                        el.parentElement.parentElement.appendChild(_name)
-                    }
-                })
-            }, 50)
-
-            if (["/loadouts", "/loadouts/inventory"].includes(window.location.pathname)) document.querySelector(".iRauPR").innerHTML = inventoryPage
+            document.querySelector(".iRauPR").innerHTML = inventoryPage
 
             document.querySelectorAll(".voxiomSelect").forEach(select => {
                 const menu = select.querySelector(".voxiomSelectMenu")
                 const selected = select.querySelector(".selected")
                 const options = select.querySelectorAll(".option")
 
-                selected?.addEventListener("click", () => menu?.classList.toggle("active"))
+                selected?.addEventListener("click", () => menu.classList.toggle("active"))
                 options.forEach(option => {
                     if (option.dataset.value === skinSettings[select.id]) selected.textContent = option.textContent
                     option.addEventListener("click", () => {
@@ -162,14 +155,13 @@ const advancedInventory = () => {
                 if (!menu.parentNode.contains(e.target)) menu.classList.remove("active")
             }))
 
-            document.querySelector("#name")?.addEventListener("input", e => skinSettings.name = e.target.value)
-            document.querySelector("#id")?.addEventListener("input", e => skinSettings.id = e.target.value)
-
-            document.querySelector("#apply")?.addEventListener("click", () => {
+            el("name").event("input", e => skinSettings.name = e.target.value)
+            el("id").event("input", e => skinSettings.id = e.target.value)
+            el("apply").event("click", () => {
                 sessionStorage.setItem("skinSettings", JSON.stringify(skinSettings))
                 window.location.reload()
             })
-            document.querySelector("#clear")?.addEventListener("click", () => {
+            el("clear").event("click", () => {
                 sessionStorage.removeItem("skinSettings")
                 window.location.reload()
             })
