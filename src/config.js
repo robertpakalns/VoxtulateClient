@@ -3,6 +3,7 @@ const fs = require("fs")
 const path = require("path")
 
 const defaultConfig = {
+    firstJoin: true,
     client: {
         adblocker: true,
         fpsUncap: true
