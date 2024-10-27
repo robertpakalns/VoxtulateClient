@@ -6,8 +6,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "electron .",
-    "build": "electron-builder --win --publish never",
-    "publish": "electron-builder --publish always"
+    "build": "electron-builder"
   },
   "repository": {
     "type": "git",
