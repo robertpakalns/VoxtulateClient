@@ -27,31 +27,5 @@
     "schemes": [
       "voxtulate"
     ]
-  },
-  "build": {
-    "appId": "voxtulate.client",
-    "productName": "Voxtulate Client",
-    "artifactName": "${productName}.${ext}",
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "robertpakalns",
-        "repo": "VoxtulateClient"
-      }
-    ],
-    "directories": {
-      "output": "dist"
-    },
-    "win": {
-      "icon": "assets/icon.ico",
-      "target": "nsis"
-    },
-    "nsis": {
-      "oneClick": true,
-      "deleteAppDataOnUninstall": true,
-      "runAfterFinish": true,
-      "uninstallDisplayName": "${productName}",
-      "shortcutName": "${productName}"
-    }
   }
 }
