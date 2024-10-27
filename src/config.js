@@ -3,14 +3,16 @@ const fs = require("fs")
 const path = require("path")
 
 const defaultConfig = {
-    firstJoin: true,
     client: {
+        firstJoin: true,
         adblocker: true,
-        fpsUncap: true
+        fpsUncap: true,
+        fullscreen: false,
+        rpc: true
     },
     crosshair: {
-        url: "",
-        enable: false
+        enable: false,
+        url: ""
     },
     styles: {
         enable: true,
@@ -21,7 +23,6 @@ const defaultConfig = {
     inventorySorting: true,
     console: true,
     chatOpacity: "100",
-    fullscreen: false,
     keybinding: {
         enable: false,
         content: {

@@ -8,12 +8,14 @@ Voxtulate Client uses `voxtulate` protocol for opening the app. Example: `voxtul
 All Voxtulate Client source code is publicly available in the [GitHub repository](https://github.com/robertpakalns/VoxtulateClient). If you have concerns about the safety of your private information while using the Voxtulate Client, feel free to inspect the source code. Trust in the client is based on your trust in the developer.
 
 ### Default Keybinding
-- `Escape` - Close Modal (Settings, Info) Window
-- `F1` - Open Settings Window
-- `F2` - Open Info Window
-- `F5` - Reload Page
-- `F11` - Toggle Fullscreen Mode
-- `F12` - Toggle Chromium Developer Tools
+| Keybinding       | Action                 |
+|------------------|------------------------|
+| `Escape`         | Close Modal Window     |
+| `F1`             | Open Settings Window   |
+| `F2`             | Open Info Window       |
+| `F5`             | Reload Page            |
+| `F11`            | Toggle Fullscreen Mode |
+| `F12`            | Toggle Developer Tools |
 
 ### Current Features
 - Adblocker
@@ -49,6 +51,7 @@ All Voxtulate Client source code is publicly available in the [GitHub repository
   * `electron@10.4.7`
   * `electron-updater@6.3.4`
   * `electron-builder@25.0.5`
+- Discord
   * `discord-rpc@4.0.1`
 
 ### Credits

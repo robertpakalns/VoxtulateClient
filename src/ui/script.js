@@ -34,15 +34,11 @@ const enableStyles = () => {
     .voxiomConsole { font-family: "Consolas", monospace; top: 0; left: 0; font-size: 10px; opacity: ${config.get("console") ? "100%" : "0%"} }
     .voxiomBlocks { margin: auto; width: 100%; position: absolute; bottom: 35%; text-align: center; font-size: 10px }
     .voxiomCrosshair { top: 50vh; left: 50vw; position: fixed; transform: translate(-50%, -50%) }
-    .voxiomSkins { background: #646464; padding: 0 10px; line-height: 38px; cursor: pointer }
-    .voxiomInput { height: 100%; color: white; background: #646464; border: none; outline: none; }
-    .voxiomInput::placeholder { color: rgba(255, 255, 255, 0.5) }
-    .iRauPR { flex-wrap: wrap; gap: 10px }
 
-    .voxiomSkinName { width: 100%; position: absolute; bottom: 0; left: 0; text-align:center; font-size: 12px; color: gray }
+    .voxiomSkinName { width: 100%; position: absolute; bottom: 0; left: 0; text-align:center; font-size: 0.8rem; color: gray }
     .UOSSK { display: ${config.get("inventorySorting") ? "none" : "block"} }
     .hYnMmT { display: ${config.get("inventorySorting") ? "none" : "block"} }
-    .gem { margin-left: 2px; height: 10px }`
+    .gem { margin-left: 3px; height: 9px }`
 
     document.head.append(enableScript, enableStyles, clientStyles)
 
@@ -54,18 +50,19 @@ const enableStyles = () => {
     crosshair.classList.add("voxiomCrosshair")
     document.body.prepend(crosshair)
 
-    const updateStyleRule = (sheet, selector, property, value) => {
+    const updateStyleRule = (selector, property, value) => {
+        const { sheet } = clientStyles
         const rule = Array.from(sheet.cssRules).find(el => el.selectorText === selector)
         rule ? rule.style[property] = value : sheet.insertRule(`${selector} { ${property}: ${value}; }`, sheet.cssRules.length)
     }
 
-    ipcRenderer.on("change-opacity", (_, opacity) => updateStyleRule(clientStyles.sheet, ".lpfJAq, .lpdfTz", "opacity", `${opacity}%`))
+    ipcRenderer.on("change-opacity", (_, opacity) => updateStyleRule(".lpfJAq, .lpdfTz", "opacity", `${opacity}%`))
     ipcRenderer.on("set-console", (_, enable) => {
-        updateStyleRule(clientStyles.sheet, 'body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"]', "opacity", enable ? "0%" : "100%")
-        updateStyleRule(clientStyles.sheet, ".voxiomConsole", "opacity", enable ? "100%" : "0%")
+        updateStyleRule('body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"]', "opacity", enable ? "0%" : "100%")
+        updateStyleRule(".voxiomConsole", "opacity", enable ? "100%" : "0%")
     })
     ipcRenderer.on("change-crosshair", (_, enable, url) => {
-        updateStyleRule(clientStyles.sheet, ".voxiomCrosshair", "display", enable ? "block" : "none")
+        updateStyleRule(".voxiomCrosshair", "display", enable ? "block" : "none")
         crosshair.src = url
     })
 }
@@ -121,8 +118,8 @@ const advancedInventory = () => {
                 const _image = isMarket || isSales ? createEl("img", { src: gemPath }, "gem") : ""
                 const _name = createEl("div", {
                     textContent: isInventory && !isDefault ? `${skin.type} | ${creationTime(skin.creation_time)}` :
-                        isSales ? `${timeLeft(new Date(skin.listed_time).getTime() + 1209600000)} | ${skin.price}` :
-                            isMarket ? `${timeLeft(new Date(skin.listed_time).getTime() + 1209600000)} | ${skin.price}` : ""
+                        isSales ? `${timeLeft(skin.listed_time + 1209600000)} | ${skin.price}` :
+                            isMarket ? `${timeLeft(skin.listed_time + 1209600000)} | ${skin.price}` : ""
                 }, "voxiomSkinName", [_image])
 
                 el.parentElement.parentElement.appendChild(_name)
@@ -174,26 +171,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     enableStyles()
 
-    if (config.get("client.adblocker")) setInterval(() => document.querySelectorAll("[id^='voxiom-io']").forEach(e => e.remove()), 50)
-
     new Voxiom("div", "voxiomConsole voxiomCreate", document.body)
-        .do(function () {
+        .do(e => {
             const t = document.querySelector('body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"]')
-            if (t && t.innerHTML != "") {
+            if (t && t.innerHTML !== "") {
                 const c = t.innerHTML
                 const [_, x, y, z] = c.match(/Player Block Position:<br>\s*x: ([^<]+) y: ([^<]+) z: ([^<]+)/)
-                this.text(`${parseInt(c.match(/FPS: ([\d]+)/)[1])} FPS<br>${x} ${y} ${z}<br>${(c.match(/Latency: ([\d]+ms)/)[1])}`)
+                e.text(`${parseInt(c.match(/FPS: ([\d]+)/)[1])} FPS<br>${x} ${y} ${z}<br>${(c.match(/Latency: ([\d]+ms)/)[1])}`)
             }
-            else this.text("")
+            else e.text("")
         }, 50)
 
     new Voxiom("div", "voxiomBlocks voxiomCreate", document.body)
-        .do(function () { this.text(document.querySelector(".biWqsQ")?.innerText.match(/Current mode: (\w+)/)[1] || "") }, 50)
-
-    setInterval(() => document.querySelectorAll(".cJoQGw").forEach(el => {
-        const [r, g, b] = getComputedStyle(el).borderColor.match(/\d+/g).map(Number)
-        el.style.background = `radial-gradient(circle, rgba(${r}, ${g}, ${b}, 0.3), rgba(${r}, ${g}, ${b}, 0.1))`
-    }), 50)
+        .do(e => e.text(document.querySelector(".biWqsQ")?.innerText.match(/Current mode: (\w+)/)[1] || ""), 50)
 
     document.addEventListener("click", e => {
         const el = e.target.closest(".dELrkI")
