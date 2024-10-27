@@ -2,6 +2,10 @@
     text-decoration: none;
 }
 
+div[id^="voxiom-io"] {
+    display: none;
+}
+
 ::-webkit-scrollbar {
     display: none;
 }
@@ -57,7 +61,8 @@ a[href="https://cuberealm.io"],
 .dFbRBI,
 .czueTf,
 .dXMIIa,
-.bccMWL {
+.bccMWL,
+.hPotyP {
     border: none !important;
     background: none !important;
 }
@@ -81,28 +86,36 @@ a[href="https://cuberealm.io"],
     left: 200px;
 }
 
+.faeaXa {
+    filter: drop-shadow(0 0 15px rgba(var(--inv), 1));
+}
+
+.hPoIsr>.faeaXa {
+    filter: drop-shadow(0 0 5px rgba(var(--inv), 1));
+}
+
 .faeaXa[style*="rgb(149, 165, 166)"] {
-    filter: drop-shadow(0 0 10px rgb(149, 165, 166));
+    --inv: 149, 165, 166;
 }
 
 .faeaXa[style*="rgb(46, 204, 113)"] {
-    filter: drop-shadow(0 0 10px rgb(46, 204, 113));
+    --inv: 46, 204, 113;
 }
 
 .faeaXa[style*="rgb(52, 152, 219)"] {
-    filter: drop-shadow(0 0 10px rgb(52, 152, 219));
+    --inv: 52, 152, 219;
 }
 
 .faeaXa[style*="rgb(155, 89, 182)"] {
-    filter: drop-shadow(0 0 10px rgb(155, 89, 182));
+    --inv: 155, 89, 182;
 }
 
 .faeaXa[style*="rgb(241, 196, 15)"] {
-    filter: drop-shadow(0 0 10px rgb(241, 196, 15));
+    --inv: 241, 196, 15;
 }
 
 .faeaXa[style*="rgb(211, 84, 0)"] {
-    filter: drop-shadow(0 0 10px rgb(211, 84, 0));
+    --inv: 211, 84, 0;
 }
 
 img[src="/./package/ea55824826de52b7ccc3.png"] {
@@ -122,16 +135,8 @@ img[src="/./package/ea55824826de52b7ccc3.png"] {
     height: 100%;
 }
 
-.hJOcIA {
-    margin: 0;
-}
-
 .hYnMmT {
     background: transparent;
-}
-
-.iRauPR {
-    margin: 0;
 }
 
 .bhZAzR {
@@ -140,4 +145,41 @@ img[src="/./package/ea55824826de52b7ccc3.png"] {
 
 .gJPUVb {
     color: rgb(231, 76, 60);
+}
+
+.cJoQGw {
+    background: radial-gradient(circle, rgba(var(--market), 0.3), rgba(var(--market), 0.1));
+}
+
+.cJoQGw[style*="rgb(255, 255, 255)"] {
+    --market: 255, 255, 255;
+}
+
+.cJoQGw[style*="rgb(128, 156, 255)"] {
+    --market: 128, 156, 255;
+}
+
+.cJoQGw[style*="rgb(180, 99, 255)"] {
+    --market: 180, 99, 255;
+}
+
+.cJoQGw[style*="rgb(255, 84, 224)"] {
+    --market: 255, 84, 224;
+}
+
+.cJoQGw[style*="rgb(230, 126, 34)"] {
+    --market: 230, 126, 34;
+}
+
+.cJoQGw[style*="rgb(255, 66, 101)"] {
+    --market: 255, 66, 101;
+}
+
+.cJoQGw[style*="rgb(255, 224, 99)"] {
+    --market: 255, 224, 99;
+}
+
+.cxWTDe {
+    background: rgba(0, 0, 0, 0.65) !important;
+    border-radius: 10px;
 }

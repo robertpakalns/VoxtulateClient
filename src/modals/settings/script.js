@@ -1,7 +1,7 @@
 const { ipcRenderer, shell } = require("electron")
 const { Config, configPath } = require("../../config.js")
 const config = new Config
-const { el, createEl } = require("../../functions.js")
+const { el, createEl, popup } = require("../../functions.js")
 
 const toggleElements = () => {
     const styles = el("enableStyles").checked
@@ -22,18 +22,19 @@ const toggleElements = () => {
 const updateStyles = () => {
     const enable = el("enableStyles").checked
     const custom = el("customStyles").checked
-    ipcRenderer.send("change-custom-css", enable, custom, el("customCSS").value)
-    ipcRenderer.send("change-custom-js", enable, custom, el("customJS").value)
+    ipcRenderer.send("change-css", enable, custom, el("customCSS").value)
+    ipcRenderer.send("change-js", enable, custom, el("customJS").value)
 }
 
 document.addEventListener("DOMContentLoaded", () => {
     el("fpsUncap").checked = config.get("client.fpsUncap")
     el("adblocker").checked = config.get("client.adblocker")
+    el("fullscreen").checked = config.get("client.fullscreen")
+    el("rpc").checked = config.get("client.rpc")
     el("enableCrosshair").checked = config.get("crosshair.enable")
     el("enableStyles").checked = config.get("styles.enable")
     el("customStyles").checked = config.get("styles.custom")
     el("console").checked = config.get("console")
-    el("fullscreen").checked = config.get("fullscreen")
     el("enableSwapper").checked = config.get("swapper.enable")
     el("enableKeybinding").checked = config.get("keybinding.enable")
     el("inventorySorting").checked = config.get("inventorySorting")
@@ -52,20 +53,21 @@ document.addEventListener("DOMContentLoaded", () => {
     toggleElements()
 
     ipcRenderer.on("update-url", (_, url) => el("currentURL").element.innerText = url || "Unknown URL")
-    ipcRenderer.send("update-url-request")
+    ipcRenderer.send("update-url")
 })
 
 el("fpsUncap").event("change", e => config.set("client.fpsUncap", e.target.checked))
 el("adblocker").event("change", e => config.set("client.adblocker", e.target.checked))
 el("inventorySorting").event("change", e => config.set("inventorySorting", e.target.checked))
+el("rpc").event("change", e => config.set("client.rpc", e.target.checked))
 
 el("enableCrosshair").event("change", e => {
     config.set("crosshair.enable", e.target.checked)
-    ipcRenderer.send("change-crosshair-data", el("enableCrosshair").checked, el("crosshairURL").value)
+    ipcRenderer.send("change-crosshair", el("enableCrosshair").checked, el("crosshairURL").value)
 })
 el("crosshairURL").event("input", e => {
     config.set("crosshair.url", e.target.value)
-    ipcRenderer.send("change-crosshair-data", el("enableCrosshair").checked, el("crosshairURL").value)
+    ipcRenderer.send("change-crosshair", el("enableCrosshair").checked, el("crosshairURL").value)
 })
 
 el("joinLink").event("click", () => ipcRenderer.send("join-game", el("joinLinkURL").value))
@@ -90,7 +92,7 @@ el("customStyles").event("click", e => {
 
 el("console").event("change", e => {
     config.set("console", e.target.checked)
-    ipcRenderer.send("set-custom-console", e.target.checked)
+    ipcRenderer.send("set-console", e.target.checked)
 })
 el("fullscreen").event("change", e => config.set("fullscreen", e.target.checked))
 el("enableSwapper").event("change", e => {
@@ -105,16 +107,16 @@ el("enableKeybinding").event("change", e => {
 
 el("chatOpacity").event("input", e => {
     config.set("chatOpacity", e.target.value)
-    ipcRenderer.send("change-chat-opacity", e.target.value)
+    ipcRenderer.send("change-opacity", e.target.value)
 })
 
 el("customCSS").event("input", e => {
     config.set("styles.css", e.target.value)
-    ipcRenderer.send("change-custom-css", el("enableStyles").checked, el("customStyles").checked, el("customCSS").value)
+    ipcRenderer.send("change-css", el("enableStyles").checked, el("customStyles").checked, el("customCSS").value)
 })
 el("customJS").event("input", e => {
     config.set("styles.js", e.target.value)
-    ipcRenderer.send("change-custom-js", el("enableStyles").checked, el("customStyles").checked, el("customJS").value)
+    ipcRenderer.send("change-js", el("enableStyles").checked, el("customStyles").checked, el("customJS").value)
 })
 
 el("defaultSettings").event("click", () => {
@@ -169,3 +171,6 @@ el("clearData").event("click", () => {
     ipcRenderer.send("clear-data")
     ipcRenderer.send("relaunch")
 })
+
+for (const e of ["fpsUncap", "rpc", "adblocker", "inventorySorting", "fullscreen", "enableSwapper", "enableKeybinding"])
+    el(e).event("click", () => popup("rgb(231, 76, 60)", "Restart the client to apply this setting."))

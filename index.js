@@ -5,6 +5,7 @@ const path = require("path")
 const { Config, configPath, defaultConfig } = require("./src/config.js")
 const config = new Config
 const DiscordRPC = require("./src/discord.js")
+const rpc = new DiscordRPC
 
 let mainWindow, settingsWindow, infoWindow
 const keybinding = config.get("keybinding.enable") ? config.get("keybinding.content") : defaultConfig.keybinding.content
@@ -13,7 +14,7 @@ const createMain = async () => {
     mainWindow = new BrowserWindow({
         height: 600,
         width: 800,
-        fullscreen: config.get("fullscreen"),
+        fullscreen: config.get("client.fullscreen"),
         title: "Voxtulate Client",
         icon: path.join(__dirname, "assets/icon.ico"),
         webPreferences: {
@@ -22,8 +23,6 @@ const createMain = async () => {
         }
     })
 
-    const rpc = new DiscordRPC()
-
     mainWindow.setMenu(null)
     mainWindow.loadURL("https://voxiom.io")
     mainWindow.on("page-title-updated", e => e.preventDefault())
@@ -31,7 +30,7 @@ const createMain = async () => {
     const { webContents } = mainWindow
 
     webContents.on("will-prevent-unload", e => e.preventDefault())
-    webContents.on("before-input-event", async (e, { code, type }) => {
+    webContents.on("before-input-event", (e, { code, type }) => {
         if ([keybinding.Settings, keybinding.Reload, keybinding.Fullscreen, keybinding.DevTools].includes(code)) e.preventDefault()
 
         if (code === keybinding.Settings) settingsModal()
@@ -43,11 +42,11 @@ const createMain = async () => {
         if (code === "Escape" && type === "keyUp") webContents.executeJavaScript(`document.querySelector(".enmYtp") ? document.querySelector("canvas").requestPointerLock() : document.exitPointerLock()`)
     })
 
-    ipcMain.on("update-url-request", e => e.reply("update-url", webContents.getURL()))
+    ipcMain.on("update-url", e => e.reply("update-url", webContents.getURL()))
     webContents.on("did-navigate-in-page", () => {
-        const fullUrl = webContents.getURL()
-        settingsWindow?.webContents.send("update-url", fullUrl)
-        rpc.setJoinURL(fullUrl.replace('https://voxiom.io/', 'voxtulate://'))
+        const url = webContents.getURL()
+        settingsWindow?.webContents.send("update-url", url)
+        rpc.setJoinURL(url.replace("https://voxiom.io/", "voxtulate://"))
     })
 
     const reject = JSON.parse(fs.readFileSync(path.join(__dirname, "src/reject.json"), "utf8"))
@@ -124,7 +123,6 @@ const infoModal = () => {
 if (config.get("client.fpsUncap")) app.commandLine.appendSwitch("disable-frame-rate-limit")
 for (const el of ["disable-gpu-vsync", "in-process-gpu", "enable-quic", "enable-gpu-rasterization", "enable-pointer-lock-options"]) app.commandLine.appendSwitch(el)
 
-
 const message = message => dialog.showMessageBox({ icon: path.join(__dirname, "assets/icon.ico"), title: "Voxtulate Client | Update", message })
 
 app.on("ready", () => {
@@ -135,9 +133,9 @@ app.on("ready", () => {
     if (deepLink) mainWindow.loadURL(`https://voxiom.io/${decodeURIComponent(deepLink.slice(12)).replace(/\/$/, "").replace(/\/#/g, "#")}`)
     app.setAsDefaultProtocolClient("voxtulate")
 
-    if (config.get("firstJoin")) {
-        message("Welcome to Voxtulate Client! Press F1 and F2 for more information. Have a good game!")
-        config.set("firstJoin", false)
+    if (config.get("client.firstJoin")) {
+        setTimeout(() => message("Welcome to Voxtulate Client! Press F1 and F2 for more information. Have a good game!"), 3000)
+        config.set("client.firstJoin", false)
     }
 
     autoUpdater.checkForUpdates()
@@ -167,11 +165,8 @@ app.on("ready", () => {
         if (!canceled && filePath) webContents.send("get-game-settings", filePath)
     })
 
-    ipcMain.on("change-crosshair-data", (_, ...args) => webContents.send("change-crosshair", ...args))
-    ipcMain.on("change-chat-opacity", (_, ...args) => webContents.send("change-opacity", ...args))
-    ipcMain.on("set-custom-console", (_, ...args) => webContents.send("set-console", ...args))
-    ipcMain.on("change-custom-css", (_, ...args) => webContents.send("change-css", ...args))
-    ipcMain.on("change-custom-js", (_, ...args) => webContents.send("change-js", ...args))
+    for (const e of ["change-crosshair", "change-opacity", "set-console", "change-css", "change-js"])
+        ipcMain.on(e, (_, ...a) => webContents.send(e, ...a))
 
     ipcMain.on("clear-data", () => session.defaultSession.clearStorageData([]))
     ipcMain.on("relaunch", () => {

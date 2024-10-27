@@ -1,3 +1,5 @@
+const path = require("path")
+
 const el = id => ({
     get element() { return document.getElementById(id) },
     get checked() { return this.element.checked },
@@ -35,7 +37,7 @@ class Voxiom {
     }
 
     do(c, i) {
-        setInterval(c.bind(this), i)
+        setInterval(() => c(this), i)
         return this
     }
 
@@ -45,4 +47,58 @@ class Voxiom {
     }
 }
 
-module.exports = { el, createEl, creationTime, Voxiom, timeLeft, output }
+const popup = (color, text) => {
+    document.querySelector(".popup")?.remove()
+
+    const styles = `
+        .popup {
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            font-size: 10px;
+            border-radius: 10px;
+            background: ${color};
+            cursor: pointer;
+            user-select: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .popup img {
+            height: 15px;
+            margin-right: 7px;
+        }
+
+        .popup:hover {
+            transform: scale(1.05);
+        }
+    `
+
+    if (!document.querySelector("#popupStyles")) {
+        const style = document.createElement("style")
+        style.id = "popupStyles"
+        style.innerText = styles
+        document.head.appendChild(style)
+    }
+
+    const _popup = createEl("div", {}, "popup", [createEl("img", { src: path.join(__dirname, "../assets/bell.png") }), text])
+
+    const audio = new Audio(path.join(__dirname, "../assets/pop.mp3"))
+    audio.volume = 0.5
+    audio.play()
+
+    const closePopup = () => {
+        _popup.style.opacity = "0"
+        setTimeout(() => _popup.remove(), 200)
+    }
+
+    _popup.addEventListener("click", closePopup)
+    setTimeout(closePopup, 5000)
+
+    document.body.appendChild(_popup)
+}
+
+module.exports = { el, createEl, creationTime, Voxiom, timeLeft, output, popup }
