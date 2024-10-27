@@ -2,24 +2,17 @@ name: Build
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - v20
 
 jobs:
   build:
     runs-on: ${{ matrix.os }}
 
-    permissions:
-      contents: write
-
     strategy:
       matrix:
         os: [macos-12, windows-latest, ubuntu-latest]
-        include:
-          - os: windows-latest
-            arch: x64
-          - os: macos-12
-            arch: x64
-          - os: ubuntu-latest
-            arch: x64
 
     steps:
       - name: Checkout Repository
@@ -33,11 +26,13 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Get version and name from package.json
-        id: get_version_name
-        run: |
-          echo "::set-output name=version::$(node -p "require('./package.json').version")"
-          echo "::set-output name=name::$(node -p "require('./package.json').name")"
+      - name: Build Electron App
+        run: npm run build
+
+      - name: Package Electron App
+        run: npm run publish
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Release
         id: create_release
@@ -45,13 +40,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ steps.get_version_name.outputs.version }}
-          name: Release ${{ steps.get_version_name.outputs.version }}
-          draft: true
-          prerelease: false
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build Electron App
-        run: npm run build
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: v${{ env.VERSION }}
+          name: Release ${{ env.VERSION }}
+          draft: false
