@@ -25,7 +25,7 @@
                 </div>
                 <div class="content">
                     <input type="checkbox" id="fullscreen">
-                    <div>Fullscreen On Start</div>
+                    <div>Fullscreen on Start</div>
                 </div>
                 <div class="content">
                     <input type="checkbox" id="rpc">
@@ -39,6 +39,10 @@
                     <input type="checkbox" id="enableCrosshair">
                     <div>Enable Crosshair</div>
                     <input type="url" id="crosshairURL">
+                    <input type="file" id="crosshairFile">
+                    <label for="crosshairFile" class="file-upload-label">
+                        <img src="../../../assets/icons/file.svg" class="file-icon">
+                    </label>
                 </div>
                 <div class="content">
                     <input type="checkbox" id="console">
@@ -119,7 +123,7 @@
                 <thead>
                     <tr>
                         <td>Name</td>
-                        <td>Source</td>
+                        <td>URL</td>
                     </tr>
                 </thead>
                 <tbody id="swapperBody">

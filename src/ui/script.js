@@ -70,7 +70,7 @@ const enableStyles = () => {
 const advancedInventory = () => {
     const inventoryPage = fs.readFileSync(path.join(__dirname, "../../src/modals/inventory/index.html"), "utf8")
     const market = JSON.parse(fs.readFileSync(path.join(__dirname, "../market.json"), "utf8"))
-    const gemPath = path.join(__dirname, "../../assets/gem.png")
+    const gemPath = path.join(__dirname, "../../assets/icons/gem.webp")
 
     const _fetch = window.fetch
     window.fetch = (...args) => _fetch(...args).then(r => r.json().then(data => {
@@ -102,28 +102,30 @@ const advancedInventory = () => {
         name: "", id: "", rotation: "", defaults: true, creation: "", model: "", rarity: ""
     }
 
-    setInterval(() => {
+    const observer = new MutationObserver(() => {
         const { pathname } = window.location
         const isInventory = ["/loadouts", "/loadouts/inventory"].includes(pathname) && !document.querySelector(".dzKqCZ")
         const isMarket = pathname === "/loadouts/market" || (pathname === "/loadouts" && document.querySelector(".dzKqCZ"))
         const isSales = pathname === "/loadouts/sales"
         if (!isInventory && !isMarket && !isSales) return
 
+        console.time("observer")
+
         document.querySelectorAll(".kiKVOk").forEach((el, i) => {
-            const isDefault = ["Common", "Default"].includes(el.textContent)
+            if (el.parentElement.parentElement.querySelector(".voxiomSkinName")) return
 
-            if (skinSettings.defaults === "false" && isDefault) el.parentElement.parentElement.parentElement.parentElement.remove()
-            if (!el.parentElement.parentElement.querySelector(".voxiomSkinName")) {
-                const skin = isInventory ? inventoryData.data[i / 2] : isMarket ? marketData.data.market_items[i / 2] : listedData.data.player_market_items[i / 2]
-                const _image = isMarket || isSales ? createEl("img", { src: gemPath }, "gem") : ""
-                const _name = createEl("div", {
-                    textContent: isInventory && !isDefault ? `${skin.type} | ${creationTime(skin.creation_time)}` :
-                        isSales ? `${timeLeft(skin.listed_time + 1209600000)} | ${skin.price}` :
-                            isMarket ? `${timeLeft(skin.listed_time + 1209600000)} | ${skin.price}` : ""
-                }, "voxiomSkinName", [_image])
+            const isDefault = el.textContent === "Default"
+            if (skinSettings.defaults === "false" && isDefault) el.closest(".lcogQs").remove()
 
-                el.parentElement.parentElement.appendChild(_name)
-            }
+            const skin = isInventory ? inventoryData.data[i / 2] : isMarket ? marketData.data.market_items[i / 2] : listedData.data.player_market_items[i / 2]
+            const _image = isMarket || isSales ? createEl("img", { src: gemPath }, "gem") : ""
+            const _name = createEl("div", {
+                textContent: isInventory && !isDefault ? `${skin.type} | ${creationTime(skin.creation_time)}` :
+                    isSales ? `${timeLeft(skin.listed_time + 1209600000)} | ${skin.price}` :
+                        isMarket ? `${timeLeft(skin.listed_time + 1209600000)} | ${skin.price}` : ""
+            }, "voxiomSkinName", [_image])
+
+            el.parentElement.parentElement.appendChild(_name)
         })
 
         if (document.querySelector(".iRauPR") &&
@@ -163,7 +165,13 @@ const advancedInventory = () => {
                 window.location.reload()
             })
         }
-    }, 50)
+        console.timeEnd("observer")
+    })
+
+    observer.observe(document.querySelector("#app"), {
+        childList: true,
+        subtree: true
+    })
 }
 
 document.addEventListener("DOMContentLoaded", () => {

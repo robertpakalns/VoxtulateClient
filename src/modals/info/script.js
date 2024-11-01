@@ -1,7 +1,7 @@
 const { shell } = require("electron")
 const { Config, defaultConfig } = require("../../config.js")
 const config = new Config
-const { createEl } = require("../../functions.js")
+const { createEl, popup } = require("../../functions.js")
 const { version } = require("../../../package.json")
 
 const { content: userKeybinding } = config.get("keybinding")
@@ -29,5 +29,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!config.get("keybinding.enable")) document.querySelectorAll("#keybindingBody tr td:nth-child(3)").forEach(el => el.style.opacity = "0.2")
     else document.querySelectorAll("#keybindingBody tr td:nth-child(2)").forEach(el => el.style.opacity = "0.2")
 
-    document.querySelectorAll(".copy").forEach(el => el.addEventListener("click", e => navigator.clipboard.writeText(e.target.innerText)))
+    document.querySelectorAll(".copy").forEach(el => el.addEventListener("click", e => {
+        navigator.clipboard.writeText(e.target.innerText)
+        popup("rgb(206, 185, 45)", "Copied!")
+    }))
 })

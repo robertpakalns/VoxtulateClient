@@ -1,57 +1,28 @@
-name: Build
-
-on:
-  workflow_dispatch:
-
+on: push
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-12]
 
     permissions:
       contents: write
-
-    strategy:
-      matrix:
-        os: [macos-12, windows-latest, ubuntu-latest]
-        include:
-          - os: windows-latest
-            arch: x64
-          - os: macos-12
-            arch: x64
-          - os: ubuntu-latest
-            arch: x64
-
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - run: npm install electron@10.4.7 electron-builder --save-dev
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - id: name
+        run: echo "::set-output name=v::$(node -p "require('./package.json').version")"
+
+      - uses: softprops/action-gh-release@v2.0.6      
         with:
-          node-version: '20.x'
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Get version and name from package.json
-        id: get_version_name
-        run: |
-          echo "::set-output name=version::$(node -p "require('./package.json').version")"
-          echo "::set-output name=name::$(node -p "require('./package.json').name")"
-
-      - name: Create Release
-        id: create_release
-        uses: softprops/action-gh-release@v2.0.6
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ steps.get_version_name.outputs.version }}
-          name: Release ${{ steps.get_version_name.outputs.version }}
+          tag_name: v${{ steps.name.outputs.v }}
+          name: ${{ steps.name.outputs.v }}
           draft: true
           prerelease: false
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Electron App
-        run: npm run build
+      - run: npm run build
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

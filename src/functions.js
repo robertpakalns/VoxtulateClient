@@ -84,9 +84,9 @@ const popup = (color, text) => {
         document.head.appendChild(style)
     }
 
-    const _popup = createEl("div", {}, "popup", [createEl("img", { src: path.join(__dirname, "../assets/bell.png") }), text])
+    const _popup = createEl("div", {}, "popup", [createEl("img", { src: path.join(__dirname, "../assets/icons/bell.png") }), text])
 
-    const audio = new Audio(path.join(__dirname, "../assets/pop.mp3"))
+    const audio = new Audio(path.join(__dirname, "../assets/sounds/pop.mp3"))
     audio.volume = 0.5
     audio.play()
 
