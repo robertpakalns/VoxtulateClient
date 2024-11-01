@@ -218,12 +218,9 @@ thead {
     cursor: pointer;
     outline: none;
     padding: 2px 5px;
-
     color: #ffe4e1;
-
     background: rgba(255, 255, 255, 0.1);
     transition: background-color 0.1s ease;
-
 }
 
 .copy:hover {
@@ -232,4 +229,12 @@ thead {
 
 .copy:active {
     background: rgba(255, 255, 255, 0.5);
+}
+
+.file-icon {
+    height: 15px;
+}
+
+#crosshairURL {
+    width: 160px;
 }

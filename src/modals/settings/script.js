@@ -69,10 +69,21 @@ el("crosshairURL").event("input", e => {
     config.set("crosshair.url", e.target.value)
     ipcRenderer.send("change-crosshair", el("enableCrosshair").checked, el("crosshairURL").value)
 })
+el("crosshairFile").event("change", ({ target: { files: [file] } }) => {
+    if (file) {
+        const { path } = file
+        config.set("crosshair.url", path)
+        el("crosshairURL").element.value = path
+        ipcRenderer.send("change-crosshair", el("enableCrosshair").checked, el("crosshairURL").value)
+    }
+})
 
 el("joinLink").event("click", () => ipcRenderer.send("join-game", el("joinLinkURL").value))
 
-document.querySelectorAll(".copy").forEach(el => el.addEventListener("click", e => navigator.clipboard.writeText(e.target.innerText)))
+document.querySelectorAll(".copy").forEach(el => el.addEventListener("click", e => {
+    navigator.clipboard.writeText(e.target.innerText)
+    popup("rgb(206, 185, 45)", "Copied!")
+}))
 
 el("importClientSettings").event("click", () => ipcRenderer.send("import-client-settings"))
 el("exportClientSettings").event("click", () => ipcRenderer.send("export-client-settings"))
@@ -133,8 +144,9 @@ const swapperRow = (name, value) => {
     const _inputChild = createEl("input", { type: "url", value }, "swapperInput")
     _inputChild.addEventListener("input", e => config.set(`swapper.content.${name}`, e.target.value))
 
-    const _fileChild = createEl("input", { type: "file", id: `file-upload-${name}` }, "swapperInput")
-    const _fileLabel = createEl("label", { textContent: "File", htmlFor: _fileChild.id }, "file-upload-label")
+    const _fileChild = createEl("input", { type: "file", id: `file-upload-${name}` })
+    const _fileIcon = createEl("img", { src: "../../../assets/icons/file.svg" }, "file-icon")
+    const _fileLabel = createEl("label", { htmlFor: _fileChild.id }, "file-upload-label", [_fileIcon])
 
     _fileChild.addEventListener("change", ({ target: { files: [file] } }) => {
         if (file) {
@@ -153,7 +165,7 @@ const swapperRow = (name, value) => {
 }
 
 const keybindingRow = (name, key) => {
-    const _inputChild = createEl("input", { type: "text", value: key }, "keybindingInput")
+    const _inputChild = createEl("input", { type: "text", value: key })
     _inputChild.addEventListener("keydown", e => {
         e.preventDefault()
         _inputChild.value = e.code
