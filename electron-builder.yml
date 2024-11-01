@@ -5,18 +5,18 @@ directories:
 win:
   target:
     - target: nsis
-  icon: "src/assets/icon.ico"
+  icon: "assets/icon.ico"
   artifactName: "${name}-win.${ext}"
 mac:
   target: dmg
-  icon: "src/assets/icon.icns"
+  icon: "assets/icon.icns"
   artifactName: "${name}-mac.${ext}"
 linux:
   target:
     - AppImage
     - tar.gz
   category: Game
-  icon: "src/assets/icon.png"
+  icon: "assets/icon.png"
   artifactName: "${name}-linux.${ext}"
 nsis:
   oneClick: true
