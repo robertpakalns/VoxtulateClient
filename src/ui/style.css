@@ -35,7 +35,9 @@ a[href="https://cuberealm.io"],
 
 .bNczYf {
     background-size: cover !important;
-    filter: grayscale(100%);
+    filter: grayscale(100%) blur(5px);
+    padding: 10px;
+    margin: -10px;
 }
 
 .jzxTWp,
@@ -133,10 +135,6 @@ img[src="/./package/ea55824826de52b7ccc3.png"] {
 
 .ekaCUa {
     height: 100%;
-}
-
-.hYnMmT {
-    background: transparent;
 }
 
 .bhZAzR {

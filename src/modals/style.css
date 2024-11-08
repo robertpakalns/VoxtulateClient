@@ -185,10 +185,6 @@ p {
     margin: 0 20px;
 }
 
-.swapperInput {
-    width: 100%;
-}
-
 input[type="file"] {
     display: none;
 }

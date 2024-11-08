@@ -11,7 +11,7 @@ class DiscordRPC {
         this.client.on("ready", () => this.setActivity())
         setInterval(() => this.setActivity(), 15000)
 
-        this.client.login({ clientId: this.clientId }).catch(console.error)
+        this.client.login({ clientId: this.clientId })
     }
 
     setActivity() {
@@ -23,7 +23,7 @@ class DiscordRPC {
             startTimestamp: this.time,
             largeImageKey: "voxtulate",
             buttons: buttons
-        }).catch(console.error)
+        })
     }
 
     setJoinURL(url) {

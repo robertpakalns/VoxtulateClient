@@ -50,16 +50,29 @@ const createMain = async () => {
     })
 
     const reject = JSON.parse(fs.readFileSync(path.join(__dirname, "src/reject.json"), "utf8"))
-    const swapper = JSON.parse(fs.readFileSync(path.join(__dirname, "src/swapper.json"), "utf8"))
+    const { adblocker, swapper } = config.get("client")
 
-    const { adblocker } = config.get("client")
-    const { enable: enableSwapper, content = {} } = config.get("swapper")
+    const swapperFolder = path.join(app.getPath("documents"), "VoxtulateClient", "swapper")
+    if (!fs.existsSync(swapperFolder)) fs.mkdirSync(swapperFolder, { recursive: true })
+    const swapperFiles = fs.readdirSync(swapperFolder)
+
+    const swappedFile = url => {
+        const resource = new URL(url).pathname.split("/").pop()
+        if (swapperFiles.includes(resource)) {
+            const localFilePath = path.join(swapperFolder, resource)
+            if (fs.existsSync(localFilePath)) return `file://${localFilePath}`
+        }
+        return null
+    }
 
     webContents.session.webRequest.onBeforeRequest(({ url }, callback) => {
+        if (url.startsWith("file://")) return callback({})
         if (adblocker && reject.some(el => url.includes(el))) return callback({ cancel: true })
-
-        const swappedUrl = enableSwapper && content[swapper[url]]
-        return swappedUrl ? callback({ redirectURL: swappedUrl }) : callback({})
+        if (swapper) {
+            const swap = swappedFile(url)
+            if (swap) return callback({ redirectURL: swap })
+        }
+        return callback({})
     })
 
     webContents.on("new-window", (e, url) => {

@@ -6,16 +6,13 @@ const { el, createEl, popup } = require("../../functions.js")
 const toggleElements = () => {
     const styles = el("enableStyles").checked
     const custom = el("customStyles").checked
-    const swapper = el("enableSwapper").checked
     const keybinding = el("enableKeybinding").checked
 
-    el("swapperTable").class("disabled", !swapper)
     el("keybindingTable").class("disabled", !keybinding)
 
     el("customStyles").element.disabled = !styles
     el("customCSS").element.disabled = !(styles && custom)
     el("customJS").element.disabled = !(styles && custom)
-    el("swapperTable").element.querySelectorAll("input").forEach(el => el.disabled = !swapper)
     el("keybindingTable").element.querySelectorAll("input").forEach(el => el.disabled = !keybinding)
 }
 
@@ -34,18 +31,15 @@ document.addEventListener("DOMContentLoaded", () => {
     el("enableCrosshair").checked = config.get("crosshair.enable")
     el("enableStyles").checked = config.get("styles.enable")
     el("customStyles").checked = config.get("styles.custom")
-    el("console").checked = config.get("console")
-    el("enableSwapper").checked = config.get("swapper.enable")
+    el("console").checked = config.get("interface.console")
+    el("enableSwapper").checked = config.get("client.swapper")
     el("enableKeybinding").checked = config.get("keybinding.enable")
-    el("inventorySorting").checked = config.get("inventorySorting")
+    el("inventorySorting").checked = config.get("interface.inventorySorting")
 
     el("crosshairURL").value = config.get("crosshair.url") ?? ""
     el("customCSS").value = config.get("styles.css") ?? ""
     el("customJS").value = config.get("styles.js") ?? ""
-    el("chatOpacity").value = config.get("chatOpacity") ?? "100"
-
-    const { content: c1 } = config.get("swapper")
-    for (const swap in c1) swapperRow(swap, c1[swap])
+    el("chatOpacity").value = config.get("interface.chatOpacity") ?? "100"
 
     const { content: c2 } = config.get("keybinding")
     for (const key in c2) keybindingRow(key, c2[key])
@@ -58,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 el("fpsUncap").event("change", e => config.set("client.fpsUncap", e.target.checked))
 el("adblocker").event("change", e => config.set("client.adblocker", e.target.checked))
-el("inventorySorting").event("change", e => config.set("inventorySorting", e.target.checked))
+el("inventorySorting").event("change", e => config.set("interface.inventorySorting", e.target.checked))
 el("rpc").event("change", e => config.set("client.rpc", e.target.checked))
 
 el("enableCrosshair").event("change", e => {
@@ -102,12 +96,12 @@ el("customStyles").event("click", e => {
 })
 
 el("console").event("change", e => {
-    config.set("console", e.target.checked)
+    config.set("interface.console", e.target.checked)
     ipcRenderer.send("set-console", e.target.checked)
 })
-el("fullscreen").event("change", e => config.set("fullscreen", e.target.checked))
+el("fullscreen").event("change", e => config.set("client.fullscreen", e.target.checked))
 el("enableSwapper").event("change", e => {
-    config.set("swapper.enable", e.target.checked)
+    config.set("client.swapper", e.target.checked)
     toggleElements()
 })
 
@@ -117,7 +111,7 @@ el("enableKeybinding").event("change", e => {
 })
 
 el("chatOpacity").event("input", e => {
-    config.set("chatOpacity", e.target.value)
+    config.set("interface.chatOpacity", e.target.value)
     ipcRenderer.send("change-opacity", e.target.value)
 })
 
@@ -137,32 +131,7 @@ el("defaultSettings").event("click", () => {
 el("openConfigs").event("click", () => shell.openPath(configPath))
 el("restart").event("click", () => ipcRenderer.send("relaunch"))
 
-const tableBody = document.querySelector("#swapperBody")
 const keybindingBody = document.querySelector("#keybindingBody")
-
-const swapperRow = (name, value) => {
-    const _inputChild = createEl("input", { type: "url", value }, "swapperInput")
-    _inputChild.addEventListener("input", e => config.set(`swapper.content.${name}`, e.target.value))
-
-    const _fileChild = createEl("input", { type: "file", id: `file-upload-${name}` })
-    const _fileIcon = createEl("img", { src: "../../../assets/icons/file.svg" }, "file-icon")
-    const _fileLabel = createEl("label", { htmlFor: _fileChild.id }, "file-upload-label", [_fileIcon])
-
-    _fileChild.addEventListener("change", ({ target: { files: [file] } }) => {
-        if (file) {
-            const { path } = file
-            config.set(`swapper.content.${name}`, path)
-            _inputChild.value = path
-        }
-    })
-
-    const _name = createEl("td", { textContent: name })
-    const _input = createEl("td", {}, "", [_inputChild])
-    const _file = createEl("td", {}, "", [_fileChild, _fileLabel])
-
-    const tr = createEl("tr", {}, "", [_name, _input, _file])
-    tableBody.appendChild(tr)
-}
 
 const keybindingRow = (name, key) => {
     const _inputChild = createEl("input", { type: "text", value: key })
