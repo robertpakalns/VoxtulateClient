@@ -1,20 +1,23 @@
-appId: voxtulate.client
 productName: Voxtulate Client
-artifactName: "${productName}.${ext}"
-
-publish:
-  - provider: github
-    owner: robertpakalns
-    repo: VoxtulateClient
-
+npmRebuild: false
 directories:
-  output: dist
-
+  output: "dist"
 win:
-  icon: assets/icon.ico
   target:
     - target: nsis
-
+  icon: "assets/icon.ico"
+  artifactName: "${name}-win.${ext}"
+mac:
+  target: dmg
+  icon: "assets/icon.icns"
+  artifactName: "${name}-mac.${ext}"
+linux:
+  target:
+    - AppImage
+    - tar.gz
+  category: Game
+  icon: "assets/icon.png"
+  artifactName: "${name}-linux.${ext}"
 nsis:
   oneClick: true
   deleteAppDataOnUninstall: true

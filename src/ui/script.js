@@ -9,6 +9,8 @@ let skinSettings, inventoryData, marketData, listedData
 
 const enableStyles = () => {
     const { enable, custom, css, js } = config.get("styles")
+    const { console: enableConsole, chatOpacity, inventorySorting } = config.get("interface")
+    console.log({ enableConsole, chatOpacity, inventorySorting })
 
     const enableScript = document.createElement("script")
     enableScript.textContent = enable && custom ? js : ""
@@ -28,17 +30,17 @@ const enableStyles = () => {
 
     const clientStyles = document.createElement("style")
     clientStyles.textContent = `
-    body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"] { opacity: ${config.get("console") ? "0%" : "100%"} !important }
-    .lpfJAq, .lpdfTz { opacity: ${config.get("chatOpacity")}% }
+    body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"] { opacity: ${enableConsole ? "0%" : "100%"} !important }
+    .lpfJAq, .lpdfTz { opacity: ${chatOpacity}% }
     .voxiomCreate { margin: 20px; position: absolute; font-weight: 900 }
-    .voxiomConsole { font-family: "Consolas", monospace; top: 0; left: 0; font-size: 10px; opacity: ${config.get("console") ? "100%" : "0%"} }
+    .voxiomConsole { font-family: "Consolas", monospace; top: 0; left: 0; font-size: 10px; opacity: ${enableConsole ? "100%" : "0%"} }
     .voxiomBlocks { margin: auto; width: 100%; position: absolute; bottom: 35%; text-align: center; font-size: 10px }
     .voxiomCrosshair { top: 50vh; left: 50vw; position: fixed; transform: translate(-50%, -50%) }
-
-    .voxiomSkinName { width: 100%; position: absolute; bottom: 0; left: 0; text-align:center; font-size: 0.8rem; color: gray }
-    .UOSSK { display: ${config.get("inventorySorting") ? "none" : "block"} }
-    .hYnMmT { display: ${config.get("inventorySorting") ? "none" : "block"} }
-    .gem { margin-left: 3px; height: 9px }`
+    .voxiomSkinName { width: 100%; position: absolute; bottom: 0; left: 0; text-align: center; font-size: 0.8rem; color: gray }
+    ${inventorySorting ? `
+    .UOSSK { display: none }
+    .hYnMmT { display: none }
+    .gem { margin-left: 3px; height: 9px }` : ""}`
 
     document.head.append(enableScript, enableStyles, clientStyles)
 
@@ -109,8 +111,6 @@ const advancedInventory = () => {
         const isSales = pathname === "/loadouts/sales"
         if (!isInventory && !isMarket && !isSales) return
 
-        console.time("observer")
-
         document.querySelectorAll(".kiKVOk").forEach((el, i) => {
             if (el.parentElement.parentElement.querySelector(".voxiomSkinName")) return
 
@@ -165,7 +165,6 @@ const advancedInventory = () => {
                 window.location.reload()
             })
         }
-        console.timeEnd("observer")
     })
 
     observer.observe(document.querySelector("#app"), {
@@ -201,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })
 
-    if (config.get("inventorySorting")) advancedInventory()
+    if (config.get("interface.inventorySorting")) advancedInventory()
 })
 
 ipcRenderer.on("set-game-settings", (_, data) => localStorage.setItem("persist:root", JSON.parse(data)))
