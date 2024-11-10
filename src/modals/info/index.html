@@ -1,14 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
+<link rel="stylesheet" href="../style.css">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../style.css">
-</head>
-
-<body>
-    <div class="info">Modal windows are Settings and Info windows</div>
+<div class="modal">
     <div class="page">
 
         <main>
@@ -21,27 +13,59 @@
 
         <main>
             <header>Details</header>
-            <div class="content">
-                <div>Version</div>
-                <div class="copy" id="version"></div>
-            </div>
-            <div class="content">
-                <div>Protocol</div>
-                <div class="copy">voxtulate://</div>
-            </div>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Version</td>
+                        <td>
+                            <div class="copy" id="version"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Protocol</td>
+                        <td>
+                            <div class="copy">voxtulate://</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </main>
 
         <main>
             <header>Client Directory</header>
-            <div>Windows: Win + R</div>
-            <div class="content">
-                <div>Client</div>
-                <div class="copy">%APPDATA%\voxtulate-client</div>
-            </div>
-            <div class="content">
-                <div>Config</div>
-                <div class="copy">%APPDATA%\voxtulate-client\config.json</div>
-            </div>
+
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Windows</td>
+                        <td>Win + R</td>
+                    </tr>
+                    <tr>
+                        <td>Client Data</td>
+                        <td>
+                            <div class="copy">%APPDATA%\voxtulate-client</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Client User Data</td>
+                        <td>
+                            <div class="copy">%USERPROFILE%\Documents\VoxtulateClient</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Config File</td>
+                        <td>
+                            <div class="copy">%USERPROFILE%\Documents\VoxtulateClient\config.json</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Swapper Folder</td>
+                        <td>
+                            <div class="copy">%USERPROFILE%\Documents\VoxtulateClient\swapper</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </main>
 
         <main>
@@ -101,6 +125,4 @@
     </footer>
 
     <script src="script.js"></script>
-</body>
-
-</html>
+</div>

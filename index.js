@@ -12,8 +12,8 @@ const keybinding = config.get("keybinding.enable") ? config.get("keybinding.cont
 
 const createMain = async () => {
     mainWindow = new BrowserWindow({
-        height: 600,
-        width: 800,
+        height: 700,
+        width: 900,
         fullscreen: config.get("client.fullscreen"),
         title: "Voxtulate Client",
         icon: path.join(__dirname, "assets/icon.ico"),
@@ -66,6 +66,7 @@ const createMain = async () => {
     }
 
     webContents.session.webRequest.onBeforeRequest(({ url }, callback) => {
+        if (url.includes("7cb119bcceb97088c8ad.js")) return callback({ redirectURL: path.join(__dirname, "assets/script-0.9.2.0.js") })
         if (url.startsWith("file://")) return callback({})
         if (adblocker && reject.some(el => url.includes(el))) return callback({ cancel: true })
         if (swapper) {
@@ -86,8 +87,10 @@ const settingsModal = () => {
 
     settingsWindow = new BrowserWindow({
         height: 600,
-        width: 810,
+        width: 800,
         resizable: false,
+        frame: false,
+        transparent: true,
         title: "Voxtulate Client | Settings",
         icon: path.join(__dirname, "assets/icon.ico"),
         parent: mainWindow,
@@ -97,7 +100,6 @@ const settingsModal = () => {
         }
     })
 
-    settingsWindow.setMenu(null)
     settingsWindow.loadFile(path.join(__dirname, "src/modals/settings/index.html"))
 
     settingsWindow.webContents.on("did-finish-load", () => settingsWindow.show())
@@ -113,8 +115,10 @@ const infoModal = () => {
 
     infoWindow = new BrowserWindow({
         height: 600,
-        width: 800,
+        width: 650,
         resizable: false,
+        frame: false,
+        transparent: true,
         title: "Voxtulate Client | Info",
         icon: path.join(__dirname, "assets/icon.ico"),
         parent: mainWindow,
@@ -124,7 +128,6 @@ const infoModal = () => {
         }
     })
 
-    infoWindow.setMenu(null)
     infoWindow.loadFile(path.join(__dirname, "src/modals/info/index.html"))
 
     infoWindow.webContents.on("did-finish-load", () => infoWindow.show())

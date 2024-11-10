@@ -1,14 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../style.css">
-</head>
-
-<body>
-    <div class="info">To apply settings, restart the client</div>
+<link rel="stylesheet" href="../style.css">
+<div class="modal">
     <section>
         <main>
             <header>Main Settings</header>
@@ -37,7 +28,7 @@
                 </div>
             </div>
 
-            <h1>Game Interface</h1>
+            <h1>Interface</h1>
             <div class="block">
                 <div class="content">
                     <input type="checkbox" id="enableCrosshair">
@@ -74,17 +65,17 @@
                 </div>
             </div>
 
-            <h1>Client Settings</h1>
             <div class="block">
                 <div class="content">
+                    <div>Client Settings</div>
                     <button id="importClientSettings">Import</button>
                     <button id="exportClientSettings">Export</button>
                 </div>
             </div>
 
-            <h1>Game Settings</h1>
             <div class="block">
                 <div class="content">
+                    <div>Game Settings</div>
                     <button id="importGameSettings">Import</button>
                     <button id="exportGameSettings">Export</button>
                 </div>
@@ -104,7 +95,7 @@
                 <div class="content">
                     <input type="checkbox" id="customStyles">
                     <div>Custom Styles</div>
-                    <div class="subText">Client Styles By Default</div>
+                    <div class="subText">Client Styles by Default</div>
                 </div>
             </div>
 
@@ -149,6 +140,4 @@
     </footer>
 
     <script src="script.js"></script>
-</body>
-
-</html>
+</div>

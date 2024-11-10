@@ -48,7 +48,8 @@ class Config {
     constructor() {
         this.file = configPath
         this.config = JSON.parse(fs.readFileSync(this.file, "utf8"))
-        this.fillDefaults()
+        this.fillConfig()
+        this.cleanConfig()
     }
 
     get(key) {
@@ -65,13 +66,21 @@ class Config {
         fs.writeFileSync(this.file, JSON.stringify(this.config, null, 2))
     }
 
-    fillDefaults(source = defaultConfig, target = this.config) {
+    fillConfig(source = defaultConfig, target = this.config) {
         for (const key in source) if (source.hasOwnProperty(key)) {
             if (target[key] === undefined) target[key] = source[key]
             else if (typeof source[key] === "object" && source[key] !== null) {
                 if (typeof target[key] !== "object" || target[key] === null) target[key] = {}
-                this.fillDefaults(source[key], target[key])
+                this.fillConfig(source[key], target[key])
             }
+        }
+        fs.writeFileSync(this.file, JSON.stringify(this.config, null, 2))
+    }
+
+    cleanConfig(source = defaultConfig, target = this.config) {
+        for (const key in target) {
+            if (!source.hasOwnProperty(key)) delete target[key]
+            else if (typeof source[key] === "object" && source[key] !== null && typeof target[key] === "object") this.cleanConfig(source[key], target[key])
         }
         fs.writeFileSync(this.file, JSON.stringify(this.config, null, 2))
     }

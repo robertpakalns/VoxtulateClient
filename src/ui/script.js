@@ -6,11 +6,10 @@ const config = new Config
 const { el, createEl, creationTime, Voxiom, timeLeft } = require("../functions.js")
 
 let skinSettings, inventoryData, marketData, listedData
+const { console: enableConsole, chatOpacity, inventorySorting } = config.get("interface")
 
 const enableStyles = () => {
     const { enable, custom, css, js } = config.get("styles")
-    const { console: enableConsole, chatOpacity, inventorySorting } = config.get("interface")
-    console.log({ enableConsole, chatOpacity, inventorySorting })
 
     const enableScript = document.createElement("script")
     enableScript.textContent = enable && custom ? js : ""
@@ -37,10 +36,10 @@ const enableStyles = () => {
     .voxiomBlocks { margin: auto; width: 100%; position: absolute; bottom: 35%; text-align: center; font-size: 10px }
     .voxiomCrosshair { top: 50vh; left: 50vw; position: fixed; transform: translate(-50%, -50%) }
     .voxiomSkinName { width: 100%; position: absolute; bottom: 0; left: 0; text-align: center; font-size: 0.8rem; color: gray }
-    ${inventorySorting ? `
-    .UOSSK { display: none }
-    .hYnMmT { display: none }
-    .gem { margin-left: 3px; height: 9px }` : ""}`
+    .voxiomSkinsButton { width: 130px; height: 38.5px; background: #646464; display: flex; align-items: center; padding-left: 10px; cursor: pointer }
+    .gem { margin-left: 3px; height: 9px }
+    .skinModal { z-index: 9999; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) }
+    ${inventorySorting ? ".hYnMmT { display: none }" : ""}`
 
     document.head.append(enableScript, enableStyles, clientStyles)
 
@@ -100,71 +99,175 @@ const advancedInventory = () => {
         return new Response(JSON.stringify(data))
     }))
 
+    const modal = createEl("div", { innerHTML: inventoryPage }, "skinModal")
+
+    document.body.querySelector("#app").appendChild(modal)
+
     skinSettings = JSON.parse(sessionStorage.getItem("skinSettings")) || {
-        name: "", id: "", rotation: "", defaults: true, creation: "", model: "", rarity: ""
+        name: "", id: "", rotation: "", creation: "", model: "", rarity: ""
     }
+
+    document.querySelectorAll(".voxiomSelect").forEach(select => {
+        const menu = select.querySelector(".voxiomSelectMenu")
+        const selected = select.querySelector(".selected")
+        const options = select.querySelectorAll(".option")
+
+        selected?.addEventListener("click", () => menu.classList.toggle("active"))
+        options.forEach(option => {
+            if (option.dataset.value === skinSettings[select.id]) selected.textContent = option.textContent
+            option.addEventListener("click", async () => {
+                selected.textContent = option.textContent
+                skinSettings[select.id] = option.dataset.value
+                menu.classList.remove("active")
+                await renderPage()
+            })
+        })
+    })
+
+    document.addEventListener("click", e => document.querySelectorAll(".voxiomSelectMenu.active").forEach(menu => {
+        if (!menu.parentNode.contains(e.target)) menu.classList.remove("active")
+    }))
+
+    el("name").event("input", async e => {
+        skinSettings.name = e.target.value
+        await renderPage()
+    })
+    el("id").event("input", async e => {
+        skinSettings.id = e.target.value
+        await renderPage()
+    })
+    el("apply").event("click", () => {
+        sessionStorage.setItem("skinSettings", JSON.stringify(skinSettings))
+        window.location.reload()
+    })
+    el("clear").event("click", async () => {
+        sessionStorage.removeItem("skinSettings")
+        window.location.reload()
+    })
+
+    const renderURL = async (type, seed) => {
+        const key = `${type}_${seed}`
+
+        const cachedData = localStorage.getItem("skinCache")
+        const imageStore = cachedData ? JSON.parse(cachedData) : {}
+
+        if (imageStore[key]) return imageStore[key]
+
+        const skin = market.data.find(el => el.id === type)
+        if (skin.type === "SPRAY") {
+            imageStore[key] = `https://tricko.pro/assets/voxiom/preview/${type}.webp`
+            localStorage.setItem("skinCache", JSON.stringify(imageStore))
+            return imageStore[key]
+        }
+
+        const generator = window.renderSkin([{ type, seed }], {})
+        const img = await generator.next(await generator.next().value).value
+        const imageURL = Object.values(img)[0]
+
+        imageStore[key] = imageURL
+        localStorage.setItem("skinCache", JSON.stringify(imageStore))
+        return imageURL
+    }
+
+    const rarities = {
+        Common: "255, 255, 255",
+        Noteworthy: "128, 156, 255",
+        Precious: "180, 99, 255",
+        Magnificent: "255, 84, 224",
+        Extraordinary: "230, 126, 34",
+        Covert: "255, 66, 101",
+        Artifact: "255, 224, 99"
+    }
+
+    let currentPage = 0
+    const itemsPerPage = 18
+
+    const _button = createEl("div", { id: "voxiomSkinsButton" }, "voxiomSkinsButton", ["Advanced Sorting"])
+    _button.addEventListener("click", async () => {
+        document.querySelector("#voxiomSkinRender").classList.toggle("open")
+        await new Promise(res => setTimeout(res, 1))
+        currentPage = 0
+        await renderPage()
+    })
+    setInterval(() => {
+        if (
+            inventoryData?.data &&
+            !document.querySelector("#voxiomSkinsButton") &&
+            ["/loadouts", "/loadouts/inventory"].includes(window.location.pathname)
+        ) document.querySelector(".iRauPR")?.appendChild(_button, 50)
+    })
+
+    const cont = document.querySelector(".cont")
+
+    const renderPage = async () => {
+        cont.innerHTML = ""
+        const start = currentPage * itemsPerPage
+        const end = start + itemsPerPage
+        const limitedData = [...inventoryData.data]
+            .filter(el =>
+                (!skinSettings.name || el.name.toLowerCase().includes(skinSettings.name.toLowerCase())) &&
+                (!skinSettings.id || el.type.toString().includes(skinSettings.id)) &&
+                (skinSettings.rotation === "" || el.rotation === (skinSettings.rotation === "true")) &&
+                (skinSettings.model === "" || el.model === skinSettings.model) &&
+                (skinSettings.rarity === "" || el.rarity === skinSettings.rarity)
+            ).sort((a, b) => !skinSettings.creation ? 0 : skinSettings.creation === "true" ? b.creation_time - a.creation_time : a.creation_time - b.creation_time)
+            .slice(start, end)
+        const totalPages = Math.ceil(inventoryData.data.length / itemsPerPage)
+
+        document.querySelector(".count").innerText = `${currentPage + 1}/${totalPages}`
+
+        el("left").class("disabled", currentPage === 0)
+        el("right").class("disabled", end >= inventoryData.data.length)
+
+        for (const el of limitedData) {
+            const _img = createEl("img", { src: await renderURL(el.type, el.seed) }, "img")
+            const _line = createEl("hr", {}, "line")
+            _line.style.background = `linear-gradient(90deg, rgba(${rarities[el.rarity]}, 0.5) 0%, rgb(${rarities[el.rarity]}) 50%, rgba(${rarities[el.rarity]}, 0.5) 100%)`
+            const _name = createEl("div", {}, "name", [el.name])
+            const _id = createEl("div", {}, "id", [el.type])
+            const _creation = createEl("div", {}, "creation", [creationTime(el.creation_time)])
+            const _imgCont = createEl("div", {}, "imgCont", [_name, _img, _id, _creation, _line])
+            const _imgBlock = createEl("div", {}, "imgBlock", [_imgCont])
+
+            cont.appendChild(_imgBlock)
+        }
+    }
+
+    document.querySelector("#left").addEventListener("click", async () => {
+        if (currentPage > 0) {
+            currentPage--
+            await renderPage()
+        }
+    })
+
+    document.querySelector("#right").addEventListener("click", async () => {
+        if ((currentPage + 1) * itemsPerPage < inventoryData.data.length) {
+            currentPage++
+            await renderPage()
+        }
+    })
+
+    document.querySelector(".close").addEventListener("click", () => document.querySelector("#voxiomSkinRender").classList.toggle("open"))
 
     const observer = new MutationObserver(() => {
         const { pathname } = window.location
-        const isInventory = ["/loadouts", "/loadouts/inventory"].includes(pathname) && !document.querySelector(".dzKqCZ")
         const isMarket = pathname === "/loadouts/market" || (pathname === "/loadouts" && document.querySelector(".dzKqCZ"))
         const isSales = pathname === "/loadouts/sales"
-        if (!isInventory && !isMarket && !isSales) return
+        if (!isMarket && !isSales) return
 
         document.querySelectorAll(".kiKVOk").forEach((el, i) => {
             if (el.parentElement.parentElement.querySelector(".voxiomSkinName")) return
 
-            const isDefault = el.textContent === "Default"
-            if (skinSettings.defaults === "false" && isDefault) el.closest(".lcogQs").remove()
-
-            const skin = isInventory ? inventoryData.data[i / 2] : isMarket ? marketData.data.market_items[i / 2] : listedData.data.player_market_items[i / 2]
+            const skin = isMarket ? marketData.data.market_items[i / 2] : listedData.data.player_market_items[i / 2]
             const _image = isMarket || isSales ? createEl("img", { src: gemPath }, "gem") : ""
             const _name = createEl("div", {
-                textContent: isInventory && !isDefault ? `${skin.type} | ${creationTime(skin.creation_time)}` :
+                textContent:
                     isSales ? `${timeLeft(skin.listed_time + 1209600000)} | ${skin.price}` :
                         isMarket ? `${timeLeft(skin.listed_time + 1209600000)} | ${skin.price}` : ""
             }, "voxiomSkinName", [_image])
 
             el.parentElement.parentElement.appendChild(_name)
         })
-
-        if (document.querySelector(".iRauPR") &&
-            ["/loadouts", "/loadouts/inventory"].includes(window.location.pathname) &&
-            !document.querySelector("#voxiomInventory")) {
-
-            document.querySelector(".iRauPR").innerHTML = inventoryPage
-
-            document.querySelectorAll(".voxiomSelect").forEach(select => {
-                const menu = select.querySelector(".voxiomSelectMenu")
-                const selected = select.querySelector(".selected")
-                const options = select.querySelectorAll(".option")
-
-                selected?.addEventListener("click", () => menu.classList.toggle("active"))
-                options.forEach(option => {
-                    if (option.dataset.value === skinSettings[select.id]) selected.textContent = option.textContent
-                    option.addEventListener("click", () => {
-                        selected.textContent = option.textContent
-                        skinSettings[select.id] = option.dataset.value
-                        menu.classList.remove("active")
-                    })
-                })
-            })
-
-            document.addEventListener("click", e => document.querySelectorAll(".voxiomSelectMenu.active").forEach(menu => {
-                if (!menu.parentNode.contains(e.target)) menu.classList.remove("active")
-            }))
-
-            el("name").event("input", e => skinSettings.name = e.target.value)
-            el("id").event("input", e => skinSettings.id = e.target.value)
-            el("apply").event("click", () => {
-                sessionStorage.setItem("skinSettings", JSON.stringify(skinSettings))
-                window.location.reload()
-            })
-            el("clear").event("click", () => {
-                sessionStorage.removeItem("skinSettings")
-                window.location.reload()
-            })
-        }
     })
 
     observer.observe(document.querySelector("#app"), {
@@ -200,7 +303,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })
 
-    if (config.get("interface.inventorySorting")) advancedInventory()
+    if (inventorySorting) advancedInventory()
 })
 
 ipcRenderer.on("set-game-settings", (_, data) => localStorage.setItem("persist:root", JSON.parse(data)))
