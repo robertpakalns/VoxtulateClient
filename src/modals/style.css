@@ -8,12 +8,17 @@
     margin: 0;
     padding: 0;
     font-family: "Roboto-Mono", monospace;
+    color: white;
+    user-select: none;
+    -webkit-user-drag: none;
 }
 
-body {
-    background: black;
-    color: white;
-    font-size: 1rem;
+.modal {
+    height: 600px;
+    overflow-y: auto;
+    border-radius: 1rem;
+    background: linear-gradient(-30deg, rgba(0, 0, 10, 0.95) 0%, rgba(10, 0, 0, 0.95) 100%);
+    font-size: 0.8rem;
 }
 
 section {
@@ -26,7 +31,7 @@ main {
 }
 
 h1 {
-    font-size: 0.75rem;
+    font-size: 0.6rem;
     color: gray;
 }
 
@@ -38,7 +43,7 @@ h1 {
     margin: 5px 0;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .subText {
@@ -49,7 +54,6 @@ h1 {
 input[type="text"],
 input[type="url"] {
     background: transparent;
-    color: white;
     outline: none;
     border: none;
     border-bottom: 1px solid gray;
@@ -59,10 +63,10 @@ input[type="checkbox"] {
     cursor: pointer;
     outline: none;
     appearance: none;
-    width: 15px;
-    height: 15px;
+    width: 10px;
+    height: 10px;
     border: 2px solid #4CAF50;
-    border-radius: 3px;
+    border-radius: 2px;
 }
 
 input[type="checkbox"]:hover {
@@ -91,8 +95,12 @@ textarea {
     height: 175px;
     background: transparent;
     border: 2px solid gray;
+    border-radius: 5px;
     outline: none;
-    color: white;
+}
+
+textarea:hover {
+    filter: drop-shadow(0 0 2px #4CAF50);
 }
 
 .relaunch {
@@ -112,6 +120,11 @@ footer button {
 
 input[type="range"] {
     width: 70px;
+    height: 5px;
+}
+
+input[type="range"]:hover {
+    filter: drop-shadow(0 0 2px #4CAF50);
 }
 
 .disabled,
@@ -126,21 +139,12 @@ input:disabled:hover {
     box-shadow: none;
 }
 
-.info {
-    margin: 3px;
-    font-size: 0.5rem;
-    color: gray;
-    position: absolute;
-    top: 0;
-    right: 0;
-}
-
 ::-webkit-scrollbar {
     display: none;
 }
 
 header {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     text-align: center;
 }
 
@@ -170,7 +174,7 @@ a {
 }
 
 .page {
-    width: 800px;
+    width: 650px;
     text-align: left;
     margin: auto;
 }
@@ -228,7 +232,11 @@ thead {
 }
 
 .file-icon {
-    height: 15px;
+    height: 10px;
+}
+
+.file-icon:hover {
+    filter: drop-shadow(0 0 5px #4CAF50);
 }
 
 #crosshairURL {

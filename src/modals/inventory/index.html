@@ -1,95 +1,141 @@
-<div id="voxiomInventory">
-    <div id="model" class="voxiomSelect" style="width: 200px">
-        <div class="selected">All Items</div>
-        <div class="voxiomSelectMenu">
-            <div class="option" data-value="">All Items</div>
-            <div class="option" data-value="CAR">Combat Assault Rifle</div>
-            <div class="option" data-value="TAR">Tactical Assault Rifle</div>
-            <div class="option" data-value="SAR">Surge Assault Rifle</div>
-            <div class="option" data-value="EAR">Elite Assault Rifle</div>
-            <div class="option" data-value="BSG">Burst Shotgun</div>
-            <div class="option" data-value="LSMG">Light Submachine Gun</div>
-            <div class="option" data-value="CSMG">Compact Submachine Gun</div>
-            <div class="option" data-value="LSR">Light Sniper Rifle</div>
-            <div class="option" data-value="HSR">Heavy Sniper Rifle</div>
-            <div class="option" data-value="SP">Strike Pistol</div>
-            <div class="option" data-value="MP">Magnum Pistol</div>
-            <div class="option" data-value="S">Shovel</div>
-            <div class="option" data-value="SPRAY">Spray</div>
+<div class="modal" id="voxiomSkinRender">
+    <div class="count"></div>
+    <div class="close">×</div>
+    <div class="selectMenu">
+        <div id="left">◄</div>
+        <div id="voxiomInventory">
+            <div id="model" class="voxiomSelect" style="width: 150px">
+                <div class="selected">All Items</div>
+                <div class="voxiomSelectMenu">
+                    <div class="option" data-value="">All Items</div>
+                    <div class="option" data-value="CAR">Combat Assault Rifle</div>
+                    <div class="option" data-value="TAR">Tactical Assault Rifle</div>
+                    <div class="option" data-value="SAR">Surge Assault Rifle</div>
+                    <div class="option" data-value="EAR">Elite Assault Rifle</div>
+                    <div class="option" data-value="BSG">Burst Shotgun</div>
+                    <div class="option" data-value="LSMG">Light Submachine Gun</div>
+                    <div class="option" data-value="CSMG">Compact Submachine Gun</div>
+                    <div class="option" data-value="LSR">Light Sniper Rifle</div>
+                    <div class="option" data-value="HSR">Heavy Sniper Rifle</div>
+                    <div class="option" data-value="SP">Strike Pistol</div>
+                    <div class="option" data-value="MP">Magnum Pistol</div>
+                    <div class="option" data-value="S">Shovel</div>
+                    <div class="option" data-value="SPRAY">Spray</div>
+                </div>
+            </div>
+
+            <div id="rarity" class="voxiomSelect" style="width: 70px">
+                <div class="selected">All Rarities</div>
+                <div class="voxiomSelectMenu">
+                    <div class="option" data-value="">All Rarities</div>
+                    <div class="option" data-value="Common">Common</div>
+                    <div class="option" data-value="Noteworthy">Noteworthy</div>
+                    <div class="option" data-value="Precious">Precious</div>
+                    <div class="option" data-value="Magnificent">Magnificent</div>
+                    <div class="option" data-value="Extraordinary">Extraordinary</div>
+                    <div class="option" data-value="Covert">Covert</div>
+                    <div class="option" data-value="Artifact">Artifact</div>
+                </div>
+            </div>
+
+            <div id="name" class="voxiomSelect" style="width: 150px">
+                <input class="input" type="text" placeholder="Filter by name" />
+            </div>
+
+            <div id="id" class="voxiomSelect" style="width: 100px">
+                <input class="input" type="number" placeholder="Filter by ID" min="1" max="531" />
+            </div>
+
+            <div id="rotation" class="voxiomSelect" style="width: 80px">
+                <div class="selected">Rotation: all</div>
+                <div class="voxiomSelectMenu">
+                    <div class="option" data-value="">Rotation: all</div>
+                    <div class="option" data-value="true">Rotation: true</div>
+                    <div class="option" data-value="false">Rotation: false</div>
+                </div>
+            </div>
+
+            <div id="creation" class="voxiomSelect" style="width: 120px">
+                <div class="selected">Creation date: default</div>
+                <div class="voxiomSelectMenu">
+                    <div class="option" data-value="">Creation date: default</div>
+                    <div class="option" data-value="true">Creation date: newest</div>
+                    <div class="option" data-value="false">Creation date: oldest</div>
+                </div>
+            </div>
+
+            <div class="voxiomSelect" id="apply">Apply </div>
+
+            <div class="voxiomSelect" id="clear"> Clear </div>
         </div>
+        <div id="right">►</div>
     </div>
 
-    <div id="rarity" class="voxiomSelect" style="width: 110px">
-        <div class="selected">All Rarities</div>
-        <div class="voxiomSelectMenu">
-            <div class="option" data-value="">All Rarities</div>
-            <div class="option" data-value="Common">Common</div>
-            <div class="option" data-value="Noteworthy">Noteworthy</div>
-            <div class="option" data-value="Precious">Precious</div>
-            <div class="option" data-value="Magnificent">Magnificent</div>
-            <div class="option" data-value="Extraordinary">Extraordinary</div>
-            <div class="option" data-value="Covert">Covert</div>
-            <div class="option" data-value="Artifact">Artifact</div>
-        </div>
-    </div>
-
-    <div id="name" class="voxiomSelect" style="width: 150px">
-        <input class="input" type="text" placeholder="Filter by name" />
-    </div>
-
-    <div id="id" class="voxiomSelect" style="width: 100px">
-        <input class="input" type="number" placeholder="Filter by ID" />
-    </div>
-
-    <div id="rotation" class="voxiomSelect" style="width: 120px">
-        <div class="selected">Rotation: all</div>
-        <div class="voxiomSelectMenu">
-            <div class="option" data-value="">Rotation: all</div>
-            <div class="option" data-value="true">Rotation: true</div>
-            <div class="option" data-value="false">Rotation: false</div>
-        </div>
-    </div>
-
-    <div id="defaults" class="voxiomSelect" style="width: 120px">
-        <div class="selected">Defaults: true</div>
-        <div class="voxiomSelectMenu">
-            <div class="option" data-value="true">Defaults: true</div>
-            <div class="option" data-value="false">Defaults: false</div>
-        </div>
-    </div>
-
-    <div id="creation" class="voxiomSelect" style="width: 170px">
-        <div class="selected">Creation date: default</div>
-        <div class="voxiomSelectMenu">
-            <div class="option" data-value="">Creation date: default</div>
-            <div class="option" data-value="true">Creation date: newest</div>
-            <div class="option" data-value="false">Creation date: oldest</div>
-        </div>
-    </div>
-
-    <div class="voxiomSelect" id="apply">
-        <div class="selected">Apply</div>
-    </div>
-    <div class="voxiomSelect" id="clear">
-        <div class="selected">Clear</div>
-    </div>
+    <div class="cont"></div>
 </div>
 
 <style>
+    ::-webkit-scrollbar {
+        display: none;
+    }
+
+    .selectMenu {
+        margin: 10px auto;
+        display: flex;
+        align-items: center;
+    }
+
+    .modal {
+        display: none;
+        width: 800px;
+        height: 600px;
+        overflow-y: auto;
+        border-radius: 1rem;
+        background: linear-gradient(-30deg, rgba(0, 0, 10, 0.95) 0%, rgba(10, 0, 0, 0.95) 100%);
+        font-size: 0.8rem;
+        color: white;
+        user-select: none;
+        flex-direction: column;
+    }
+
+    #left,
+    #right {
+        background: #646464;
+        width: 30px;
+        height: 100%;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        cursor: pointer;
+    }
+
+    .cont {
+        margin: 10px;
+        flex: 1;
+        overflow-y: auto;
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+    }
+
     #voxiomInventory {
-        margin-bottom: 17px;
-        height: 80px;
+        width: 600px;
         display: flex;
         flex-wrap: wrap;
+        justify-content: center;
         gap: 10px;
     }
 
     .voxiomSelect {
-        height: 39px;
+        height: 30px;
         background: #646464;
         position: relative;
         cursor: pointer;
         padding: 0 10px;
+        border-radius: 10px;
+        line-height: 30px;
     }
 
     .voxiomSelectMenu {
@@ -111,13 +157,27 @@
     }
 
     .option {
-        padding: 10px;
-        border-top: 1px solid #646464;
+        padding: 0 10px;
+    }
+
+    .option:first-child {
+        border-radius: 10px 10px 0 0;
+    }
+
+    .option:last-child {
+        border-radius: 0 0 10px 10px;
+    }
+
+    .option:nth-child(even) {
+        background: #444444;
+    }
+
+    .option:nth-child(odd) {
         background: #323232;
     }
 
     .option:hover {
-        background: #646464;
+        background: #7c7c7c;
     }
 
     .input {
@@ -137,7 +197,88 @@
         background: #4CAF50;
     }
 
+    #apply:hover {
+        background: #59ce5d;
+    }
+
     #clear {
         background: #f44336;
+    }
+
+    #clear:hover {
+        background: #ff5d51;
+    }
+
+    .open {
+        display: flex;
+    }
+
+    .count,
+    .close {
+        position: absolute;
+        top: 0;
+        cursor: pointer;
+    }
+
+    .count {
+        left: 0;
+        font-size: 1rem;
+        margin: 10px;
+    }
+
+    .close {
+        right: 0;
+        font-size: 1.4rem;
+        margin: 5px 10px;
+    }
+
+    .imgBlock {
+        position: relative;
+    }
+
+    .imgCont {
+        width: 70%;
+        height: 70%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain
+    }
+
+    .name {
+        margin-top: 5px;
+        font-size: 8px;
+        text-align: center;
+    }
+
+    .id {
+        position: absolute;
+        bottom: -20px;
+        left: 0;
+        font-size: 8px
+    }
+
+    .creation {
+        position: absolute;
+        bottom: -20px;
+        right: 0;
+        font-size: 8px
+    }
+
+    .line {
+        border: none;
+        height: 3px;
+        border-radius: 3px;
+    }
+
+    .disabled {
+        opacity: 50%;
+        cursor: not-allowed !important;
     }
 </style>
