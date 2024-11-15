@@ -36,7 +36,7 @@ const enableStyles = () => {
     .voxiomBlocks { margin: auto; width: 100%; position: absolute; bottom: 35%; text-align: center; font-size: 10px }
     .voxiomCrosshair { top: 50vh; left: 50vw; position: fixed; transform: translate(-50%, -50%) }
     .voxiomSkinName { width: 100%; position: absolute; bottom: 0; left: 0; text-align: center; font-size: 0.8rem; color: gray }
-    .voxiomSkinsButton { width: 130px; height: 38.5px; background: #646464; display: flex; align-items: center; padding-left: 10px; cursor: pointer }
+    .voxiomSkinsButton { width: 130px; background: #646464; display: flex; align-items: center; padding-left: 10px; cursor: pointer }
     .gem { margin-left: 3px; height: 9px }
     .skinModal { z-index: 9999; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) }
     ${inventorySorting ? ".hYnMmT { display: none }" : ""}`
@@ -145,30 +145,6 @@ const advancedInventory = () => {
         window.location.reload()
     })
 
-    const renderURL = async (type, seed) => {
-        const key = `${type}_${seed}`
-
-        const cachedData = localStorage.getItem("skinCache")
-        const imageStore = cachedData ? JSON.parse(cachedData) : {}
-
-        if (imageStore[key]) return imageStore[key]
-
-        const skin = market.data.find(el => el.id === type)
-        if (skin.type === "SPRAY") {
-            imageStore[key] = `https://tricko.pro/assets/voxiom/preview/${type}.webp`
-            localStorage.setItem("skinCache", JSON.stringify(imageStore))
-            return imageStore[key]
-        }
-
-        const generator = window.renderSkin([{ type, seed }], {})
-        const img = await generator.next(await generator.next().value).value
-        const imageURL = Object.values(img)[0]
-
-        imageStore[key] = imageURL
-        localStorage.setItem("skinCache", JSON.stringify(imageStore))
-        return imageURL
-    }
-
     const rarities = {
         Common: "255, 255, 255",
         Noteworthy: "128, 156, 255",
@@ -178,6 +154,65 @@ const advancedInventory = () => {
         Covert: "255, 66, 101",
         Artifact: "255, 224, 99"
     }
+
+    const renderURL = async limitedData => {
+        const store = "skins"
+
+        const openDB = () => new Promise(res => {
+            const request = indexedDB.open("SkinCacheDB", 1)
+            request.onupgradeneeded = event => {
+                const db = event.target.result
+                if (!db.objectStoreNames.contains(store)) db.createObjectStore(store, { keyPath: "key" }).createIndex("by_type", "type")
+            }
+            request.onsuccess = e => res(e.target.result)
+        })
+
+        const getFromDB = (db, key) => new Promise(res => {
+            const request = db.transaction(store, "readonly").objectStore(store).get(key)
+            request.onsuccess = () => res(request.result ? request.result.value : null)
+        })
+
+        const setToDB = (db, key, value) => new Promise(res => {
+            const transaction = db.transaction(store, "readwrite")
+            transaction.objectStore(store).put({ key, value })
+            transaction.oncomplete = () => res()
+        })
+
+        const setImage = (el, src) => {
+            const r = rarities[el.rarity]
+            const _img = createEl("img", { src }, "img")
+            const _line = createEl("hr", {}, "line")
+            _line.style.background = `linear-gradient(90deg, rgba(${r}, 0.5) 0%, rgb(${r}) 50%, rgba(${r}, 0.5) 100%)`
+            const _name = createEl("div", {}, "name", [el.name])
+            const _id = createEl("div", {}, "id", [el.type])
+            const _creation = createEl("div", {}, "creation", [creationTime(el.creation_time)])
+            const _imgCont = createEl("div", {}, "imgCont", [_name, _img, _id, _creation, _line])
+            const _imgBlock = createEl("div", {}, "imgBlock", [_imgCont])
+
+            cont.appendChild(_imgBlock)
+        }
+
+        const db = await openDB()
+
+        for (const el of limitedData) {
+            const key = `${el.type}_${el.seed}`
+            const cached = await getFromDB(db, key)
+
+            if (cached) setImage(el, cached)
+            else {
+                let url
+                if (market.data.find(item => item.id === el.type).type === "SPRAY") url = `https://tricko.pro/assets/voxiom/preview/${el.type}.webp`
+                else {
+                    const generator = window.renderSkin([{ type: el.type, seed: el.seed }], {})
+                    const img = await generator.next(await generator.next().value).value
+                    url = Object.values(img)[0]
+                }
+                await setToDB(db, key, url)
+                setImage(el, url)
+            }
+        }
+    }
+
 
     let currentPage = 0
     const itemsPerPage = 18
@@ -211,26 +246,16 @@ const advancedInventory = () => {
                 (skinSettings.model === "" || el.model === skinSettings.model) &&
                 (skinSettings.rarity === "" || el.rarity === skinSettings.rarity)
             ).sort((a, b) => !skinSettings.creation ? 0 : skinSettings.creation === "true" ? b.creation_time - a.creation_time : a.creation_time - b.creation_time)
-            .slice(start, end)
-        const totalPages = Math.ceil(inventoryData.data.length / itemsPerPage)
+        const slicedData = [...limitedData].slice(start, end)
 
-        document.querySelector(".count").innerText = `${currentPage + 1}/${totalPages}`
+        const totalPages = Math.ceil(limitedData.length / itemsPerPage)
+        console.log({ data: limitedData.length, items: itemsPerPage, math: limitedData.length / itemsPerPage, totalPages })
+        document.querySelector(".count").innerText = `Page: ${currentPage + 1}/${totalPages}\n Filtered: ${limitedData.length}\nTotal: ${inventoryData.data.length}`
 
         el("left").class("disabled", currentPage === 0)
         el("right").class("disabled", end >= inventoryData.data.length)
 
-        for (const el of limitedData) {
-            const _img = createEl("img", { src: await renderURL(el.type, el.seed) }, "img")
-            const _line = createEl("hr", {}, "line")
-            _line.style.background = `linear-gradient(90deg, rgba(${rarities[el.rarity]}, 0.5) 0%, rgb(${rarities[el.rarity]}) 50%, rgba(${rarities[el.rarity]}, 0.5) 100%)`
-            const _name = createEl("div", {}, "name", [el.name])
-            const _id = createEl("div", {}, "id", [el.type])
-            const _creation = createEl("div", {}, "creation", [creationTime(el.creation_time)])
-            const _imgCont = createEl("div", {}, "imgCont", [_name, _img, _id, _creation, _line])
-            const _imgBlock = createEl("div", {}, "imgBlock", [_imgCont])
-
-            cont.appendChild(_imgBlock)
-        }
+        await renderURL(slicedData)
     }
 
     document.querySelector("#left").addEventListener("click", async () => {
@@ -274,6 +299,79 @@ const advancedInventory = () => {
         childList: true,
         subtree: true
     })
+
+    const renderFilteredSkins = async skinSettings => {
+        const store = "skins"
+
+        const openDB = () => new Promise(res => {
+            const request = indexedDB.open("SkinCacheDB", 1)
+            request.onupgradeneeded = e => {
+                const db = e.target.result
+                if (!db.objectStoreNames.contains(store))
+                    db.createObjectStore(store, { keyPath: "key" }).createIndex("by_type", "type")
+            }
+            request.onsuccess = e => res(e.target.result)
+        })
+
+        const getFromDB = (db, key) => new Promise(res => {
+            const request = db.transaction(store, "readonly").objectStore(store).get(key)
+            request.onsuccess = () => res(request.result ? request.result.value : null)
+        })
+
+        const db = await openDB()
+
+        const exportedData = [...inventoryData.data]
+            .filter(el =>
+                (!skinSettings.name || el.name.toLowerCase().includes(skinSettings.name.toLowerCase())) &&
+                (!skinSettings.id || el.type.toString().includes(skinSettings.id)) &&
+                (skinSettings.rotation === "" || el.rotation === (skinSettings.rotation === "true")) &&
+                (skinSettings.model === "" || el.model === skinSettings.model) &&
+                (skinSettings.rarity === "" || el.rarity === skinSettings.rarity)
+            )
+            .sort((a, b) => !skinSettings.creation ? 0 : skinSettings.creation === "true" ? b.creation_time - a.creation_time : a.creation_time - b.creation_time)
+
+        const size = 256
+        const columns = Math.ceil(Math.sqrt(exportedData.length))
+        const rows = Math.ceil(exportedData.length / columns)
+
+        const canvas = document.createElement("canvas")
+        const ctx = canvas.getContext("2d")
+        canvas.width = size * columns
+        canvas.height = size * rows
+
+        await Promise.all(exportedData.map(async (el, i) => {
+            const url = await getFromDB(db, `${el.type}_${el.seed}`)
+
+            if (url) {
+                const img = new Image()
+                img.src = url
+                await new Promise(res => {
+                    img.onload = () => {
+                        const scale = Math.min(size / img.width, size / img.height)
+                        ctx.drawImage(img,
+                            (i % columns) * size + (size - img.width * scale) / 2,
+                            Math.floor(i / columns) * size + (size - img.height * scale) / 2,
+                            img.width * scale, img.height * scale)
+                        res()
+                    }
+                })
+            }
+        }))
+
+        return new Promise(res => canvas.toBlob(blob => res(blob), "image/png"))
+    }
+
+    const saveImageLocally = async skinSettings => {
+        const blob = await renderFilteredSkins(skinSettings)
+        const link = document.createElement("a")
+        const url = URL.createObjectURL(blob)
+        link.href = url
+        link.download = `voxtulate_render_${new Date().toISOString().replace(/[:.-]/g, "_")}.png`
+        link.click()
+        URL.revokeObjectURL(url)
+    }
+
+    el("export").event("click", () => saveImageLocally(skinSettings))
 }
 
 document.addEventListener("DOMContentLoaded", () => {
