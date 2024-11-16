@@ -101,4 +101,21 @@ const popup = (color, text) => {
     document.body.appendChild(_popup)
 }
 
-module.exports = { el, createEl, creationTime, Voxiom, timeLeft, output, popup }
+const openDB = store => new Promise(res => {
+    const req = indexedDB.open("SkinCacheDB", 1)
+    req.onupgradeneeded = e => {
+        const db = e.target.result
+        if (!db.objectStoreNames.contains(store)) db.createObjectStore(store, { keyPath: "key" }).createIndex("by_type", "type")
+    }
+    req.onsuccess = e => res(e.target.result)
+})
+
+const getData = (db, store) => new Promise(res => db.transaction(store, "readonly").objectStore(store).getAll().onsuccess = e => res(e.target.result))
+
+const setData = (db, array, store) => new Promise(res => {
+    const tx = db.transaction(store, "readwrite")
+    for (const el of array) tx.objectStore(store).put(el)
+    tx.oncomplete = res
+})
+
+module.exports = { el, createEl, creationTime, Voxiom, timeLeft, output, popup, openDB, getData, setData }
