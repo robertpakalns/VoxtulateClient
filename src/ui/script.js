@@ -144,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const [_, x, y, z] = c.match(/Player Block Position:<br>\s*x: ([^<]+) y: ([^<]+) z: ([^<]+)/)
                 e.text(`${parseInt(c.match(/FPS: ([\d]+)/)[1])} FPS<br>${x} ${y} ${z}<br>${(c.match(/Latency: ([\d]+ms)/)[1])}`)
             }
-            else e.text("")
+            else e.text("") 
         }, 50)
 
     new Voxiom("div", "voxiomBlocks voxiomCreate", document.body)
