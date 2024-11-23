@@ -1,36 +1,48 @@
-@font-face {
+/* @font-face {
     font-family: "Roboto-Mono";
     src: url("../../assets/fonts/RobotoMono.ttf") format("truetype");
     font-display: swap;
-}
+} */
 
-* {
-    margin: 0;
-    padding: 0;
-    font-family: "Roboto-Mono", monospace;
-    color: white;
-    user-select: none;
+.modal * {
     -webkit-user-drag: none;
+    user-select: none;
+    font-family: "Roboto-Mono", monospace;
 }
 
 .modal {
+    width: 800px;
     height: 600px;
     overflow-y: auto;
     border-radius: 1rem;
-    background: linear-gradient(-30deg, rgba(0, 0, 10, 0.95) 0%, rgba(10, 0, 0, 0.95) 100%);
+    background: linear-gradient(-30deg, rgba(0, 0, 20, 0.7) 0%, rgba(20, 0, 0, 0.7) 100%);
     font-size: 0.8rem;
+    color: white;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: hop ease 0.3s;
 }
 
-section {
+.modal input,
+.modal textarea {
+    color: white;
+}
+
+.modal section {
     display: grid;
     grid-template-columns: repeat(2, 400px);
 }
 
-main {
+.modal main {
     margin: 10px;
 }
 
-h1 {
+.modal h1 {
     font-size: 0.6rem;
     color: gray;
 }
@@ -51,15 +63,15 @@ h1 {
     color: gray;
 }
 
-input[type="text"],
-input[type="url"] {
+.modal input[type="text"],
+.modal input[type="url"] {
     background: transparent;
     outline: none;
     border: none;
     border-bottom: 1px solid gray;
 }
 
-input[type="checkbox"] {
+.modal input[type="checkbox"] {
     cursor: pointer;
     outline: none;
     appearance: none;
@@ -69,15 +81,15 @@ input[type="checkbox"] {
     border-radius: 2px;
 }
 
-input[type="checkbox"]:hover {
+.modal input[type="checkbox"]:hover {
     box-shadow: 0 0 5px #4CAF50;
 }
 
-input[type="checkbox"]:checked {
+.modal input[type="checkbox"]:checked {
     background-color: #4CAF50;
 }
 
-button {
+.modal button {
     background: transparent;
     color: rgb(252, 222, 55);
     outline: none;
@@ -85,11 +97,11 @@ button {
     cursor: pointer;
 }
 
-button:hover {
+.modal button:hover {
     text-shadow: 0 0 10px #4CAF50;
 }
 
-textarea {
+.modal textarea {
     resize: none;
     width: 100%;
     height: 175px;
@@ -99,31 +111,31 @@ textarea {
     outline: none;
 }
 
-textarea:hover {
+.modal textarea:hover {
     filter: drop-shadow(0 0 2px #4CAF50);
 }
 
 .relaunch {
-    color: #f44336;
+    color: #f44336 !important;
 }
 
-footer {
+.modal footer {
     display: flex;
     justify-content: center;
     margin-bottom: 10px;
     gap: 20px;
 }
 
-footer button {
+.modal footer button {
     font-size: 1rem;
 }
 
-input[type="range"] {
+.modal input[type="range"] {
     width: 70px;
     height: 5px;
 }
 
-input[type="range"]:hover {
+.modal input[type="range"]:hover {
     filter: drop-shadow(0 0 2px #4CAF50);
 }
 
@@ -135,7 +147,7 @@ input:disabled {
     cursor: not-allowed;
 }
 
-input:disabled:hover {
+.modal input:disabled:hover {
     box-shadow: none;
 }
 
@@ -143,32 +155,32 @@ input:disabled:hover {
     display: none;
 }
 
-header {
+.modal header {
     font-size: 1.2rem;
     text-align: center;
 }
 
-table {
+.modal table {
     border-collapse: collapse;
 }
 
-tbody tr:nth-child(odd) {
+.modal tbody tr:nth-child(odd) {
     background-color: #1a1a1a;
 }
 
-td {
+.modal td {
     padding: 5px 20px;
 }
 
-td:first-child {
+.modal td:first-child {
     border-radius: 15px 0 0 15px;
 }
 
-td:last-child {
+.modal td:last-child {
     border-radius: 0 15px 15px 0;
 }
 
-a {
+.modal a {
     text-decoration: none;
     color: #00A1E4;
 }
@@ -185,11 +197,11 @@ a {
     margin: auto;
 }
 
-p {
+.modal p {
     margin: 0 20px;
 }
 
-input[type="file"] {
+.modal input[type="file"] {
     display: none;
 }
 
@@ -202,11 +214,11 @@ input[type="file"] {
     text-shadow: 0 0 10px #4CAF50;
 }
 
-table {
+.modal table {
     font-size: 0.75rem;
 }
 
-thead {
+.modal thead {
     font-weight: 900;
 }
 
@@ -241,4 +253,216 @@ thead {
 
 #crosshairURL {
     width: 160px;
+}
+
+/* Modals */
+.close {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 1.4rem;
+    margin: 5px 10px;
+}
+
+.overlay {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+}
+
+/* Inventory */
+.selectMenu {
+    margin: 10px auto;
+    display: flex;
+    align-items: center;
+}
+
+#left,
+#right {
+    background: #646464;
+    width: 30px;
+    height: 100%;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    cursor: pointer;
+}
+
+.cont {
+    margin: 10px;
+    flex: 1;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+
+#voxiomInventory {
+    width: 600px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.voxiomSelect {
+    height: 30px;
+    background: #646464;
+    position: relative;
+    cursor: pointer;
+    padding: 0 10px;
+    border-radius: 10px;
+    line-height: 30px;
+}
+
+.voxiomSelectMenu {
+    display: none;
+    margin-left: -10px;
+    width: 100%;
+    position: absolute;
+    z-index: 1000;
+}
+
+.voxiomSelectMenu.active {
+    display: block;
+}
+
+.selected {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.option {
+    padding: 0 10px;
+}
+
+.option:first-child {
+    border-radius: 10px 10px 0 0;
+}
+
+.option:last-child {
+    border-radius: 0 0 10px 10px;
+}
+
+.option:nth-child(even) {
+    background: #444444;
+}
+
+.option:nth-child(odd) {
+    background: #323232;
+}
+
+.option:hover {
+    background: #7c7c7c;
+}
+
+#inventoryModal .input {
+    width: 100%;
+    height: 100%;
+    background: #646464;
+    outline: none;
+    border: none;
+    color: white;
+}
+
+#inventoryModal .input::placeholder {
+    color: lightgray;
+}
+
+#apply {
+    background: #4CAF50;
+}
+
+#apply:hover {
+    background: #59ce5d;
+}
+
+#clear {
+    background: #f44336;
+}
+
+#clear:hover {
+    background: #ff5d51;
+}
+
+.count,
+.close {
+    position: absolute;
+    top: 0;
+    cursor: pointer;
+}
+
+.count {
+    left: 0;
+    font-size: 0.6rem;
+    color: gray;
+    margin: 10px;
+}
+
+.imgBlock {
+    position: relative;
+}
+
+.imgCont {
+    width: 70%;
+    height: 70%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain
+}
+
+.name {
+    margin-top: 5px;
+    font-size: 8px;
+    text-align: center;
+}
+
+.id {
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    font-size: 8px
+}
+
+.creation {
+    position: absolute;
+    bottom: -20px;
+    right: 0;
+    font-size: 8px
+}
+
+.line {
+    border: none;
+    height: 3px;
+    border-radius: 3px;
+}
+
+.disabled {
+    opacity: 50%;
+    cursor: not-allowed !important;
+}
+
+@keyframes hop {
+    0% {
+        transform: translate(-50%, calc(-50% + 30px));
+    }
+
+    100% {
+        transform: translate(-50%, -50%);
+    }
 }

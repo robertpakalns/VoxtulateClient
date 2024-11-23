@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="../style.css">
 <div class="modal">
     <section>
         <main>
@@ -36,7 +35,7 @@
                     <input type="url" id="crosshairURL">
                     <input type="file" id="crosshairFile">
                     <label for="crosshairFile" class="file-upload-label">
-                        <img src="../../../assets/icons/file.svg" class="file-icon">
+                        <img class="file-icon">
                     </label>
                 </div>
                 <div class="content">
@@ -122,9 +121,7 @@
                         <td>Key</td>
                     </tr>
                 </thead>
-                <tbody id="keybindingBody">
-                    <!-- script.js is responsible for creating the keybindingBody content -->
-                </tbody>
+                <tbody id="keybindingBody"></tbody>
             </table>
             <div class="subText">Setting multiple options to the same hotkey can lead to unpredictable client behavior
             </div>
@@ -138,6 +135,4 @@
         <button id="openConfigs">Open Configs</button>
         <button id="restart" class="relaunch">Restart Client</button>
     </footer>
-
-    <script src="script.js"></script>
 </div>

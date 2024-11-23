@@ -1,20 +1,18 @@
 const { app, BrowserWindow, ipcMain, dialog, protocol, session } = require("electron")
-const { autoUpdater } = require("electron-updater")
-const fs = require("fs")
-const path = require("path")
 const { Config, configPath, defaultConfig } = require("./src/config.js")
-const config = new Config
+const { autoUpdater } = require("electron-updater")
 const DiscordRPC = require("./src/discord.js")
+const path = require("path")
 const rpc = new DiscordRPC
+const config = new Config
+const fs = require("fs")
+require("v8-compile-cache")
 
-let mainWindow, settingsWindow, infoWindow
+let mainWindow
 const keybinding = config.get("keybinding.enable") ? config.get("keybinding.content") : defaultConfig.keybinding.content
 
 const createMain = async () => {
     mainWindow = new BrowserWindow({
-        height: 700,
-        width: 900,
-        fullscreen: config.get("client.fullscreen"),
         title: "Voxtulate Client",
         icon: path.join(__dirname, "assets/icon.ico"),
         webPreferences: {
@@ -23,18 +21,20 @@ const createMain = async () => {
         }
     })
 
+    mainWindow.maximize()
     mainWindow.setMenu(null)
     mainWindow.loadURL("https://voxiom.io")
+    mainWindow.setFullScreen(config.get("client.fullscreen"))
     mainWindow.on("page-title-updated", e => e.preventDefault())
 
     const { webContents } = mainWindow
 
     webContents.on("will-prevent-unload", e => e.preventDefault())
     webContents.on("before-input-event", (e, { code, type }) => {
-        if ([keybinding.Settings, keybinding.Reload, keybinding.Fullscreen, keybinding.DevTools].includes(code)) e.preventDefault()
+        if ([keybinding.Settings, keybinding.Info, keybinding.Reload, keybinding.Fullscreen, keybinding.DevTools].includes(code)) e.preventDefault()
 
-        if (code === keybinding.Settings) settingsModal()
-        if (code === keybinding.Info) infoModal()
+        if (code === keybinding.Settings) webContents.executeJavaScript(`document.querySelector("#settingsModal").classList.toggle("open")`)
+        if (code === keybinding.Info) webContents.executeJavaScript(`document.querySelector("#infoModal").classList.toggle("open")`)
         if (code === keybinding.Reload) webContents.reload()
         if (code === keybinding.Fullscreen) mainWindow.setFullScreen(!mainWindow.isFullScreen())
         if (code === keybinding.DevTools) webContents.toggleDevTools()
@@ -45,7 +45,7 @@ const createMain = async () => {
     ipcMain.on("update-url", e => e.reply("update-url", webContents.getURL()))
     webContents.on("did-navigate-in-page", () => {
         const url = webContents.getURL()
-        settingsWindow?.webContents.send("update-url", url)
+        webContents.send("update-url", url)
         rpc.setJoinURL(url.replace("https://voxiom.io/", "voxtulate://"))
     })
 
@@ -82,60 +82,6 @@ const createMain = async () => {
     })
 }
 
-const settingsModal = () => {
-    if (settingsWindow) return settingsWindow.show()
-
-    settingsWindow = new BrowserWindow({
-        height: 600,
-        width: 800,
-        resizable: false,
-        frame: false,
-        transparent: true,
-        title: "Voxtulate Client | Settings",
-        icon: path.join(__dirname, "assets/icon.ico"),
-        parent: mainWindow,
-        webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false
-        }
-    })
-
-    settingsWindow.loadFile(path.join(__dirname, "src/modals/settings/index.html"))
-
-    settingsWindow.webContents.on("did-finish-load", () => settingsWindow.show())
-    settingsWindow.webContents.on("before-input-event", (_, { code }) => code === keybinding.Close_Modal && settingsWindow.hide())
-    settingsWindow.on("blur", () => settingsWindow.hide())
-    settingsWindow.on("close", () => settingsWindow = null)
-
-    ipcMain.on("reload", () => settingsWindow.webContents.reload())
-}
-
-const infoModal = () => {
-    if (infoWindow) return infoWindow.show()
-
-    infoWindow = new BrowserWindow({
-        height: 600,
-        width: 650,
-        resizable: false,
-        frame: false,
-        transparent: true,
-        title: "Voxtulate Client | Info",
-        icon: path.join(__dirname, "assets/icon.ico"),
-        parent: mainWindow,
-        webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false
-        }
-    })
-
-    infoWindow.loadFile(path.join(__dirname, "src/modals/info/index.html"))
-
-    infoWindow.webContents.on("did-finish-load", () => infoWindow.show())
-    infoWindow.webContents.on("before-input-event", (_, { code }) => code === keybinding.Close_Modal && infoWindow.hide())
-    infoWindow.on("blur", () => infoWindow.hide())
-    infoWindow.on("close", () => infoWindow = null)
-}
-
 if (config.get("client.fpsUncap")) app.commandLine.appendSwitch("disable-frame-rate-limit")
 for (const el of ["disable-gpu-vsync", "in-process-gpu", "enable-quic", "enable-gpu-rasterization", "enable-pointer-lock-options"]) app.commandLine.appendSwitch(el)
 
@@ -156,10 +102,7 @@ app.on("ready", () => {
 
     autoUpdater.checkForUpdates()
 
-    ipcMain.on("join-game", (_, url) => setTimeout(() => {
-        mainWindow.loadURL(url)
-        settingsWindow?.close()
-    }, 100))
+    ipcMain.on("join-game", (_, url) => setTimeout(() => mainWindow.loadURL(url), 100))
 
     const filters = { filters: [{ name: "JSON Files", extensions: ["json"] }] }
     const { webContents } = mainWindow

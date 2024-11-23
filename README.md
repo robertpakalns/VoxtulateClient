@@ -36,12 +36,9 @@ Voxtulate Client data (e.g., user data, tokens, cache, etc.) is stored in `%appd
 - Settings window (`F1`)
 - Advanced Inventory Sorting
   * Filter by type, rarity, name, ID, rotation
-  * Remove Defaults
   * Sort by creation date
-  * Apply and Clear buttons
-  * Skin ID and creation date for each item in `/loadouts/inventory` 
-  * Skin listing time left and price for each item in `/loadouts/market` 
-  * Skin listing time left and price for each item in `/loadouts/sales` 
+  * Apply, Clear and Export buttons
+  * Skin listing time left and price for each item in `/loadouts/market` and `/loadouts/sales`
 - Chromium Developer Tools (`F12`)
 - Client-Side CSS/JS Customization
 - Keybinding Option For Client Features
@@ -51,17 +48,12 @@ Voxtulate Client data (e.g., user data, tokens, cache, etc.) is stored in `%appd
   * Latency
 - Discord Rich Presence
 
-### Development Questions
-- `disabling mouse acceleration is not supported` message from `https://voxiom.io/package/c88d6619469a22a797eb.js` script while clicking on in-game canvas.
-- I would like to rewrite the whole client using Tauri. The only problem I get there is FPS uncap. If I resolve this issue, I will definitely move on Tauri.
-
-### Used Technologies
-- Electron
-  * `electron@10.4.7`
-  * `electron-updater@6.3.4`
-  * `electron-builder@25.0.5`
-- Discord
-  * `discord-rpc@4.0.1`
+### Dependencies
+- `electron@10.4.7`
+- `electron-updater@6.3.4`
+- `electron-builder@25.1.8`
+- `discord-rpc@4.0.1`
+- `v8-compile-cache@2.4.0`
 
 ### Credits
 - Vanced Voxiom Client (NamekujiLSDs)
@@ -70,6 +62,9 @@ Voxtulate Client data (e.g., user data, tokens, cache, etc.) is stored in `%appd
 - Voxiom.io (ThriveR)
   * [Website](https://voxiom.io)
   * [Discord](https://discord.com/invite/GBFtRcY)
+- Juice Client (irrvlo)
+  * [Website](https://juice.irrvlo.xyz)
+  * [Discord](https://discord.gg/FjzAAdSjng)
 
 by robertpakalns  
 [Community Server](https://discord.gg/yPjrUrvSzv)  

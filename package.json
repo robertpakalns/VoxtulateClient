@@ -1,6 +1,6 @@
 {
   "name": "voxtulate-client",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "Voxtulate Client",
   "author": "robertpakalns",
   "main": "index.js",
@@ -15,7 +15,8 @@
   "license": "ISC",
   "dependencies": {
     "discord-rpc": "^4.0.1",
-    "electron-updater": "^6.3.4"
+    "electron-updater": "^6.3.4",
+    "v8-compile-cache": "^2.4.0"
   },
   "devDependencies": {
     "electron": "^10.4.7",
