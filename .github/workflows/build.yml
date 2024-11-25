@@ -10,8 +10,7 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-
-      - run: npm install
+      - run: npm install electron@10.4.7 electron-builder --save-dev
 
       - id: name
         run: echo "::set-output name=v::$(node -p "require('./package.json').version")"
