@@ -6,8 +6,8 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-12]
 
-    # permissions:
-    #   contents: write
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
