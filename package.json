@@ -1,6 +1,6 @@
 {
   "name": "voxtulate-client",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "description": "Voxtulate Client",
   "author": "robertpakalns",
   "main": "index.js",

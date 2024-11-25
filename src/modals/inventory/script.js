@@ -4,6 +4,8 @@ const { el, createEl } = require("../../functions.js")
 const Modal = require("../modal.js")
 const { openDB, getData, setData, creationTime } = require("../../functions.js")
 
+const market = JSON.parse(fs.readFileSync(path.join(__dirname, "../../market.json"), "utf8"))
+
 class InventoryModal extends Modal {
     constructor() {
         super()
@@ -121,6 +123,7 @@ class InventoryModal extends Modal {
             options.forEach(option => {
                 if (option.dataset.value === this.settings[select.id]) selected.textContent = option.textContent
                 option.addEventListener("click", async () => {
+                    this.currentPage = 0
                     selected.textContent = option.textContent
                     this.settings[select.id] = option.dataset.value
                     menu.classList.remove("active")
@@ -134,10 +137,12 @@ class InventoryModal extends Modal {
         }))
 
         el("name").event("input", async e => {
+            this.currentPage = 0
             this.settings.name = e.target.value
             this.renderPage()
         })
         el("id").event("input", async e => {
+            this.currentPage = 0
             this.settings.id = e.target.value
             this.renderPage()
         })
