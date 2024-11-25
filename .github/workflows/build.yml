@@ -6,20 +6,15 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-12]
 
-    permissions:
-      contents: write
+    # permissions:
+    #   contents: write
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/cache@v4
+      - uses: actions/setup-node@v4
         with:
-          path: node_modules, ~/.npm
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+          node-version: '18.x'
 
-      - run: |
-          if [ ! -d "node_modules" ]; then
-            npm install electron@10.4.7 electron-builder --save-dev
-          fi
+      - run: npm install
 
       - id: name
         run: echo "::set-output name=v::$(node -p "require('./package.json').version")"
