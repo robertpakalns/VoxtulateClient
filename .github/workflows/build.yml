@@ -4,13 +4,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-12]
+        os: [windows-latest, ubuntu-latest, macos-13]
 
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - run: npm install electron@10.4.7 electron-builder --save-dev
+      - run: npm install
 
       - id: name
         run: echo "::set-output name=v::$(node -p "require('./package.json').version")"
