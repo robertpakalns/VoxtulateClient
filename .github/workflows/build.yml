@@ -10,7 +10,16 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - run: npm install electron@10.4.7 electron-builder --save-dev
+
+      - uses: actions/cache@v4
+        with:
+          path: node_modules, ~/.npm
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+
+      - run: |
+          if [ ! -d "node_modules" ]; then
+            npm install electron@10.4.7 electron-builder --save-dev
+          fi
 
       - id: name
         run: echo "::set-output name=v::$(node -p "require('./package.json').version")"
