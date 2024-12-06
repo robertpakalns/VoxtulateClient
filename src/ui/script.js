@@ -8,7 +8,7 @@ const SettingsModal = require("../modals/settings/script.js")
 const InfoModal = require("../modals/info/script.js")
 const InventoryModal = require("../modals/inventory/script.js")
 
-let skinSettings, marketData, listedData
+let marketData, listedData
 const { console: enableConsole, chatOpacity, inventorySorting } = config.get("interface")
 
 const enableStyles = () => {
@@ -76,7 +76,7 @@ const advancedInventory = () => {
     window.fetch = (...args) => _fetch(...args).then(r => r.clone().text().then(data => {
         const [url] = args
         if (url === "/profile/myinv") {
-            const { name, id, rotation = "", creation = "", model = "", rarity = "" } = inmenu.settings
+            const { name = "", id = "", rotation = "", creation = "", model = "", rarity = "", equipped = "" } = inmenu.settings
             const parsedData = JSON.parse(data)
             const newData = {
                 ...parsedData,
@@ -88,7 +88,8 @@ const advancedInventory = () => {
                     (!id || el.type.toString().includes(id)) &&
                     (rotation === "" || el.rotation === (rotation === "true")) &&
                     (model === "" || el.model === model) &&
-                    (rarity === "" || el.rarity === rarity)
+                    (rarity === "" || el.rarity === rarity) &&
+                    (equipped === "" || el.slot !== null === (equipped === "true"))
                 ).sort((a, b) => !creation ? 0 : creation === "true" ? b.creation_time - a.creation_time : a.creation_time - b.creation_time)
             }
             inmenu.setData(newData)
@@ -144,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const [_, x, y, z] = c.match(/Player Block Position:<br>\s*x: ([^<]+) y: ([^<]+) z: ([^<]+)/)
                 e.text(`${parseInt(c.match(/FPS: ([\d]+)/)[1])} FPS<br>${x} ${y} ${z}<br>${(c.match(/Latency: ([\d]+ms)/)[1])}`)
             }
-            else e.text("") 
+            else e.text("")
         }, 50)
 
     new Voxiom("div", "voxiomBlocks voxiomCreate", document.body)

@@ -56,8 +56,9 @@ class InventoryModal extends Modal {
                 const _line = createEl("hr", { style: `background: linear-gradient(90deg, rgba(${r}, 0.5) 0%, rgb(${r}) 50%, rgba(${r}, 0.5) 100%)` }, "line")
                 const _name = createEl("div", {}, "name", [el.name])
                 const _id = createEl("div", {}, "id", [el.type])
+                const _equipped = createEl("div", { style: `background: ${el.slot !== null ? "yellow" : "transparent"}` }, "equipped")
                 const _creation = createEl("div", {}, "creation", [creationTime(el.creation_time)])
-                const _imgCont = createEl("div", {}, "imgCont", [_name, _img, _id, _creation, _line])
+                const _imgCont = createEl("div", {}, "imgCont", [_name, _img, _id, _equipped, _creation, _line])
                 const _imgBlock = createEl("div", {}, "imgBlock", [_imgCont])
                 cont.appendChild(_imgBlock)
             }
@@ -84,17 +85,22 @@ class InventoryModal extends Modal {
         }
 
         const render = async () => {
+            const s = this.settings
             cont.innerHTML = ""
+
             const start = this.currentPage * this.itemsPerPage
             const end = start + this.itemsPerPage
             const limitedData = [...this.data.data]
                 .filter(el =>
-                    (!this.settings.name || el.name.toLowerCase().includes(this.settings.name.toLowerCase())) &&
-                    (!this.settings.id || el.type.toString().includes(this.settings.id)) &&
-                    (this.settings.rotation === "" || el.rotation === (this.settings.rotation === "true")) &&
-                    (this.settings.model === "" || el.model === this.settings.model) &&
-                    (this.settings.rarity === "" || el.rarity === this.settings.rarity)
-                ).sort((a, b) => !this.settings.creation ? 0 : this.settings.creation === "true" ? b.creation_time - a.creation_time : a.creation_time - b.creation_time)
+                    (!s.name || el.name.toLowerCase().includes(s.name.toLowerCase())) &&
+                    (!s.id || el.type.toString().includes(s.id)) &&
+                    (s.rotation === "" || el.rotation === (s.rotation === "true")) &&
+                    (s.model === "" || el.model === s.model) &&
+                    (s.rarity === "" || el.rarity === s.rarity) &&
+                    (s.equipped === "" || el.slot !== null === (s.equipped === "true"))
+                )
+                .sort((a, b) => !s.creation ? 0 : s.creation === "true" ? b.creation_time - a.creation_time : a.creation_time - b.creation_time)
+
             const slicedData = [...limitedData].slice(start, end)
 
             const totalPages = Math.ceil(limitedData.length / this.itemsPerPage)
@@ -111,7 +117,7 @@ class InventoryModal extends Modal {
 
     work() {
         this.settings = JSON.parse(sessionStorage.getItem("skinSettings")) || {
-            name: "", id: "", rotation: "", creation: "", model: "", rarity: ""
+            name: "", id: "", rotation: "", creation: "", model: "", rarity: "", equipped: "", equipped_date: ""
         }
 
         document.querySelectorAll(".voxiomSelect").forEach(select => {
@@ -180,7 +186,8 @@ class InventoryModal extends Modal {
                     (!settings.id || el.type.toString().includes(settings.id)) &&
                     (settings.rotation === "" || el.rotation === (settings.rotation === "true")) &&
                     (settings.model === "" || el.model === settings.model) &&
-                    (settings.rarity === "" || el.rarity === settings.rarity)
+                    (settings.rarity === "" || el.rarity === settings.rarity) &&
+                    (settings.equipped === "" || el.slot !== null === (settings.equipped === "true"))
                 )
                 .sort((a, b) => !settings.creation ? 0 : settings.creation === "true" ? b.creation_time - a.creation_time : a.creation_time - b.creation_time)
 
@@ -202,14 +209,30 @@ class InventoryModal extends Modal {
                     img.width * scale, img.height * scale)
             }))
 
-            return new Promise(res => canvas.toBlob(blob => res(blob), "image/png"))
+            const iconSize = 15
+            const padding = 3
+            const icon = new Image()
+            icon.crossOrigin = "Anonymous"
+            icon.src = "https://tricko.pro/assets/icon.webp"
+
+            icon.onload = () => {
+                ctx.globalAlpha = 0.2
+                ctx.drawImage(icon, canvas.width - iconSize - padding, canvas.height - iconSize - padding, iconSize, iconSize)
+                ctx.font = "12px Arial"
+                ctx.textAlign = "right"
+                ctx.fillText("Powered by Tricko", canvas.width - iconSize - padding * 2, canvas.height - padding * 2)
+                ctx.globalAlpha = 1
+                canvas.toBlob(blob => {
+                    if (blob) {
+                        const url = URL.createObjectURL(blob)
+                        createEl("a", { href: url, download: `voxtulate_${Date.now()}.png` }).click()
+                        URL.revokeObjectURL(url)
+                    }
+                }, "image/png")
+            }
         }
 
-        el("export").event("click", async () => {
-            const url = URL.createObjectURL(await exportSkins(this.settings))
-            createEl("a", { href: url, download: `voxtulate_${Date.now()}.png` }).click()
-            URL.revokeObjectURL(url)
-        })
+        el("export").event("click", () => exportSkins(this.settings))
     }
 }
 

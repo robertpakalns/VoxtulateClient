@@ -377,20 +377,12 @@ input:disabled {
     color: lightgray;
 }
 
-#apply {
+.btn {
     background: #4CAF50;
 }
 
-#apply:hover {
+.btn:hover {
     background: #59ce5d;
-}
-
-#clear {
-    background: #f44336;
-}
-
-#clear:hover {
-    background: #ff5d51;
 }
 
 .count,
@@ -450,6 +442,15 @@ input:disabled {
     border: none;
     height: 3px;
     border-radius: 3px;
+}
+
+.equipped {
+    position: absolute;
+    top: 7px;
+    right: -10px;
+    width: 7px;
+    height: 7px;
+    border-radius: 10px;
 }
 
 .disabled {

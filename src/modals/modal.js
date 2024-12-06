@@ -1,4 +1,7 @@
 const { createEl } = require("../functions.js")
+const { Config } = require("../config.js")
+
+const config = new Config
 
 class Modal {
     constructor() {
@@ -8,7 +11,7 @@ class Modal {
     }
 
     init() {
-        this.modal = createEl("div", { innerHTML: this.modalHTML })
+        this.modal = createEl("div", { innerHTML: this.modalHTML, classList: "wrapper" })
         const modalStyles = createEl("style", { textContent: this.modalCSS })
 
         document.body.appendChild(this.modal)
@@ -20,8 +23,9 @@ class Modal {
         this.modal.prepend(overlay)
         this.modal.querySelector(".modal").prepend(close)
 
-        close.addEventListener("click", () => this.modal.classList.toggle("open"))
-        overlay.addEventListener("click", () => this.modal.classList.toggle("open"))
+        const toggle = () => this.modal.classList.toggle("open")
+        close.addEventListener("click", toggle)
+        overlay.addEventListener("click", toggle)
     }
 }
 

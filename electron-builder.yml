@@ -1,4 +1,5 @@
 productName: Voxtulate Client
+appId: pro.tricko.voxtulate
 npmRebuild: false
 directories:
   output: "dist"

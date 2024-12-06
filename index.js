@@ -31,13 +31,15 @@ const createMain = async () => {
 
     webContents.on("will-prevent-unload", e => e.preventDefault())
     webContents.on("before-input-event", (e, { code, type }) => {
-        if ([keybinding.Settings, keybinding.Info, keybinding.Reload, keybinding.Fullscreen, keybinding.DevTools].includes(code)) e.preventDefault()
+        const { Close_Modal, Settings, Info, Reload, Fullscreen, DevTools } = keybinding
+        if ([Settings, Info, Reload, Fullscreen, DevTools].includes(code)) e.preventDefault()
 
-        if (code === keybinding.Settings) webContents.executeJavaScript(`document.querySelector("#settingsModal").classList.toggle("open")`)
-        if (code === keybinding.Info) webContents.executeJavaScript(`document.querySelector("#infoModal").classList.toggle("open")`)
-        if (code === keybinding.Reload) webContents.reload()
-        if (code === keybinding.Fullscreen) mainWindow.setFullScreen(!mainWindow.isFullScreen())
-        if (code === keybinding.DevTools) webContents.toggleDevTools()
+        if (code === Close_Modal) webContents.executeJavaScript(`document.querySelector(".wrapper.open")?.classList.toggle("open")`)
+        if (code === Settings) webContents.executeJavaScript(`document.querySelector("#settingsModal").classList.toggle("open")`)
+        if (code === Info) webContents.executeJavaScript(`document.querySelector("#infoModal").classList.toggle("open")`)
+        if (code === Reload) webContents.reload()
+        if (code === Fullscreen) mainWindow.setFullScreen(!mainWindow.isFullScreen())
+        if (code === DevTools) webContents.toggleDevTools()
 
         if (code === "Escape" && type === "keyUp") webContents.executeJavaScript(`document.querySelector(".enmYtp") ? document.querySelector("canvas").requestPointerLock() : document.exitPointerLock()`)
     })
