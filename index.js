@@ -104,27 +104,23 @@ app.on("ready", () => {
 
     autoUpdater.checkForUpdates()
 
-    ipcMain.on("join-game", (_, url) => setTimeout(() => mainWindow.loadURL(url), 100))
+    ipcMain.on("join-game", (_, url) => mainWindow.loadURL(url))
 
-    const filters = { filters: [{ name: "JSON Files", extensions: ["json"] }] }
     const { webContents } = mainWindow
 
-    ipcMain.on("import-client-settings", async () => {
-        const { canceled, filePaths } = await dialog.showOpenDialog(filters)
+    const f = { filters: [{ name: "JSON Files", extensions: ["json"] }] }
+    ipcMain.on("import-client-settings", () => dialog.showOpenDialog(f).then(({ canceled, filePaths }) => {
         if (!canceled && filePaths.length > 0) fs.writeFileSync(config.file, fs.readFileSync(filePaths[0], "utf8"))
-    })
-    ipcMain.on("export-client-settings", async () => {
-        const { canceled, filePath } = await dialog.showSaveDialog(filters)
+    }))
+    ipcMain.on("export-client-settings", () => dialog.showSaveDialog(f).then(({ canceled, filePath }) => {
         if (!canceled && filePath) fs.writeFileSync(filePath, fs.readFileSync(configPath))
-    })
-    ipcMain.on("import-game-settings", async () => {
-        const { canceled, filePaths } = await dialog.showOpenDialog(filters)
+    }))
+    ipcMain.on("import-game-settings", () => dialog.showOpenDialog(f).then(({ canceled, filePaths }) => {
         if (!canceled && filePaths.length > 0) webContents.send("set-game-settings", JSON.stringify(fs.readFileSync(filePaths[0], "utf8")))
-    })
-    ipcMain.on("export-game-settings", async () => {
-        const { canceled, filePath } = await dialog.showSaveDialog(filters)
+    }))
+    ipcMain.on("export-game-settings", () => dialog.showSaveDialog(f).then(({ canceled, filePath }) => {
         if (!canceled && filePath) webContents.send("get-game-settings", filePath)
-    })
+    }))
 
     for (const e of ["change-crosshair", "change-opacity", "set-console", "change-css", "change-js"])
         ipcMain.on(e, (_, ...a) => webContents.send(e, ...a))
