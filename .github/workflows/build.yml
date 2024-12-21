@@ -29,11 +29,11 @@ jobs:
           # name: ${{ steps.name.outputs.v }}
           tag_name: v${{ env.v }}
           name: ${{ env.v }}
-          
+
           draft: true
           prerelease: false
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - run: npm run build
-        # env:
-        #   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
