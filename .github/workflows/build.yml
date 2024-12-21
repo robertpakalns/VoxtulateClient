@@ -16,17 +16,12 @@ jobs:
           node-version: 20
           cache: "npm"
 
-      - run: npm install
-
-      # - id: name
-      #   run: echo "::set-output name=v::$(node -p "require('./package.json').version")"
+      - run: npm ci
 
       - run: echo "v=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
 
       - uses: softprops/action-gh-release@v2.0.6      
         with:
-          # tag_name: v${{ steps.name.outputs.v }}
-          # name: ${{ steps.name.outputs.v }}
           tag_name: v${{ env.v }}
           name: ${{ env.v }}
 
