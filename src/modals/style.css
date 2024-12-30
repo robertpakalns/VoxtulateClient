@@ -1,9 +1,3 @@
-/* @font-face {
-    font-family: "Roboto-Mono";
-    src: url("../../assets/fonts/RobotoMono.ttf") format("truetype");
-    font-display: swap;
-} */
-
 .modal * {
     -webkit-user-drag: none;
     user-select: none;
@@ -273,6 +267,10 @@ input:disabled {
     left: 0;
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(10px);
+}
+
+.open {
+    display: block !important;
 }
 
 /* Inventory */

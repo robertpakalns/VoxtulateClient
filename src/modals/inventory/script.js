@@ -1,18 +1,17 @@
-const fs = require("fs")
-const path = require("path")
-const { el, createEl } = require("../../functions.js")
-const Modal = require("../modal.js")
 const { openDB, getData, setData, creationTime } = require("../../functions.js")
+const { el, createEl } = require("../../functions.js")
+const { readFileSync } = require("fs")
+const Modal = require("../modal.js")
+const path = require("path")
 
-const market = JSON.parse(fs.readFileSync(path.join(__dirname, "../../market.json"), "utf8"))
+const market = JSON.parse(readFileSync(path.join(__dirname, "../../../assets/jsons/market.json"), "utf8"))
 
 class InventoryModal extends Modal {
     constructor() {
         super()
-        this.modalHTML = fs.readFileSync(path.join(__dirname, "./index.html"), "utf8")
-        this.modalCSS = fs.readFileSync(path.join(__dirname, "../style.css"), "utf-8") + `
+        this.modalHTML = readFileSync(path.join(__dirname, "./index.html"), "utf8")
+        this.modalCSS += `
         #inventoryModal { display: none }
-        .open { display: block !important }
         #inventoryModal * { font-family: "Roboto", sans-serif }`
         this.settings = null
         this.data = null
@@ -56,7 +55,7 @@ class InventoryModal extends Modal {
                 const _line = createEl("hr", { style: `background: linear-gradient(90deg, rgba(${r}, 0.5) 0%, rgb(${r}) 50%, rgba(${r}, 0.5) 100%)` }, "line")
                 const _name = createEl("div", {}, "name", [el.name])
                 const _id = createEl("div", {}, "id", [el.type])
-                const _equipped = createEl("div", { style: `background: ${el.slot !== null ? "yellow" : "transparent"}` }, "equipped")
+                const _equipped = createEl("div", { style: `background: ${el.slot ? "yellow" : "transparent"}` }, "equipped")
                 const _creation = createEl("div", {}, "creation", [creationTime(el.creation_time)])
                 const _imgCont = createEl("div", {}, "imgCont", [_name, _img, _id, _equipped, _creation, _line])
                 const _imgBlock = createEl("div", {}, "imgBlock", [_imgCont])

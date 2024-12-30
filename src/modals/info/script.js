@@ -1,21 +1,17 @@
-const { shell } = require("electron")
 const { Config, defaultConfig } = require("../../config.js")
-const config = new Config
 const { createEl, popup } = require("../../functions.js")
 const { version } = require("../../../package.json")
-const fs = require("fs")
-const path = require("path")
+const { readFileSync } = require("fs")
+const { shell } = require("electron")
 const Modal = require("../modal.js")
+const path = require("path")
+const config = new Config
 
 class InfoModal extends Modal {
     constructor() {
         super()
-        const fontURL = path.join(__dirname, "../../../assets/fonts/RobotoMono.ttf").replace(/\\/g, "/")
-        this.modalHTML = fs.readFileSync(path.join(__dirname, "./index.html"), "utf-8")
-        this.modalCSS = fs.readFileSync(path.join(__dirname, "../style.css"), "utf-8") + `
-        @font-face { font-family: "Roboto-Mono"; src: url(${fontURL}) format("truetype") }
-        #infoModal { display: none }
-        .open { display: block !important }`
+        this.modalHTML = readFileSync(path.join(__dirname, "./index.html"), "utf8")
+        this.modalCSS += `#infoModal { display: none }`
     }
 
     init() {

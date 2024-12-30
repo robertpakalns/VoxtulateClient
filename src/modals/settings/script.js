@@ -1,20 +1,16 @@
-const fs = require("fs")
-const path = require("path")
-const { ipcRenderer, shell } = require("electron")
-const { Config, configPath } = require("../../config.js")
-const config = new Config
 const { el, createEl, popup } = require("../../functions.js")
+const { Config, configPath } = require("../../config.js")
+const { ipcRenderer, shell } = require("electron")
+const { readFileSync } = require("fs")
 const Modal = require("../modal.js")
+const path = require("path")
+const config = new Config
 
 class SettingsModal extends Modal {
     constructor() {
         super()
-        const fontURL = path.join(__dirname, "../../../assets/fonts/RobotoMono.ttf").replace(/\\/g, "/")
-        this.modalHTML = fs.readFileSync(path.join(__dirname, "./index.html"), "utf-8")
-        this.modalCSS = fs.readFileSync(path.join(__dirname, "../style.css"), "utf-8") + `
-        @font-face { font-family: "Roboto-Mono"; src: url(${fontURL}) format("truetype") }
-        #settingsModal { display: none }
-        .open { display: block !important }`
+        this.modalHTML = readFileSync(path.join(__dirname, "./index.html"), "utf8")
+        this.modalCSS += `#settingsModal { display: none }`
     }
 
     init() {
@@ -58,16 +54,18 @@ class SettingsModal extends Modal {
             ipcRenderer.send("change-js", enable, custom, el("customJS").value)
         }
 
+        el("rpc").checked = config.get("client.rpc")
+        el("hint").checked = config.get("client.hint")
         el("fpsUncap").checked = config.get("client.fpsUncap")
         el("adblocker").checked = config.get("client.adblocker")
         el("fullscreen").checked = config.get("client.fullscreen")
-        el("rpc").checked = config.get("client.rpc")
+        el("enableSwapper").checked = config.get("client.swapper")
         el("enableCrosshair").checked = config.get("crosshair.enable")
         el("enableStyles").checked = config.get("styles.enable")
         el("customStyles").checked = config.get("styles.custom")
-        el("console").checked = config.get("interface.console")
-        el("enableSwapper").checked = config.get("client.swapper")
         el("enableKeybinding").checked = config.get("keybinding.enable")
+        el("console").checked = config.get("interface.console")
+        el("inventorySorting").checked = config.get("interface.inventorySorting")
         el("inventorySorting").checked = config.get("interface.inventorySorting")
 
         el("crosshairURL").value = config.get("crosshair.url") ?? ""
@@ -87,6 +85,10 @@ class SettingsModal extends Modal {
         el("adblocker").event("change", e => config.set("client.adblocker", e.target.checked))
         el("inventorySorting").event("change", e => config.set("interface.inventorySorting", e.target.checked))
         el("rpc").event("change", e => config.set("client.rpc", e.target.checked))
+        el("hint").event("change", e => {
+            config.set("client.hint", e.target.checked)
+            ipcRenderer.send("toggle-hint", e.target.checked)
+        })
 
         el("enableCrosshair").event("change", e => {
             config.set("crosshair.enable", e.target.checked)

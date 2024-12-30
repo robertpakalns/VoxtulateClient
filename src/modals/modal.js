@@ -1,13 +1,11 @@
 const { createEl } = require("../functions.js")
-const { Config } = require("../config.js")
-
-const config = new Config
-
+const { readFileSync } = require("fs")
+const path = require("path")
 class Modal {
     constructor() {
         this.modal = null
         this.modalHTML = null
-        this.modalCSS = null
+        this.modalCSS = readFileSync(path.join(__dirname, "./style.css"), "utf8")
     }
 
     init() {

@@ -5,8 +5,7 @@ const DiscordRPC = require("./src/discord.js")
 const path = require("path")
 const rpc = new DiscordRPC
 const config = new Config
-const fs = require("fs")
-require("v8-compile-cache")
+const { readFileSync, existsSync, mkdirSync, readdirSync, writeFileSync } = require("fs")
 
 let mainWindow
 const keybinding = config.get("keybinding.enable") ? config.get("keybinding.content") : defaultConfig.keybinding.content
@@ -31,12 +30,13 @@ const createMain = async () => {
 
     webContents.on("will-prevent-unload", e => e.preventDefault())
     webContents.on("before-input-event", (e, { code, type }) => {
-        const { Close_Modal, Settings, Info, Reload, Fullscreen, DevTools } = keybinding
-        if ([Settings, Info, Reload, Fullscreen, DevTools].includes(code)) e.preventDefault()
+        const { Close_Modal, Settings, Info, Updates, Reload, Fullscreen, DevTools } = keybinding
+        if ([Settings, Info, Updates, Reload, Fullscreen, DevTools].includes(code)) e.preventDefault()
 
-        if (code === Close_Modal) webContents.executeJavaScript(`document.querySelector(".wrapper.open")?.classList.toggle("open")`)
-        if (code === Settings) webContents.executeJavaScript(`document.querySelector("#settingsModal").classList.toggle("open")`)
-        if (code === Info) webContents.executeJavaScript(`document.querySelector("#infoModal").classList.toggle("open")`)
+        if (code === Close_Modal) webContents.send("toggle-window", "null")
+        if (code === Settings) webContents.send("toggle-window", "settingsModal")
+        if (code === Info) webContents.send("toggle-window", "infoModal")
+        if (code === Updates) webContents.send("toggle-window", "updatesModal")
         if (code === Reload) webContents.reload()
         if (code === Fullscreen) mainWindow.setFullScreen(!mainWindow.isFullScreen())
         if (code === DevTools) webContents.toggleDevTools()
@@ -50,19 +50,24 @@ const createMain = async () => {
         webContents.send("update-url", url)
         rpc.setJoinURL(url.replace("https://voxiom.io/", "voxtulate://"))
     })
+    webContents.on("did-finish-load", () => {
+        const url = webContents.getURL()
+        webContents.send("update-url", url)
+        rpc.setJoinURL(url.replace("https://voxiom.io/", "voxtulate://"))
+    })
 
-    const reject = JSON.parse(fs.readFileSync(path.join(__dirname, "src/reject.json"), "utf8"))
+    const reject = JSON.parse(readFileSync(path.join(__dirname, "assets/jsons/reject.json"), "utf8"))
     const { adblocker, swapper } = config.get("client")
 
     const swapperFolder = path.join(app.getPath("documents"), "VoxtulateClient", "swapper")
-    if (!fs.existsSync(swapperFolder)) fs.mkdirSync(swapperFolder, { recursive: true })
-    const swapperFiles = fs.readdirSync(swapperFolder)
+    if (!existsSync(swapperFolder)) mkdirSync(swapperFolder, { recursive: true })
+    const swapperFiles = readdirSync(swapperFolder)
 
     const swappedFile = url => {
         const resource = new URL(url).pathname.split("/").pop()
         if (swapperFiles.includes(resource)) {
             const localFilePath = path.join(swapperFolder, resource)
-            if (fs.existsSync(localFilePath)) return `file://${localFilePath}`
+            if (existsSync(localFilePath)) return `file://${localFilePath}`
         }
         return null
     }
@@ -110,19 +115,19 @@ app.on("ready", () => {
 
     const f = { filters: [{ name: "JSON Files", extensions: ["json"] }] }
     ipcMain.on("import-client-settings", () => dialog.showOpenDialog(f).then(({ canceled, filePaths }) => {
-        if (!canceled && filePaths.length > 0) fs.writeFileSync(config.file, fs.readFileSync(filePaths[0], "utf8"))
+        if (!canceled && filePaths.length > 0) writeFileSync(config.file, readFileSync(filePaths[0], "utf8"))
     }))
     ipcMain.on("export-client-settings", () => dialog.showSaveDialog(f).then(({ canceled, filePath }) => {
-        if (!canceled && filePath) fs.writeFileSync(filePath, fs.readFileSync(configPath))
+        if (!canceled && filePath) writeFileSync(filePath, readFileSync(configPath))
     }))
     ipcMain.on("import-game-settings", () => dialog.showOpenDialog(f).then(({ canceled, filePaths }) => {
-        if (!canceled && filePaths.length > 0) webContents.send("set-game-settings", JSON.stringify(fs.readFileSync(filePaths[0], "utf8")))
+        if (!canceled && filePaths.length > 0) webContents.send("set-game-settings", JSON.stringify(readFileSync(filePaths[0], "utf8")))
     }))
     ipcMain.on("export-game-settings", () => dialog.showSaveDialog(f).then(({ canceled, filePath }) => {
         if (!canceled && filePath) webContents.send("get-game-settings", filePath)
     }))
 
-    for (const e of ["change-crosshair", "change-opacity", "set-console", "change-css", "change-js"])
+    for (const e of ["change-crosshair", "change-opacity", "set-console", "change-css", "change-js", "toggle-hint"])
         ipcMain.on(e, (_, ...a) => webContents.send(e, ...a))
 
     ipcMain.on("clear-data", () => session.defaultSession.clearStorageData([]))

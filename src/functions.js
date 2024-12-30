@@ -29,24 +29,6 @@ const timeLeft = date => {
     }).filter(Boolean).slice(0, 2).join("") + " left"
 }
 
-class Voxiom {
-    constructor(t, c, p) {
-        this.element = document.createElement(t)
-        this.element.className = c
-        p.appendChild(this.element)
-    }
-
-    do(c, i) {
-        setInterval(() => c(this), i)
-        return this
-    }
-
-    text(i) {
-        this.element.innerHTML = i
-        return this
-    }
-}
-
 const popup = (color, text) => {
     document.querySelector(".popup")?.remove()
 
@@ -118,4 +100,21 @@ const setData = (db, array, store) => new Promise(res => {
     tx.oncomplete = res
 })
 
-module.exports = { el, createEl, creationTime, Voxiom, timeLeft, output, popup, openDB, getData, setData }
+const isNum = (a, b) => isNaN(a / b) ? 0 : (a / b).toFixed(2) || "No Data"
+
+const copyNode = (label, value, id) => {
+    if (document.querySelector(`#${id}`)) {
+        document.querySelector(`#${id}`).children[1].textContent = value
+        return
+    }
+
+    const node = document.querySelector(".bejTKB")
+    const copy = node.cloneNode(true)
+    copy.id = id
+    node.parentElement.appendChild(copy)
+
+    copy.children[0].innerHTML = label
+    copy.children[1].innerHTML = value
+}
+
+module.exports = { el, createEl, creationTime, timeLeft, output, popup, openDB, getData, setData, isNum, copyNode }

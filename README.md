@@ -22,6 +22,7 @@ Voxtulate Client data (e.g., user data, tokens, cache, etc.) is stored in `%appd
 | `Escape`         | Close Modal Window     |
 | `F1`             | Open Settings Window   |
 | `F2`             | Open Info Window       |
+| `F3`             | Open Updates Window    |
 | `F5`             | Reload Page            |
 | `F11`            | Toggle Fullscreen Mode |
 | `F12`            | Toggle Developer Tools |
@@ -53,7 +54,6 @@ Voxtulate Client data (e.g., user data, tokens, cache, etc.) is stored in `%appd
 - `electron-updater@6.3.4`
 - `electron-builder@25.1.8`
 - `discord-rpc@4.0.1`
-- `v8-compile-cache@2.4.0`
 
 ### Credits
 - Vanced Voxiom Client (NamekujiLSDs)
