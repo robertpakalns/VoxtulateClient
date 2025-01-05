@@ -3,7 +3,7 @@ const { Config } = require("../config.js")
 const { readFileSync, writeFileSync } = require("fs")
 const path = require("path")
 const config = new Config
-const { createEl, timeLeft, isNum, copyNode, creationTime } = require("../functions.js")
+const { createEl, timeLeft, isNum, copyNode, creationTime, sessionFetch } = require("../functions.js")
 const SettingsModal = require("../modals/settings/script.js")
 const InfoModal = require("../modals/info/script.js")
 const InventoryModal = require("../modals/inventory/script.js")
@@ -69,8 +69,8 @@ const enableStyles = () => {
     })
 }
 
-const advancedInventory = () => {
-    const market = JSON.parse(readFileSync(path.join(__dirname, "../../assets/jsons/market.json"), "utf8"))
+const advancedInventory = async () => {
+    const market = await sessionFetch("https://tricko.pro/assets/voxiom/voxiomMarket.json")
     const gemPath = path.join(__dirname, "../../assets/icons/gem.webp")
 
     const inmenu = new InventoryModal
@@ -117,7 +117,7 @@ const advancedInventory = () => {
         inmenu.renderPage()
     })
 
-    const _previewButton = createEl("div", {}, "voxiomSkinsButton", ["Preview"])
+    // const _previewButton = createEl("div", {}, "voxiomSkinsButton", ["Preview"])
 
     const observer = new MutationObserver(() => {
         const { pathname } = window.location
@@ -127,7 +127,8 @@ const advancedInventory = () => {
         if (inmenu.data?.data?.length > 0 &&
             !document.querySelector(".voxiomSkinsButton") &&
             ["/loadouts", "/loadouts/inventory"].includes(pathname)
-        ) document.querySelector(".iRauPR")?.append(_inventoryButton, _previewButton)
+        // ) document.querySelector(".iRauPR")?.append(_inventoryButton, _previewButton)
+        ) document.querySelector(".iRauPR")?.append(_inventoryButton)
         if (!isMarket && !isSales) return
 
         document.querySelectorAll(".kiKVOk").forEach((el, i) => {
@@ -139,6 +140,26 @@ const advancedInventory = () => {
         })
     })
     observer.observe(document.querySelector("#app"), { childList: true, subtree: true })
+}
+
+const createModals = () => {
+    const modalCSS = readFileSync(path.join(__dirname, "../modals/style.css"), "utf8")
+    const modalStyles = createEl("style", { textContent: modalCSS })
+    document.head.appendChild(modalStyles)
+
+    const smenu = new SettingsModal
+    smenu.init()
+    smenu.work()
+
+    const imenu = new InfoModal
+    imenu.init()
+    imenu.work()
+
+    const umenu = new UpdatesModal
+    umenu.init()
+    umenu.work()
+
+    if (inventorySorting) advancedInventory()
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -189,19 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })
 
-    if (inventorySorting) advancedInventory()
-
-    const smenu = new SettingsModal
-    smenu.init()
-    smenu.work()
-
-    const imenu = new InfoModal
-    imenu.init()
-    imenu.work()
-
-    const umenu = new UpdatesModal
-    umenu.init()
-    umenu.work()
+    createModals()
 })
 
 ipcRenderer.on("set-game-settings", (_, data) => localStorage.setItem("persist:root", JSON.parse(data)))

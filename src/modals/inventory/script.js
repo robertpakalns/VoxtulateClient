@@ -1,27 +1,24 @@
 const { openDB, getData, setData, creationTime } = require("../../functions.js")
-const { el, createEl } = require("../../functions.js")
+const { el, createEl, sessionFetch } = require("../../functions.js")
 const { readFileSync } = require("fs")
 const Modal = require("../modal.js")
 const path = require("path")
-
-const market = JSON.parse(readFileSync(path.join(__dirname, "../../../assets/jsons/market.json"), "utf8"))
 
 class InventoryModal extends Modal {
     constructor() {
         super()
         this.modalHTML = readFileSync(path.join(__dirname, "./index.html"), "utf8")
-        this.modalCSS += `
-        #inventoryModal { display: none }
-        #inventoryModal * { font-family: "Roboto", sans-serif }`
         this.settings = null
         this.data = null
+        this.marketData = null
         this.currentPage = 0
         this.itemsPerPage = 18
     }
 
-    init() {
+    async init() {
         super.init()
         this.modal.id = "inventoryModal"
+        this.marketData = await sessionFetch("https://tricko.pro/assets/voxiom/voxiomMarket.json")
     }
 
     setData(data) {
@@ -69,7 +66,7 @@ class InventoryModal extends Modal {
                 if (cached) setImage(el, cached)
                 else {
                     let url
-                    if (market.data.find(({ id }) => id === el.type)?.type === "SPRAY") url = `https://tricko.pro/assets/voxiom/preview/${el.type}.webp`
+                    if (this.marketData.data.find(({ id }) => id === el.type)?.type === "SPRAY") url = `https://tricko.pro/assets/voxiom/preview/${el.type}.webp`
                     else {
                         const generator = window.renderSkin([{ type: el.type, seed: el.seed }], {})
                         const img = await generator.next(await generator.next().value).value

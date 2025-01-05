@@ -117,4 +117,11 @@ const copyNode = (label, value, id) => {
     copy.children[1].innerHTML = value
 }
 
-module.exports = { el, createEl, creationTime, timeLeft, output, popup, openDB, getData, setData, isNum, copyNode }
+const sessionFetch = url => JSON.parse(sessionStorage.getItem(url)) || fetch(url)
+    .then(r => r.json())
+    .then(data => {
+        sessionStorage.setItem(url, JSON.stringify(data))
+        return data
+    })
+
+module.exports = { el, createEl, creationTime, timeLeft, output, popup, openDB, getData, setData, isNum, copyNode, sessionFetch }

@@ -11,7 +11,6 @@ class InfoModal extends Modal {
     constructor() {
         super()
         this.modalHTML = readFileSync(path.join(__dirname, "./index.html"), "utf8")
-        this.modalCSS += `#infoModal { display: none }`
     }
 
     init() {

@@ -10,7 +10,6 @@ class SettingsModal extends Modal {
     constructor() {
         super()
         this.modalHTML = readFileSync(path.join(__dirname, "./index.html"), "utf8")
-        this.modalCSS += `#settingsModal { display: none }`
     }
 
     init() {

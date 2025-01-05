@@ -56,7 +56,7 @@ const createMain = async () => {
         rpc.setJoinURL(url.replace("https://voxiom.io/", "voxtulate://"))
     })
 
-    const reject = JSON.parse(readFileSync(path.join(__dirname, "assets/jsons/reject.json"), "utf8"))
+    const reject = JSON.parse(readFileSync(path.join(__dirname, "src/reject.json"), "utf8"))
     const { adblocker, swapper } = config.get("client")
 
     const swapperFolder = path.join(app.getPath("documents"), "VoxtulateClient", "swapper")

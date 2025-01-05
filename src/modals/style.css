@@ -250,6 +250,10 @@ input:disabled {
 }
 
 /* Modals */
+.wrapper {
+    display: none;
+}
+
 .close {
     cursor: pointer;
     position: absolute;
@@ -271,6 +275,11 @@ input:disabled {
 
 .open {
     display: block !important;
+}
+
+#inventoryModal *,
+#updatesModal * {
+    font-family: "Roboto", sans-serif
 }
 
 /* Inventory */
@@ -464,4 +473,14 @@ input:disabled {
     100% {
         transform: translate(-50%, -50%);
     }
+}
+
+/* Updates */
+.updatesTitle {
+    margin: 10px;
+}
+
+.updatesCont {
+    margin: 10px;
+    padding: 10px;
 }
