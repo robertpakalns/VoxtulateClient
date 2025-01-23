@@ -196,7 +196,7 @@ class InventoryModal extends Modal {
 
             await Promise.all(exportedData.map(async (el, i) => {
                 const img = new Image()
-                img.src = data.find(({ key }) => key === `${el.type}_${el.seed}`).value
+                img.src = data.find(({ key }) => key === `${el.type}_${el.seed}`).value // case if no element in indexDB
                 await img.decode()
                 const scale = Math.min(size / img.width, size / img.height)
                 ctx.drawImage(img,

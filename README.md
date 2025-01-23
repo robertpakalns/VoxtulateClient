@@ -1,6 +1,6 @@
 # Voxtulate Client
 Unofficial Voxiom client, for real Voxtulators  
-![Voxtulate](https://github.com/robertpakalns/VoxtulateClient/blob/main/assets/icon.png?raw=true)
+![Voxtulate](https://raw.githubusercontent.com/robertpakalns/VoxtulateClient/main/assets/icon.png)
 
 ### Client Safety 
 This project is open-source. All Voxtulate Client source code is publicly available in the [GitHub repository](https://github.com/robertpakalns/VoxtulateClient). If you have concerns about the safety of your private information while using the Voxtulate Client, feel free to inspect the source code. Trust in the client is based on your trust in the developer.

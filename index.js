@@ -33,7 +33,7 @@ const createMain = async () => {
         const { Close_Modal, Settings, Info, Updates, Reload, Fullscreen, DevTools } = keybinding
         if ([Settings, Info, Updates, Reload, Fullscreen, DevTools].includes(code)) e.preventDefault()
 
-        if (code === Close_Modal) webContents.send("toggle-window", "null")
+        if (code === Close_Modal && type === "keyUp") webContents.send("toggle-window", "null")
         if (code === Settings) webContents.send("toggle-window", "settingsModal")
         if (code === Info) webContents.send("toggle-window", "infoModal")
         if (code === Updates) webContents.send("toggle-window", "updatesModal")
@@ -41,7 +41,7 @@ const createMain = async () => {
         if (code === Fullscreen) mainWindow.setFullScreen(!mainWindow.isFullScreen())
         if (code === DevTools) webContents.toggleDevTools()
 
-        if (code === "Escape" && type === "keyUp") webContents.executeJavaScript(`document.querySelector(".enmYtp") ? document.querySelector("canvas").requestPointerLock() : document.exitPointerLock()`)
+        if (code !== Close_Modal && code === "Escape" && type === "keyUp") webContents.send("toggle-window", "null")
     })
 
     ipcMain.on("update-url", e => e.reply("update-url", webContents.getURL()))
@@ -59,7 +59,7 @@ const createMain = async () => {
     const reject = JSON.parse(readFileSync(path.join(__dirname, "src/reject.json"), "utf8"))
     const { adblocker, swapper } = config.get("client")
 
-    const swapperFolder = path.join(app.getPath("documents"), "VoxtulateClient", "swapper")
+    const swapperFolder = path.join(app.getPath("documents"), "VoxtulateClient/swapper")
     if (!existsSync(swapperFolder)) mkdirSync(swapperFolder, { recursive: true })
     const swapperFiles = readdirSync(swapperFolder)
 
@@ -90,7 +90,7 @@ const createMain = async () => {
 }
 
 if (config.get("client.fpsUncap")) app.commandLine.appendSwitch("disable-frame-rate-limit")
-for (const el of ["disable-gpu-vsync", "in-process-gpu", "enable-quic", "enable-gpu-rasterization", "enable-pointer-lock-options"]) app.commandLine.appendSwitch(el)
+for (const el of ["in-process-gpu", "enable-quic", "enable-gpu-rasterization", "disable-gpu-vsync"]) app.commandLine.appendSwitch(el)
 
 const message = message => dialog.showMessageBox({ icon: path.join(__dirname, "assets/icon.ico"), title: "Voxtulate Client | Update", message })
 

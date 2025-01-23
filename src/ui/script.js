@@ -3,7 +3,7 @@ const { Config } = require("../config.js")
 const { readFileSync, writeFileSync } = require("fs")
 const path = require("path")
 const config = new Config
-const { createEl, timeLeft, isNum, copyNode, creationTime, sessionFetch } = require("../functions.js")
+const { createEl, timeLeft, isNum, copyNode, creationTime, sessionFetch, el } = require("../functions.js")
 const SettingsModal = require("../modals/settings/script.js")
 const InfoModal = require("../modals/info/script.js")
 const InventoryModal = require("../modals/inventory/script.js")
@@ -127,7 +127,7 @@ const advancedInventory = async () => {
         if (inmenu.data?.data?.length > 0 &&
             !document.querySelector(".voxiomSkinsButton") &&
             ["/loadouts", "/loadouts/inventory"].includes(pathname)
-        // ) document.querySelector(".iRauPR")?.append(_inventoryButton, _previewButton)
+            // ) document.querySelector(".iRauPR")?.append(_inventoryButton, _previewButton)
         ) document.querySelector(".iRauPR")?.append(_inventoryButton)
         if (!isMarket && !isSales) return
 
@@ -217,6 +217,21 @@ ipcRenderer.on("set-game-settings", (_, data) => localStorage.setItem("persist:r
 ipcRenderer.on("get-game-settings", (_, file) => writeFileSync(file, localStorage.getItem("persist:root")))
 ipcRenderer.on("toggle-window", (_, modal) => {
     const openedModal = document.querySelector(".wrapper.open")
-    openedModal?.classList.toggle("open")
-    if (openedModal?.id !== modal) document.querySelector(`#${modal}`)?.classList.toggle("open")
+
+    if (document.querySelector(".bNczYf")) {
+        openedModal?.classList.toggle("open")
+        if (openedModal?.id !== modal) document.querySelector(`#${modal}`)?.classList.toggle("open")
+        return
+    }
+
+    if (modal === "null") document.querySelector(".enmYtp") ? document.querySelector("canvas").requestPointerLock() : document.exitPointerLock()
+    if (openedModal) {
+        openedModal.classList.toggle("open")
+        if (modal === "null" || openedModal.id === modal) document.querySelector("canvas").requestPointerLock()
+        else document.querySelector(`#${modal}`).classList.toggle("open")
+    }
+    else if (modal !== "null") {
+        document.querySelector(`#${modal}`).classList.toggle("open")
+        document.exitPointerLock()
+    }
 })
