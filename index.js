@@ -95,6 +95,7 @@ for (const el of ["in-process-gpu", "enable-quic", "enable-gpu-rasterization", "
 const message = message => dialog.showMessageBox({ icon: path.join(__dirname, "assets/icon.ico"), title: "Voxtulate Client | Update", message })
 
 app.on("ready", () => {
+    app.setAsDefaultProtocolClient("voxtulate")
     protocol.registerFileProtocol("file", ({ url }, c) => c({ path: path.normalize(decodeURIComponent(new URL(url).pathname)) }))
     createMain()
 

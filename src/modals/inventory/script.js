@@ -25,6 +25,37 @@ class InventoryModal extends Modal {
         this.data = data
     }
 
+    async getURL(data) {
+        const store = "skins"
+        const db = await openDB(store)
+        const items = await getData(db, store)
+
+        const cache = new Map(items.map(el => [el.key, el.value]))
+        const newEntries = []
+        const result = {}
+
+        for (const el of data) {
+            const key = `${el.type}_${el.seed}`
+            const cached = cache.get(key)
+
+            if (cached) result[key] = cached
+            else {
+                let url
+                if (this.marketData.data.find(({ id }) => id === el.type)?.type === "SPRAY") url = `https://tricko.pro/assets/voxiom/preview/${el.type}.webp`
+                else {
+                    const generator = window.renderSkin([{ type: el.type, seed: el.seed }], {})
+                    const img = await generator.next(await generator.next().value).value
+                    url = Object.values(img)[0]
+                }
+                newEntries.push({ key, value: url })
+                result[key] = url
+            }
+        }
+
+        if (newEntries.length > 0) await setData(db, newEntries, store)
+        return result
+    }
+
     renderPage() {
         const cont = document.querySelector(".cont")
 
@@ -38,46 +69,22 @@ class InventoryModal extends Modal {
             Artifact: "255, 224, 99"
         }
 
+        const setImage = (el, src) => {
+            const r = rarities[el.rarity]
+            const _img = createEl("img", { src }, "img")
+            const _line = createEl("hr", { style: `background: linear-gradient(90deg, rgba(${r}, 0.5) 0%, rgb(${r}) 50%, rgba(${r}, 0.5) 100%)` }, "line")
+            const _name = createEl("div", {}, "name", [el.name])
+            const _id = createEl("div", {}, "id", [el.type])
+            const _equipped = createEl("div", { style: `background: ${el.slot ? "yellow" : "transparent"}` }, "equipped")
+            const _creation = createEl("div", {}, "creation", [creationTime(el.creation_time)])
+            const _imgCont = createEl("div", {}, "imgCont", [_name, _img, _id, _equipped, _creation, _line])
+            const _imgBlock = createEl("div", {}, "imgBlock", [_imgCont])
+            cont.appendChild(_imgBlock)
+        }
+
         const renderURL = async data => {
-            const store = "skins"
-            const db = await openDB(store)
-            const items = await getData(db, store)
-
-            const cache = new Map(items.map(el => [el.key, el.value]))
-            const newEntries = []
-
-            const setImage = (el, src) => {
-                const r = rarities[el.rarity]
-                const _img = createEl("img", { src }, "img")
-                const _line = createEl("hr", { style: `background: linear-gradient(90deg, rgba(${r}, 0.5) 0%, rgb(${r}) 50%, rgba(${r}, 0.5) 100%)` }, "line")
-                const _name = createEl("div", {}, "name", [el.name])
-                const _id = createEl("div", {}, "id", [el.type])
-                const _equipped = createEl("div", { style: `background: ${el.slot ? "yellow" : "transparent"}` }, "equipped")
-                const _creation = createEl("div", {}, "creation", [creationTime(el.creation_time)])
-                const _imgCont = createEl("div", {}, "imgCont", [_name, _img, _id, _equipped, _creation, _line])
-                const _imgBlock = createEl("div", {}, "imgBlock", [_imgCont])
-                cont.appendChild(_imgBlock)
-            }
-
-            for (const el of data) {
-                const key = `${el.type}_${el.seed}`
-                const cached = cache.get(key)
-
-                if (cached) setImage(el, cached)
-                else {
-                    let url
-                    if (this.marketData.data.find(({ id }) => id === el.type)?.type === "SPRAY") url = `https://tricko.pro/assets/voxiom/preview/${el.type}.webp`
-                    else {
-                        const generator = window.renderSkin([{ type: el.type, seed: el.seed }], {})
-                        const img = await generator.next(await generator.next().value).value
-                        url = Object.values(img)[0]
-                    }
-                    newEntries.push({ key, value: url })
-                    setImage(el, url)
-                }
-            }
-
-            if (newEntries.length > 0) await setData(db, newEntries, store)
+            const urls = await this.getURL(data)
+            for (const el of data) setImage(el, urls[`${el.type}_${el.seed}`])
         }
 
         const render = async () => {
@@ -172,9 +179,7 @@ class InventoryModal extends Modal {
         })
 
         const exportSkins = async settings => {
-            const store = "skins"
-            const db = await openDB(store)
-            const data = await getData(db, store)
+            const data = await this.getURL(this.data.data)
 
             const exportedData = [...this.data.data]
                 .filter(el =>
@@ -196,7 +201,8 @@ class InventoryModal extends Modal {
 
             await Promise.all(exportedData.map(async (el, i) => {
                 const img = new Image()
-                img.src = data.find(({ key }) => key === `${el.type}_${el.seed}`).value // case if no element in indexDB
+                img.src = data[`${el.type}_${el.seed}`]
+                console.log(img.src)
                 await img.decode()
                 const scale = Math.min(size / img.width, size / img.height)
                 ctx.drawImage(img,

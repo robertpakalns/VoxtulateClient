@@ -17,7 +17,7 @@ class UpdatesModal extends Modal {
 
     async work() {
         this.updatesData = await sessionFetch("https://tricko.pro/assets/tricko/voxtulateUpdates.json")
-        
+
         for (const update of this.updatesData) {
             const title = createEl("h3", {}, "updatesTitle", [`${update.version} - ${update.date}`])
             const description = createEl("ul")
@@ -29,6 +29,5 @@ class UpdatesModal extends Modal {
         }
     }
 }
-
 
 module.exports = UpdatesModal

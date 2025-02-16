@@ -172,6 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.append(consoleCont, blocksCont)
 
     const cloneData = (type, data) => {
+        if (!data) return
         const { pathname } = window.location
         if (["/account", `/player/${type}`].includes(pathname) || pathname.endsWith("/ctg")) copyNode("KPG", isNum(data.ctg.total_kills, data.ctg.total_games_played), "kpg")
         if (pathname === `/account/br` || pathname.endsWith("/br")) copyNode("KPG", isNum(data.br.total_kills, data.br.total_games_played), "kpg")
@@ -198,8 +199,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         //player data
         const { pathname } = window.location
-        if (pathname.startsWith("/account")) cloneData("account", accountData.data)
-        if (pathname.startsWith("/player/")) cloneData(pathname.split("/")[2], playerData.data)
+        if (pathname.startsWith("/account")) cloneData("account", accountData?.data)
+        if (pathname.startsWith("/player/")) cloneData(pathname.split("/")[2], playerData?.data)
     }, 50)
 
     document.addEventListener("click", e => {

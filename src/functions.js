@@ -109,6 +109,8 @@ const copyNode = (label, value, id) => {
     }
 
     const node = document.querySelector(".bejTKB")
+    if (!node) return
+
     const copy = node.cloneNode(true)
     copy.id = id
     node.parentElement.appendChild(copy)
