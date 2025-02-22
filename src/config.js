@@ -1,5 +1,5 @@
-const { homedir } = require("os")
 const { existsSync, mkdirSync, writeFileSync, readFileSync } = require("fs")
+const { homedir } = require("os")
 const path = require("path")
 
 const defaultConfig = {
@@ -15,13 +15,8 @@ const defaultConfig = {
     interface: {
         inventorySorting: true,
         console: true,
-        chatOpacity: "100"
-    },
-    styles: {
-        enable: true,
-        custom: false,
-        js: "",
-        css: ""
+        chatOpacity: "100",
+        clientStyles: true
     },
     crosshair: {
         enable: false,
@@ -68,6 +63,7 @@ class Config {
         writeFileSync(this.file, JSON.stringify(this.config, null, 2))
     }
 
+    // Fills the config with default values if missing
     fillConfig(source = defaultConfig, target = this.config) {
         for (const key in source) if (source.hasOwnProperty(key)) {
             if (target[key] === undefined) target[key] = source[key]
@@ -79,6 +75,7 @@ class Config {
         writeFileSync(this.file, JSON.stringify(this.config, null, 2))
     }
 
+    // Cleans the config from unregistered values
     cleanConfig(source = defaultConfig, target = this.config) {
         for (const key in target) {
             if (!source.hasOwnProperty(key)) delete target[key]
@@ -88,4 +85,4 @@ class Config {
     }
 }
 
-module.exports = { Config, configPath, defaultConfig }
+module.exports = { Config, configPath, defaultConfig, configDir }

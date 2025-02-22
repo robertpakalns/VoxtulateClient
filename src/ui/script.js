@@ -1,62 +1,49 @@
+const { createEl, timeLeft, isNum, copyNode, creationTime, sessionFetch } = require("../functions.js")
+const { readFileSync, writeFileSync } = require("fs")
 const { ipcRenderer, shell } = require("electron")
 const { Config } = require("../config.js")
-const { readFileSync, writeFileSync } = require("fs")
 const path = require("path")
 const config = new Config
-const { createEl, timeLeft, isNum, copyNode, creationTime, sessionFetch, el } = require("../functions.js")
-const SettingsModal = require("../modals/settings/script.js")
-const InfoModal = require("../modals/info/script.js")
 const InventoryModal = require("../modals/inventory/script.js")
+const SettingsModal = require("../modals/settings/script.js")
 const UpdatesModal = require("../modals/updates/script.js")
+const InfoModal = require("../modals/info/script.js")
 
 let marketData, listedData, accountData, playerData
-const { console: enableConsole, chatOpacity, inventorySorting } = config.get("interface")
+const { console: enableConsole, chatOpacity, inventorySorting, clientStyles: styles } = config.get("interface")
 
 const enableStyles = () => {
-    const { enable, custom, css, js } = config.get("styles")
 
-    const bgURL = path.join(__dirname, "../../assets/bg.webp").replace(/\\/g, "/")
+    // Custom client styles
     const fontURL = path.join(__dirname, "../../assets/fonts/Roboto.ttf").replace(/\\/g, "/")
-    const monoFontURL = path.join(__dirname, "../../assets/fonts/RobotoMono.ttf").replace(/\\/g, "/")
     const textURL = path.join(__dirname, "../../assets/text.webp").replace(/\\/g, "/")
-
-    const customCSS = readFileSync(path.join(__dirname, "../../src/ui/style.css"), "utf8") + `
+    const bgURL = path.join(__dirname, "../../assets/bg.webp").replace(/\\/g, "/")
+    const customCSS = readFileSync(path.join(__dirname, "../../src/ui/clientStylesCustom.css"), "utf8") + `
     @font-face { font-family: "Roboto"; src: url(${fontURL}) format("truetype") }
     * { font-family: "Roboto", sans-serif }
     .bNczYf { background: url(${bgURL}) }
     img[src="/./package/ea55824826de52b7ccc3.png"] { content: url(${textURL}) }`
 
-    const clientCSS = `
+    // Styles for the client features
+    const monoFontURL = path.join(__dirname, "../../assets/fonts/RobotoMono.ttf").replace(/\\/g, "/")
+    const clientCSS = readFileSync(path.join(__dirname, "../../src/ui/clientStylesMain.css"), "utf8") + `
     @font-face { font-family: "Roboto-Mono"; src: url(${monoFontURL}) format("truetype") }
     body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"] { opacity: ${enableConsole ? "0%" : "100%"} !important }
     .lpfJAq, .lpdfTz { opacity: ${chatOpacity}% }
-    .voxiomCreate { margin: 20px; position: absolute; font-weight: 900 }
     .voxiomConsole { font-family: "Consolas", monospace; top: 0; left: 0; font-size: 10px; opacity: ${enableConsole ? "100%" : "0%"} }
-    .voxiomBlocks { margin: auto; width: 100%; position: absolute; bottom: 35%; text-align: center; font-size: 10px }
-    .voxiomCrosshair { top: 50vh; left: 50vw; position: fixed; transform: translate(-50%, -50%) }
-    .voxiomSkinName { width: 100%; position: absolute; bottom: 0; left: 0; text-align: center; font-size: 0.8rem; color: gray }
-    .voxiomSkinsButton { background: #646464; display: flex; align-items: center; padding: 10px; margin-right: 20px; cursor: pointer }
-    .gem { margin-left: 3px; height: 9px }
-    .skinModal { width: 100%; height: 100%; z-index: 9999; display: none }
-    .hint { display: ${config.get("client.hint") ? "block" : "none"}; position: absolute; bottom: -25px; left: 15px }
-    ${inventorySorting ? ".hYnMmT { display: none }" : ""}`
+    .hint { display: ${config.get("client.hint") ? "block" : "none"} }
+    .hYnMmT { display: ${inventorySorting ? "none" : "block"} }"`
 
-    const enableScript = createEl("script", { textContent: enable && custom ? js : "" })
-    const enableStyles = createEl("style", { textContent: enable ? custom ? css : customCSS : "" })
+    const enableStyles = createEl("style", { textContent: styles ? customCSS : "" })
     const clientStyles = createEl("style", { textContent: clientCSS })
-    document.head.append(enableScript, enableStyles, clientStyles)
+    document.head.append(enableStyles, clientStyles)
 
     const crosshair = createEl("img", { src: config.get("crosshair.url") }, "voxiomCrosshair")
     document.body.prepend(crosshair)
 
-    const updateStyle = (selector, property, value) => {
-        const { sheet } = clientStyles
-        const rule = Array.from(sheet.cssRules).find(el => el.selectorText === selector)
-        rule ? rule.style[property] = value : sheet.insertRule(`${selector} { ${property}: ${value}; }`, sheet.cssRules.length)
-    }
+    const updateStyle = (selector, property, value) => document.querySelectorAll(selector).forEach(el => el.style[property] = value)
 
-    ipcRenderer.on("change-css", (_, enable, custom, code) => enableStyles.textContent = enable ? custom ? code : customCSS : "")
-    ipcRenderer.on("change-js", (_, enable, custom, code) => enable && custom && eval(code))
+    ipcRenderer.on("change-styles", (_, enable) => enableStyles.textContent = enable ? customCSS : "")
     ipcRenderer.on("toggle-hint", (_, enable) => updateStyle(".hint", "display", enable ? "block" : "none"))
     ipcRenderer.on("change-opacity", (_, opacity) => updateStyle(".lpfJAq, .lpdfTz", "opacity", `${opacity}%`))
     ipcRenderer.on("set-console", (_, enable) => {
@@ -182,10 +169,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
     setInterval(() => {
-        //hint
+        // Hint message
         if (!document.querySelector("#hintCont")) document.querySelector(".ljNuSc")?.appendChild(hintCont)
 
-        //console
+        // Mini console
         const t = document.querySelector('body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"]')
         if (t && t.innerHTML !== "") {
             const c = t.innerHTML
@@ -194,10 +181,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         else consoleCont.innerHTML = ""
 
-        //blocks
+        // Blocks
         blocksCont.innerHTML = document.querySelector(".biWqsQ")?.innerText.match(/Current mode: (\w+)/)[1] || ""
 
-        //player data
+        // Player data
         const { pathname } = window.location
         if (pathname.startsWith("/account")) cloneData("account", accountData?.data)
         if (pathname.startsWith("/player/")) cloneData(pathname.split("/")[2], playerData?.data)

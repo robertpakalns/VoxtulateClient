@@ -1,7 +1,6 @@
 <div class="modal">
     <section>
         <main>
-            <header>Main Settings</header>
 
             <h1>Client</h1>
             <div class="block">
@@ -32,7 +31,7 @@
                 <div class="content">
                     <input type="checkbox" id="hint">
                     <div>Show Hint message</div>
-                    <div class="subText">on Main Menu</div>
+                    <div class="subText">Main Menu</div>
                 </div>
                 <div class="content">
                     <input type="checkbox" id="enableCrosshair">
@@ -55,6 +54,10 @@
                 <div class="content">
                     <input type="range" min="0" max="100" id="chatOpacity">
                     <div>Chat Opacity</div>
+                </div>
+                <div class="content">
+                    <input type="checkbox" id="customStyles">
+                    <div>Client Styles</div>
                 </div>
             </div>
 
@@ -88,30 +91,8 @@
         </main>
 
         <main>
-            <header>Custom CSS/JS</header>
 
-            <h1>Custom Styles</h1>
-            <div class="block">
-                <div class="content">
-                    <input type="checkbox" id="enableStyles">
-                    <div>Enable Custom Styles</div>
-                </div>
-                <div class="content">
-                    <input type="checkbox" id="customStyles">
-                    <div>Custom Styles</div>
-                    <div class="subText">Client Styles by Default</div>
-                </div>
-            </div>
-
-            <h1>CSS</h1>
-            <textarea id="customCSS"></textarea>
-            <h1>JS</h1>
-            <textarea id="customJS"></textarea>
-        </main>
-
-        <main>
-            <header>Custom Keybinding</header>
-
+            <h1>Keybinding</h1>
             <div class="block">
                 <div class="content">
                     <input type="checkbox" id="enableKeybinding">
@@ -128,16 +109,19 @@
                 </thead>
                 <tbody id="keybindingBody"></tbody>
             </table>
-            <div class="subText">Setting multiple options to the same hotkey can lead to unpredictable client behavior
-            </div>
+            <div class="subText">Setting multiple options to the same hotkey might lead to unpredictable behavior</div>
         </main>
 
     </section>
 
     <footer>
         <button id="clearData" class="relaunch">Clear Data</button>
-        <button id="defaultSettings">Default Settings</button>
-        <button id="openConfigs">Open Configs</button>
+        <button id="defaultSettings" class="relaunch">Default Settings</button>
         <button id="restart" class="relaunch">Restart Client</button>
+    </footer>
+    <footer>
+        <button id="openConfigs">Open Configs</button>
+        <button id="openSwapper">Open Swapper Folder</button>
+        <button id="openFolder">Open Client Folder</button>
     </footer>
 </div>

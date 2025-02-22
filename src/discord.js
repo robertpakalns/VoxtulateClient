@@ -1,4 +1,4 @@
-const rpc = require("discord-rpc")
+const { Client } = require("discord-rpc")
 const { Config } = require("./config.js")
 const config = new Config
 
@@ -24,16 +24,17 @@ const links = {
     "/clans/search": "Searching clans",
     "/clans/view": name => `Viewing clan: ${name}`
 }
+
 class DiscordRPC {
     constructor() {
         this.clientId = "1294677913131810916"
-        this.client = new rpc.Client({ transport: "ipc" })
-        this.joinURL = "voxtulate://"
+        this.client = new Client({ transport: "ipc" })
+        this.joinURL = "voxtulate://" // Default join URL
         this.state = "Playing Voxiom.io"
         this.time = Date.now()
 
         this.client.on("ready", () => this.setActivity())
-        setInterval(() => this.setActivity(), 15000)
+        setInterval(() => this.setActivity(), 15000) // Updates every 15 seconds, regardless of page change
 
         this.client.login({ clientId: this.clientId })
     }

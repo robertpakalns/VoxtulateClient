@@ -1,14 +1,16 @@
 const { app, BrowserWindow, ipcMain, dialog, protocol, session } = require("electron")
-const { Config, configPath, defaultConfig } = require("./src/config.js")
+const { Config, configPath } = require("./src/config.js")
+const { readFileSync, writeFileSync } = require("fs")
 const { autoUpdater } = require("electron-updater")
 const DiscordRPC = require("./src/discord.js")
 const path = require("path")
 const rpc = new DiscordRPC
 const config = new Config
-const { readFileSync, existsSync, mkdirSync, readdirSync, writeFileSync } = require("fs")
+const userScripts = require("./src/utils/userScripts.js")
+const keybinding = require("./src/utils/keybinding.js")
+const swapper = require("./src/utils/swapper.js")
 
 let mainWindow
-const keybinding = config.get("keybinding.enable") ? config.get("keybinding.content") : defaultConfig.keybinding.content
 
 const createMain = async () => {
     mainWindow = new BrowserWindow({
@@ -26,24 +28,11 @@ const createMain = async () => {
     mainWindow.setFullScreen(config.get("client.fullscreen"))
     mainWindow.on("page-title-updated", e => e.preventDefault())
 
+    keybinding(mainWindow)
+
     const { webContents } = mainWindow
 
     webContents.on("will-prevent-unload", e => e.preventDefault())
-    webContents.on("before-input-event", (e, { code, type }) => {
-        const { Close_Modal, Settings, Info, Updates, Reload, Fullscreen, DevTools } = keybinding
-        if ([Settings, Info, Updates, Reload, Fullscreen, DevTools].includes(code)) e.preventDefault()
-
-        if (code === Close_Modal && type === "keyUp") webContents.send("toggle-window", "null")
-        if (code === Settings) webContents.send("toggle-window", "settingsModal")
-        if (code === Info) webContents.send("toggle-window", "infoModal")
-        if (code === Updates) webContents.send("toggle-window", "updatesModal")
-        if (code === Reload) webContents.reload()
-        if (code === Fullscreen) mainWindow.setFullScreen(!mainWindow.isFullScreen())
-        if (code === DevTools) webContents.toggleDevTools()
-
-        if (code !== Close_Modal && code === "Escape" && type === "keyUp") webContents.send("toggle-window", "null")
-    })
-
     ipcMain.on("update-url", e => e.reply("update-url", webContents.getURL()))
     webContents.on("did-navigate-in-page", () => {
         const url = webContents.getURL()
@@ -54,39 +43,16 @@ const createMain = async () => {
         const url = webContents.getURL()
         webContents.send("update-url", url)
         rpc.setJoinURL(url.replace("https://voxiom.io/", "voxtulate://"))
-    })
 
-    const reject = JSON.parse(readFileSync(path.join(__dirname, "src/reject.json"), "utf8"))
-    const { adblocker, swapper } = config.get("client")
-
-    const swapperFolder = path.join(app.getPath("documents"), "VoxtulateClient/swapper")
-    if (!existsSync(swapperFolder)) mkdirSync(swapperFolder, { recursive: true })
-    const swapperFiles = readdirSync(swapperFolder)
-
-    const swappedFile = url => {
-        const resource = new URL(url).pathname.split("/").pop()
-        if (swapperFiles.includes(resource)) {
-            const localFilePath = path.join(swapperFolder, resource)
-            if (existsSync(localFilePath)) return `file://${localFilePath}`
-        }
-        return null
-    }
-
-    webContents.session.webRequest.onBeforeRequest(({ url }, callback) => {
-        if (url.includes("7cb119bcceb97088c8ad.js")) return callback({ redirectURL: path.join(__dirname, "assets/script-0.9.2.0.js") })
-        if (url.startsWith("file://")) return callback({})
-        if (adblocker && reject.some(el => url.includes(el))) return callback({ cancel: true })
-        if (swapper) {
-            const swap = swappedFile(url)
-            if (swap) return callback({ redirectURL: swap })
-        }
-        return callback({})
+        userScripts(webContents)
     })
 
     webContents.on("new-window", (e, url) => {
         e.preventDefault()
         mainWindow.loadURL(url)
     })
+
+    swapper(webContents)
 }
 
 if (config.get("client.fpsUncap")) app.commandLine.appendSwitch("disable-frame-rate-limit")
@@ -101,7 +67,6 @@ app.on("ready", () => {
 
     const deepLink = process.argv.find(arg => arg.startsWith("voxtulate://"))
     if (deepLink) mainWindow.loadURL(`https://voxiom.io/${decodeURIComponent(deepLink.slice(12)).replace(/\/$/, "").replace(/\/#/g, "#")}`)
-    app.setAsDefaultProtocolClient("voxtulate")
 
     if (config.get("client.firstJoin")) {
         setTimeout(() => message("Welcome to Voxtulate Client! Press F1 and F2 for more information. Have a good game!"), 3000)
@@ -128,14 +93,35 @@ app.on("ready", () => {
         if (!canceled && filePath) webContents.send("get-game-settings", filePath)
     }))
 
-    for (const e of ["change-crosshair", "change-opacity", "set-console", "change-css", "change-js", "toggle-hint"])
+    for (const e of ["change-crosshair", "change-opacity", "set-console", "toggle-hint", "change-styles"])
         ipcMain.on(e, (_, ...a) => webContents.send(e, ...a))
 
-    ipcMain.on("clear-data", () => session.defaultSession.clearStorageData([]))
-    ipcMain.on("relaunch", () => {
+    const confirmAction = (message, callback) => {
+        const result = dialog.showMessageBoxSync({
+            type: "question",
+            buttons: ["Yes", "No"],
+            defaultId: 1,
+            icon: path.join(__dirname, "assets/icon.ico"),
+            title: "Voxtulate Client | Confirm",
+            message
+        })
+        if (result === 0) callback()
+    }
+
+    ipcMain.on("clear-settings", () => confirmAction("Are you sure you want to clear client settings?", () => {
+        config.default()
         app.relaunch()
         app.exit()
-    })
+    }))
+    ipcMain.on("clear-data", () => confirmAction("Are you sure you want to clear all stored data?", () => {
+        session.defaultSession.clearStorageData([])
+        app.relaunch()
+        app.exit()
+    }))
+    ipcMain.on("relaunch", () => confirmAction("Are you sure you want to restart the application?", () => {
+        app.relaunch()
+        app.exit()
+    }))
 })
 
 autoUpdater.on("update-available", () => message("A new version is available. It will be downloaded and installed."))

@@ -202,7 +202,6 @@ class InventoryModal extends Modal {
             await Promise.all(exportedData.map(async (el, i) => {
                 const img = new Image()
                 img.src = data[`${el.type}_${el.seed}`]
-                console.log(img.src)
                 await img.decode()
                 const scale = Math.min(size / img.width, size / img.height)
                 ctx.drawImage(img,
@@ -225,11 +224,10 @@ class InventoryModal extends Modal {
                 ctx.fillText("Powered by Tricko", canvas.width - iconSize - padding * 2, canvas.height - padding * 2)
                 ctx.globalAlpha = 1
                 canvas.toBlob(blob => {
-                    if (blob) {
-                        const url = URL.createObjectURL(blob)
-                        createEl("a", { href: url, download: `voxtulate_${Date.now()}.png` }).click()
-                        URL.revokeObjectURL(url)
-                    }
+                    if (!blob) return
+                    const url = URL.createObjectURL(blob)
+                    createEl("a", { href: url, download: `voxtulate_${Date.now()}.png` }).click()
+                    URL.revokeObjectURL(url)
                 }, "image/png")
             }
         }

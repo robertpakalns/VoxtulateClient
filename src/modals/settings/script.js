@@ -1,5 +1,5 @@
 const { el, createEl, popup } = require("../../functions.js")
-const { Config, configPath } = require("../../config.js")
+const { Config, configPath, configDir } = require("../../config.js")
 const { ipcRenderer, shell } = require("electron")
 const { readFileSync } = require("fs")
 const Modal = require("../modal.js")
@@ -33,24 +33,10 @@ class SettingsModal extends Modal {
             el("keybindingBody").element.appendChild(tr)
         }
 
-        const toggleElements = () => {
-            const styles = el("enableStyles").checked
-            const custom = el("customStyles").checked
+        const toggleKeybinding = () => {
             const keybinding = el("enableKeybinding").checked
-
             el("keybindingTable").class("disabled", !keybinding)
-
-            el("customStyles").element.disabled = !styles
-            el("customCSS").element.disabled = !(styles && custom)
-            el("customJS").element.disabled = !(styles && custom)
             el("keybindingTable").element.querySelectorAll("input").forEach(el => el.disabled = !keybinding)
-        }
-
-        const updateStyles = () => {
-            const enable = el("enableStyles").checked
-            const custom = el("customStyles").checked
-            ipcRenderer.send("change-css", enable, custom, el("customCSS").value)
-            ipcRenderer.send("change-js", enable, custom, el("customJS").value)
         }
 
         el("rpc").checked = config.get("client.rpc")
@@ -60,22 +46,18 @@ class SettingsModal extends Modal {
         el("fullscreen").checked = config.get("client.fullscreen")
         el("enableSwapper").checked = config.get("client.swapper")
         el("enableCrosshair").checked = config.get("crosshair.enable")
-        el("enableStyles").checked = config.get("styles.enable")
-        el("customStyles").checked = config.get("styles.custom")
+        el("customStyles").checked = config.get("interface.clientStyles")
         el("enableKeybinding").checked = config.get("keybinding.enable")
         el("console").checked = config.get("interface.console")
         el("inventorySorting").checked = config.get("interface.inventorySorting")
-        el("inventorySorting").checked = config.get("interface.inventorySorting")
 
         el("crosshairURL").value = config.get("crosshair.url") ?? ""
-        el("customCSS").value = config.get("styles.css") ?? ""
-        el("customJS").value = config.get("styles.js") ?? ""
         el("chatOpacity").value = config.get("interface.chatOpacity") ?? "100"
 
         const { content: c2 } = config.get("keybinding")
         for (const key in c2) keybindingRow(key, c2[key])
 
-        toggleElements()
+        toggleKeybinding()
 
         ipcRenderer.on("update-url", (_, url) => el("currentURL").element.innerText = url || "Unknown URL")
         ipcRenderer.send("update-url")
@@ -98,12 +80,11 @@ class SettingsModal extends Modal {
             ipcRenderer.send("change-crosshair", el("enableCrosshair").checked, el("crosshairURL").value)
         })
         el("crosshairFile").event("change", ({ target: { files: [file] } }) => {
-            if (file) {
-                const { path } = file
-                config.set("crosshair.url", path)
-                el("crosshairURL").element.value = path
-                ipcRenderer.send("change-crosshair", el("enableCrosshair").checked, el("crosshairURL").value)
-            }
+            if (!file) return
+            const { path } = file
+            config.set("crosshair.url", path)
+            el("crosshairURL").element.value = path
+            ipcRenderer.send("change-crosshair", el("enableCrosshair").checked, el("crosshairURL").value)
         })
 
         el("joinLink").event("click", () => ipcRenderer.send("join-game", el("joinLinkURL").value))
@@ -120,15 +101,9 @@ class SettingsModal extends Modal {
         el("importGameSettings").event("click", () => ipcRenderer.send("import-game-settings"))
         el("exportGameSettings").event("click", () => ipcRenderer.send("export-game-settings"))
 
-        el("enableStyles").event("click", e => {
-            updateStyles()
-            toggleElements()
-            config.set("styles.enable", e.target.checked)
-        })
         el("customStyles").event("click", e => {
-            updateStyles()
-            toggleElements()
-            config.set("styles.custom", e.target.checked)
+            config.set("interface.clientStyles", e.target.checked)
+            ipcRenderer.send("change-styles", e.target.checked)
         })
 
         el("console").event("change", e => {
@@ -136,14 +111,11 @@ class SettingsModal extends Modal {
             ipcRenderer.send("set-console", e.target.checked)
         })
         el("fullscreen").event("change", e => config.set("client.fullscreen", e.target.checked))
-        el("enableSwapper").event("change", e => {
-            config.set("client.swapper", e.target.checked)
-            toggleElements()
-        })
+        el("enableSwapper").event("change", e => config.set("client.swapper", e.target.checked))
 
         el("enableKeybinding").event("change", e => {
             config.set("keybinding.enable", e.target.checked)
-            toggleElements()
+            toggleKeybinding()
         })
 
         el("chatOpacity").event("input", e => {
@@ -151,26 +123,13 @@ class SettingsModal extends Modal {
             ipcRenderer.send("change-opacity", e.target.value)
         })
 
-        el("customCSS").event("input", e => {
-            config.set("styles.css", e.target.value)
-            ipcRenderer.send("change-css", el("enableStyles").checked, el("customStyles").checked, el("customCSS").value)
-        })
-        el("customJS").event("input", e => {
-            config.set("styles.js", e.target.value)
-            ipcRenderer.send("change-js", el("enableStyles").checked, el("customStyles").checked, el("customJS").value)
-        })
-
-        el("defaultSettings").event("click", () => {
-            config.default()
-            ipcRenderer.send("reload")
-        })
-        el("openConfigs").event("click", () => shell.openPath(configPath))
+        el("defaultSettings").event("click", () => ipcRenderer.send("clear-settings"))
+        el("clearData").event("click", () => ipcRenderer.send("clear-data"))
         el("restart").event("click", () => ipcRenderer.send("relaunch"))
 
-        el("clearData").event("click", () => {
-            ipcRenderer.send("clear-data")
-            ipcRenderer.send("relaunch")
-        })
+        el("openConfigs").event("click", () => shell.openPath(configPath))
+        el("openSwapper").event("click", () => shell.openPath(path.join(configDir, "swapper")))
+        el("openFolder").event("click", () => shell.openPath(configDir))
 
         for (const e of ["fpsUncap", "rpc", "adblocker", "inventorySorting", "fullscreen", "enableSwapper", "enableKeybinding"])
             el(e).event("click", () => popup("rgb(231, 76, 60)", "Restart the client to apply this setting."))

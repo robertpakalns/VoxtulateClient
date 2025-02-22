@@ -32,44 +32,11 @@ const timeLeft = date => {
 const popup = (color, text) => {
     document.querySelector(".popup")?.remove()
 
-    const styles = `
-        .popup {
-            padding: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            font-size: 10px;
-            border-radius: 10px;
-            background: ${color};
-            cursor: pointer;
-            user-select: none;
-            transition: opacity 0.2s ease, transform 0.2s ease;
-        }
-
-        .popup img {
-            height: 15px;
-            margin-right: 7px;
-        }
-
-        .popup:hover {
-            transform: scale(1.05);
-        }
-    `
-
-    if (!document.querySelector("#popupStyles")) {
-        const style = document.createElement("style")
-        style.id = "popupStyles"
-        style.innerText = styles
-        document.head.appendChild(style)
-    }
-
     const _popup = createEl("div", {}, "popup", [createEl("img", { src: path.join(__dirname, "../assets/icons/bell.png") }), text])
+    _popup.style.background = color
 
     const audio = new Audio(path.join(__dirname, "../assets/sounds/pop.mp3"))
-    audio.volume = 0.5
+    audio.volume = 0.3
     audio.play()
 
     const closePopup = () => {
