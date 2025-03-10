@@ -6,7 +6,7 @@ class Modal {
     }
 
     init() {
-        this.modal = createEl("div", { innerHTML: this.modalHTML, classList: "wrapper" })
+        this.modal = createEl("div", { innerHTML: this.modalHTML }, "wrapper")
         document.body.appendChild(this.modal)
 
         const close = createEl("div", {}, "close", ["×"])

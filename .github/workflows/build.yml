@@ -24,15 +24,14 @@ jobs:
 
       - run: echo "v=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
 
+      - run: npm run build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - uses: softprops/action-gh-release@v2.0.6      
         with:
           tag_name: v${{ env.v }}
           name: ${{ env.v }}
-
           draft: true
           prerelease: false
           token: ${{ secrets.GITHUB_TOKEN }}
-
-      - run: npm run build
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

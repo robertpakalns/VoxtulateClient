@@ -52,15 +52,13 @@ The Voxtulate Client stores its data, including user information, tokens, and ca
 
 ### Dependencies
 - `electron@10.4.7`
-- `electron-updater@6.3.4`
+- `electron-updater@6.3.9`
 - `electron-builder@25.1.8`
 - `discord-rpc@4.0.1`
 
 ### Credits
-- VVV (NamekujiLSDs) - [Website](https://namekujilsds.github.io/VVC) | [Discord](https://discord.com/invite/EcZytWAJkn)
+- VVC (NamekujiLSDs) - [Website](https://namekujilsds.github.io/VVC) | [Discord](https://discord.com/invite/EcZytWAJkn)
 - Voxiom.io (ThriveR) - [Website](https://voxiom.io) | [Discord](https://discord.com/invite/GBFtRcY)
 - Juice Client (irrvlo) - [Website](https://juice.irrvlo.xyz) | [Discord](https://discord.gg/FjzAAdSjng)
 
-by robertpakalns  
-[Community Server](https://discord.gg/yPjrUrvSzv)  
-Powered by Tricko
+by robertpakalns | [Community Server](https://discord.gg/yPjrUrvSzv) | Powered by Tricko
