@@ -39,17 +39,30 @@ class SettingsModal extends Modal {
             el("keybindingTable").element.querySelectorAll("input").forEach(el => el.disabled = !keybinding)
         }
 
-        el("rpc").checked = config.get("client.rpc")
-        el("hint").checked = config.get("client.hint")
-        el("fpsUncap").checked = config.get("client.fpsUncap")
-        el("adblocker").checked = config.get("client.adblocker")
-        el("fullscreen").checked = config.get("client.fullscreen")
-        el("enableSwapper").checked = config.get("client.swapper")
-        el("enableCrosshair").checked = config.get("crosshair.enable")
-        el("customStyles").checked = config.get("interface.clientStyles")
-        el("enableKeybinding").checked = config.get("keybinding.enable")
-        el("console").checked = config.get("interface.console")
-        el("inventorySorting").checked = config.get("interface.inventorySorting")
+        const checkedObject = {
+            adblocker: "client.adblocker",
+            fpsUncap: "client.fpsUncap",
+            fullscreen: "client.fullscreen",
+            enableSwapper: "client.swapper",
+            hint: "client.hint",
+            proxyDomain: "client.proxyDomain",
+
+            rpc: "discord.joinButton",
+            rpcNotification: "discord.notification",
+
+            inventorySorting: "interface.inventorySorting",
+            console: "interface.console",
+            customStyles: "interface.clientStyles",
+
+            enableCrosshair: "crosshair.enable",
+
+            enableKeybinding: "keybinding.enable"
+        }
+
+        for (const [id, key] of Object.entries(checkedObject)) {
+            el(id).checked = config.get(key)
+            el(id).event("change", e => config.set(key, e.target.checked))
+        }
 
         el("crosshairURL").value = config.get("crosshair.url") ?? ""
         el("chatOpacity").value = config.get("interface.chatOpacity") ?? "100"
@@ -62,19 +75,9 @@ class SettingsModal extends Modal {
         ipcRenderer.on("update-url", (_, url) => el("currentURL").element.innerText = url || "Unknown URL")
         ipcRenderer.send("update-url")
 
-        el("fpsUncap").event("change", e => config.set("client.fpsUncap", e.target.checked))
-        el("adblocker").event("change", e => config.set("client.adblocker", e.target.checked))
-        el("inventorySorting").event("change", e => config.set("interface.inventorySorting", e.target.checked))
-        el("rpc").event("change", e => config.set("client.rpc", e.target.checked))
-        el("hint").event("change", e => {
-            config.set("client.hint", e.target.checked)
-            ipcRenderer.send("toggle-hint", e.target.checked)
-        })
+        el("hint").event("change", e => ipcRenderer.send("toggle-hint", e.target.checked))
 
-        el("enableCrosshair").event("change", e => {
-            config.set("crosshair.enable", e.target.checked)
-            ipcRenderer.send("change-crosshair", el("enableCrosshair").checked, el("crosshairURL").value)
-        })
+        el("enableCrosshair").event("change", e => ipcRenderer.send("change-crosshair", e.target.checked, el("crosshairURL").value))
         el("crosshairURL").event("input", e => {
             config.set("crosshair.url", e.target.value)
             ipcRenderer.send("change-crosshair", el("enableCrosshair").checked, el("crosshairURL").value)
@@ -101,22 +104,9 @@ class SettingsModal extends Modal {
         el("importGameSettings").event("click", () => ipcRenderer.send("import-game-settings"))
         el("exportGameSettings").event("click", () => ipcRenderer.send("export-game-settings"))
 
-        el("customStyles").event("click", e => {
-            config.set("interface.clientStyles", e.target.checked)
-            ipcRenderer.send("change-styles", e.target.checked)
-        })
-
-        el("console").event("change", e => {
-            config.set("interface.console", e.target.checked)
-            ipcRenderer.send("set-console", e.target.checked)
-        })
-        el("fullscreen").event("change", e => config.set("client.fullscreen", e.target.checked))
-        el("enableSwapper").event("change", e => config.set("client.swapper", e.target.checked))
-
-        el("enableKeybinding").event("change", e => {
-            config.set("keybinding.enable", e.target.checked)
-            toggleKeybinding()
-        })
+        el("customStyles").event("click", e => ipcRenderer.send("change-styles", e.target.checked))
+        el("console").event("change", e => ipcRenderer.send("set-console", e.target.checked))
+        el("enableKeybinding").event("change", toggleKeybinding)
 
         el("chatOpacity").event("input", e => {
             config.set("interface.chatOpacity", e.target.value)
@@ -131,7 +121,7 @@ class SettingsModal extends Modal {
         el("openSwapper").event("click", () => shell.openPath(path.join(configDir, "swapper")))
         el("openFolder").event("click", () => shell.openPath(configDir))
 
-        for (const e of ["fpsUncap", "rpc", "adblocker", "inventorySorting", "fullscreen", "enableSwapper", "enableKeybinding"])
+        for (const e of ["fpsUncap", "proxyDomain", "rpc", "rpcNotification", "adblocker", "inventorySorting", "fullscreen", "enableSwapper", "enableKeybinding"])
             el(e).event("click", () => popup("rgb(231, 76, 60)", "Restart the client to apply this setting."))
     }
 }

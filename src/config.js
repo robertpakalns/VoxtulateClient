@@ -8,9 +8,13 @@ const defaultConfig = {
         adblocker: true,
         fpsUncap: true,
         fullscreen: false,
-        rpc: true,
         swapper: false,
-        hint: true
+        hint: true,
+        proxyDomain: false
+    },
+    discord: {
+        joinButton: true,
+        notification: true
     },
     interface: {
         inventorySorting: true,

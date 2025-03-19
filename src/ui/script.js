@@ -28,7 +28,7 @@ const enableStyles = () => {
     const monoFontURL = path.join(__dirname, "../../assets/fonts/RobotoMono.ttf").replace(/\\/g, "/")
     const clientCSS = readFileSync(path.join(__dirname, "../../src/ui/clientStylesMain.css"), "utf8") + `
     @font-face { font-family: "Roboto-Mono"; src: url(${monoFontURL}) format("truetype") }
-    body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"] { opacity: ${enableConsole ? "0%" : "100%"} !important }
+    body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"] { opacity: ${enableConsole ? "0%" : "100%"} }
     .lpfJAq, .lpdfTz { opacity: ${chatOpacity}% }
     .voxiomConsole { font-family: "Consolas", monospace; top: 0; left: 0; font-size: 10px; opacity: ${enableConsole ? "100%" : "0%"} }
     .hint { display: ${config.get("client.hint") ? "block" : "none"} }
@@ -47,6 +47,7 @@ const enableStyles = () => {
     ipcRenderer.on("toggle-hint", (_, enable) => updateStyle(".hint", "display", enable ? "block" : "none"))
     ipcRenderer.on("change-opacity", (_, opacity) => updateStyle(".lpfJAq, .lpdfTz", "opacity", `${opacity}%`))
     ipcRenderer.on("set-console", (_, enable) => {
+        console.log({ enable })
         updateStyle('body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"]', "opacity", enable ? "0%" : "100%")
         updateStyle(".voxiomConsole", "opacity", enable ? "100%" : "0%")
     })

@@ -10,7 +10,7 @@ Voxtulate Client uses `voxtulate://` protocol for opening the app. Example: `vox
 ### Data Folder
 The Voxtulate Client stores its data, including user information, tokens, and cache, in `%appdata%/voxtulate-client`. Meanwhile, user customization data, such as `config.json`, user scripts and the swapper folder, is kept in `%USERPROFILE%\Documents\VoxtulateClient`.
 
-### Swapper usage
+### Swapper Usage
 1. In Developer Tools `Network` section, find the file you want to swap. Save the file name (e.g., `a5afd201eb5c5abf621b.mp3`)
 2. Go to `%USERPROFILE%\Documents\VoxtulateClient\swapper`
 3. Import the file there with the saved name
@@ -27,15 +27,13 @@ The Voxtulate Client stores its data, including user information, tokens, and ca
 | `F11`            | Toggle Fullscreen Mode |
 | `F12`            | Toggle Developer Tools |
 
-### Current Features
+### Features
 - Adblocker
 - Unlimited FPS
 - Custom Crosshair
 - Resource Swapper
-- Info Window (`F2`)
-- Upates Window (`F3`)
+- Settings, Info, Upates Windows
 - CSS/JS Customization
-- Settings Window (`F1`)
 - Developer Tools (`F12`)
 - Advanced Inventory Sorting
   * Filter by type, rarity, name, ID, rotation

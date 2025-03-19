@@ -1,3 +1,4 @@
+const { message } = require("./functions.js")
 const { Client } = require("discord-rpc")
 const { Config } = require("./config.js")
 const config = new Config
@@ -25,6 +26,8 @@ const links = {
     "/clans/view": name => `Viewing clan: ${name}`
 }
 
+const { joinButton, notification } = config.get("discord")
+
 class DiscordRPC {
     constructor() {
         this.clientId = "1294677913131810916"
@@ -32,16 +35,27 @@ class DiscordRPC {
         this.joinURL = "voxtulate://" // Default join URL
         this.state = "Playing Voxiom.io"
         this.time = Date.now()
+        this.connected = false
 
-        this.client.on("ready", () => this.setActivity())
-        setInterval(() => this.setActivity(), 15000) // Updates every 15 seconds, regardless of page change
+        this.client.on("ready", () => {
+            this.connected = true
+            this.setActivity()
+        })
+        setInterval(() => this.connected && this.setActivity(), 15000) // Updates every 15 seconds, regardless of page change
 
-        this.client.login({ clientId: this.clientId })
+        this.client
+            .login({ clientId: this.clientId })
+            .catch(() => {
+                this.connected = false
+                setTimeout(() => notification && message("Discord RPC", "Failed to connect to Discord RPC."), 1000)
+            })
     }
 
     setActivity() {
+        if (!this.connected) return
+
         const buttons = [{ label: "Download Client", url: "https://github.com/robertpakalns/VoxtulateClient/releases/latest" }]
-        if (config.get("client.rpc")) buttons.unshift({ label: "Join Game", url: this.joinURL })
+        if (joinButton) buttons.unshift({ label: "Join Game", url: this.joinURL })
 
         this.client.setActivity({
             state: this.state,
@@ -52,6 +66,8 @@ class DiscordRPC {
     }
 
     setJoinURL(url) {
+        if (!this.connected) return
+
         const path = url.replace("voxtulate://", "/")
         const match = Object.keys(links).find(key => typeof links[key] === "function" ? path.startsWith(key) : path === key)
 

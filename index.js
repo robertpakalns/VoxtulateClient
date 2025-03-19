@@ -1,7 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog, protocol, session } = require("electron")
 const { Config, configPath } = require("./src/config.js")
 const { readFileSync, writeFileSync } = require("fs")
-const { autoUpdater } = require("electron-updater")
+const { message } = require("./src/functions.js")
 const DiscordRPC = require("./src/discord.js")
 const path = require("path")
 const rpc = new DiscordRPC
@@ -9,8 +9,10 @@ const config = new Config
 const userScripts = require("./src/utils/userScripts.js")
 const keybinding = require("./src/utils/keybinding.js")
 const swapper = require("./src/utils/swapper.js")
+const clientUpdater = require("./src/utils/clientUpdater.js")
 
 let mainWindow
+const domain = config.get("client.proxyDomain") ? "https://historynotes.club" : "https://voxiom.io"
 
 const createMain = async () => {
     mainWindow = new BrowserWindow({
@@ -24,7 +26,7 @@ const createMain = async () => {
 
     mainWindow.maximize()
     mainWindow.setMenu(null)
-    mainWindow.loadURL("https://voxiom.io")
+    mainWindow.loadURL(domain)
     mainWindow.setFullScreen(config.get("client.fullscreen"))
     mainWindow.on("page-title-updated", e => e.preventDefault())
 
@@ -37,12 +39,12 @@ const createMain = async () => {
     webContents.on("did-navigate-in-page", () => {
         const url = webContents.getURL()
         webContents.send("update-url", url)
-        rpc.setJoinURL(url.replace("https://voxiom.io/", "voxtulate://"))
+        rpc.setJoinURL(url.replace(`${domain}/`, "voxtulate://"))
     })
     webContents.on("did-finish-load", () => {
         const url = webContents.getURL()
         webContents.send("update-url", url)
-        rpc.setJoinURL(url.replace("https://voxiom.io/", "voxtulate://"))
+        rpc.setJoinURL(url.replace(`${domain}/`, "voxtulate://"))
 
         userScripts(webContents)
     })
@@ -58,22 +60,20 @@ const createMain = async () => {
 if (config.get("client.fpsUncap")) app.commandLine.appendSwitch("disable-frame-rate-limit")
 for (const el of ["in-process-gpu", "enable-quic", "enable-gpu-rasterization", "disable-gpu-vsync"]) app.commandLine.appendSwitch(el)
 
-const message = message => dialog.showMessageBox({ icon: path.join(__dirname, "assets/icon.ico"), title: "Voxtulate Client | Update", message })
-
 app.on("ready", () => {
     app.setAsDefaultProtocolClient("voxtulate")
     protocol.registerFileProtocol("file", ({ url }, c) => c({ path: path.normalize(decodeURIComponent(new URL(url).pathname)) }))
     createMain()
 
     const deepLink = process.argv.find(arg => arg.startsWith("voxtulate://"))
-    if (deepLink) mainWindow.loadURL(`https://voxiom.io/${decodeURIComponent(deepLink.slice(12)).replace(/\/$/, "").replace(/\/#/g, "#")}`)
+    if (deepLink) mainWindow.loadURL(`${domain}/${decodeURIComponent(deepLink.slice(12)).replace(/\/$/, "").replace(/\/#/g, "#")}`)
 
     if (config.get("client.firstJoin")) {
-        setTimeout(() => message("Welcome to Voxtulate Client! Press F1 and F2 for more information. Have a good game!"), 3000)
+        setTimeout(() => message("Welcome", "Welcome to Voxtulate Client! Press F1 and F2 for more information. Have a good game!"), 3000)
         config.set("client.firstJoin", false)
     }
 
-    autoUpdater.checkForUpdates()
+    clientUpdater()
 
     ipcMain.on("join-game", (_, url) => mainWindow.loadURL(url))
 
@@ -123,7 +123,3 @@ app.on("ready", () => {
         app.exit()
     }))
 })
-
-autoUpdater.on("update-available", () => message("A new version is available. It will be downloaded and installed."))
-autoUpdater.on("update-downloaded", () => message("The update has been downloaded. It will be installed on restart.")
-    .then(() => autoUpdater.quitAndInstall()))

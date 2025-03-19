@@ -17,12 +17,13 @@
                     <div>Fullscreen on Start</div>
                 </div>
                 <div class="content">
-                    <input type="checkbox" id="rpc">
-                    <div>Discord RPC Join Link</div>
-                </div>
-                <div class="content">
                     <input type="checkbox" id="enableSwapper">
                     <div>Enable Resource Swapper</div>
+                </div>
+                <div class="content">
+                    <input type="checkbox" id="proxyDomain">
+                    <div>Use Proxy Domain</div>
+                    <div class="subText">historynotes.club</div>
                 </div>
             </div>
 
@@ -92,6 +93,18 @@
 
         <main>
 
+            <h1>Discord RPC</h1>
+            <div class="block">
+                <div class="content">
+                    <input type="checkbox" id="rpc">
+                    <div>Discord Profile Join Link</div>
+                </div>
+                <div class="content">
+                    <input type="checkbox" id="rpcNotification">
+                    <div>Connection Failure Notification</div>
+                </div>
+            </div>
+
             <h1>Keybinding</h1>
             <div class="block">
                 <div class="content">
@@ -110,6 +123,7 @@
                 <tbody id="keybindingBody"></tbody>
             </table>
             <div class="subText">Setting multiple options to the same hotkey might lead to unpredictable behavior</div>
+
         </main>
 
     </section>

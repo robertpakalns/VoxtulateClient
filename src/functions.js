@@ -1,3 +1,4 @@
+const { dialog } = require("electron")
 const path = require("path")
 
 const el = id => ({
@@ -93,4 +94,6 @@ const sessionFetch = url => JSON.parse(sessionStorage.getItem(url)) || fetch(url
         return data
     })
 
-module.exports = { el, createEl, creationTime, timeLeft, output, popup, openDB, getData, setData, isNum, copyNode, sessionFetch }
+const message = (title, message) => dialog.showMessageBox({ icon: path.join(__dirname, "../assets/icon.ico"), title: `Voxtulate Client | ${title}`, message })
+
+module.exports = { el, createEl, creationTime, timeLeft, output, popup, openDB, getData, setData, isNum, copyNode, sessionFetch, message }

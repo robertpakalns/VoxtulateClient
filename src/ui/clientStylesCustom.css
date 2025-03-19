@@ -89,11 +89,7 @@ a[href="https://cuberealm.io"],
 }
 
 .faeaXa {
-    filter: drop-shadow(0 0 15px rgba(var(--inv), 1));
-}
-
-.hPoIsr>.faeaXa {
-    filter: drop-shadow(0 0 5px rgba(var(--inv), 1));
+    filter: drop-shadow(0 0 3px rgb(var(--inv))) drop-shadow(0 0 3px rgb(var(--inv)))
 }
 
 .faeaXa[style*="rgb(149, 165, 166)"] {
