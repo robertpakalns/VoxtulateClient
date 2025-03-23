@@ -1,4 +1,4 @@
-const { openDB, getData, setData, creationTime } = require("../../functions.js")
+const { openDB, getData, setData, creationTime, getAsset } = require("../../functions.js")
 const { el, createEl, sessionFetch } = require("../../functions.js")
 const { readFileSync } = require("fs")
 const Modal = require("../modal.js")
@@ -18,7 +18,7 @@ class InventoryModal extends Modal {
     async init() {
         super.init()
         this.modal.id = "inventoryModal"
-        this.marketData = await sessionFetch("https://tricko.pro/assets/voxiom/voxiomMarket.json")
+        this.marketData = await sessionFetch(getAsset("voxiom/voxiomMarket.json"))
     }
 
     setData(data) {
@@ -35,13 +35,14 @@ class InventoryModal extends Modal {
         const result = {}
 
         for (const el of data) {
+            const item = this.marketData.data.find(({ id }) => id === el.type)
             const key = `${el.type}_${el.seed}`
             const cached = cache.get(key)
 
             if (cached) result[key] = cached
             else {
                 let url
-                if (this.marketData.data.find(({ id }) => id === el.type)?.type === "SPRAY") url = `https://tricko.pro/assets/voxiom/preview/${el.type}.webp`
+                if (item?.type === "SPRAY") url = getAsset(`voxiom/preview/${el.type}.webp`)
                 else {
                     const generator = window.renderSkin([{ type: el.type, seed: el.seed }], {})
                     const img = await generator.next(await generator.next().value).value

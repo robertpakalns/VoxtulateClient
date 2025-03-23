@@ -1,4 +1,4 @@
-const { createEl, timeLeft, isNum, copyNode, creationTime, sessionFetch } = require("../functions.js")
+const { createEl, timeLeft, isNum, copyNode, creationTime, sessionFetch, getAsset } = require("../functions.js")
 const { readFileSync, writeFileSync } = require("fs")
 const { ipcRenderer, shell } = require("electron")
 const { Config } = require("../config.js")
@@ -58,7 +58,7 @@ const enableStyles = () => {
 }
 
 const advancedInventory = async () => {
-    const market = await sessionFetch("https://tricko.pro/assets/voxiom/voxiomMarket.json")
+    const market = await sessionFetch(getAsset("voxiom/voxiomMarket.json"))
     const gemPath = path.join(__dirname, "../../assets/icons/gem.webp")
 
     const inmenu = new InventoryModal

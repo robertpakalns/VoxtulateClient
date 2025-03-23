@@ -1,4 +1,4 @@
-const { createEl, sessionFetch } = require("../../functions.js")
+const { createEl, sessionFetch, getAsset } = require("../../functions.js")
 const Modal = require("../modal.js")
 const path = require("path")
 const { readFileSync } = require("fs")
@@ -16,7 +16,7 @@ class UpdatesModal extends Modal {
     }
 
     async work() {
-        this.updatesData = await sessionFetch("https://tricko.pro/assets/tricko/voxtulateUpdates.json")
+        this.updatesData = await sessionFetch(getAsset("tricko/voxtulateUpdates.json"))
 
         for (const update of this.updatesData) {
             const title = createEl("h3", {}, "updatesTitle", [`${update.version} - ${update.date}`])

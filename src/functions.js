@@ -96,4 +96,6 @@ const sessionFetch = url => JSON.parse(sessionStorage.getItem(url)) || fetch(url
 
 const message = (title, message) => dialog.showMessageBox({ icon: path.join(__dirname, "../assets/icon.ico"), title: `Voxtulate Client | ${title}`, message })
 
-module.exports = { el, createEl, creationTime, timeLeft, output, popup, openDB, getData, setData, isNum, copyNode, sessionFetch, message }
+const getAsset = path => `https://raw.githubusercontent.com/robertpakalns/tricko-assets/main/${path}`
+
+module.exports = { el, createEl, creationTime, timeLeft, output, popup, openDB, getData, setData, isNum, copyNode, sessionFetch, message, getAsset }
