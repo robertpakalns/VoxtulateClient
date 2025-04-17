@@ -20,10 +20,13 @@ const createEl = (tag, attrs = {}, className = "", append = []) => {
 }
 
 const output = (v, e) => `${v} ${v != 1 ? e + "s" : e}`
+
 const creationTime = date => new Date(date).toLocaleDateString("en-US")
+
+const timeUnits = { d: 86400000, h: 3600000, min: 60000, s: 1000 }
 const timeLeft = date => {
     let ms = new Date(date).getTime() - Date.now()
-    return Object.entries({ d: 86400000, h: 3600000, min: 60000, s: 1000 }).map(([unit, value]) => {
+    return Object.entries(timeUnits).map(([unit, value]) => {
         const uv = Math.floor(ms / value)
         ms %= value
         return uv > 0 ? `${uv}${unit}` : null

@@ -9,14 +9,13 @@ const swapper = webContents => {
 
     const swapperFolder = path.join(configDir, "swapper")
     if (!existsSync(swapperFolder)) mkdirSync(swapperFolder, { recursive: true })
-    const swapperFiles = readdirSync(swapperFolder)
+    const swapperFiles = new Set(readdirSync(swapperFolder))
 
     const swapFile = url => {
 
         // Resource detection based on the file name and extension
         const resource = new URL(url).pathname.split("/").pop()
-        if (!swapperFiles.includes(resource)) return null
-
+        if (!swapperFiles.has(resource)) return null
         const localFilePath = path.join(swapperFolder, resource)
         if (existsSync(localFilePath)) return `file://${localFilePath}`
     }
