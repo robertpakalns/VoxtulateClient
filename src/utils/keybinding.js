@@ -6,8 +6,10 @@ const keybinding = mainWindow => {
     const keybindings = config.get("keybinding.enable") ? config.get("keybinding.content") : defaultConfig.keybinding.content
     const { Close_Modal, Settings, Info, Updates, Reload, Fullscreen, DevTools } = keybindings
 
+    const keySet = new Set([Settings, Info, Updates, Reload, Fullscreen, DevTools])
+
     webContents.on("before-input-event", (e, { code, type }) => {
-        if ([Settings, Info, Updates, Reload, Fullscreen, DevTools].includes(code)) e.preventDefault()
+        if (keySet.has(code)) e.preventDefault()
 
         // Fix of the in-game pause button due to older electron version
         if (code !== Close_Modal && code === "Escape" && type === "keyUp") return webContents.send("toggle-window", "null")

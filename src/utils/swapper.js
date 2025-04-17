@@ -4,7 +4,13 @@ const path = require("path")
 const config = new Config
 
 const swapper = webContents => {
-    const reject = JSON.parse(readFileSync(path.join(__dirname, "../reject.json"), "utf8"))
+    const reject = new Set([
+        "api.adinplay.com",
+        "www.google-analytics.com",
+        "www.googletagmanager.com",
+        "matomo.voxiom.io"
+    ])
+
     const { adblocker, swapper } = config.get("client")
 
     const swapperFolder = path.join(configDir, "swapper")
@@ -28,7 +34,7 @@ const swapper = webContents => {
         if (url.startsWith("file://")) return callback({})
 
         // Block ads and other scripts which are not voxiom related
-        if (adblocker && reject.some(el => url.includes(el))) return callback({ cancel: true })
+        if (adblocker && reject.has(new URL(url).host)) return callback({ cancel: true })
 
         // Swapper
         if (swapper) {
