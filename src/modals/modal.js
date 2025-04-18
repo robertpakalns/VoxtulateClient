@@ -1,5 +1,7 @@
 const { createEl } = require("../functions.js")
+
 class Modal {
+    
     constructor() {
         this.modal = null
         this.modalHTML = null

@@ -9,7 +9,7 @@ const config = new Config
 const userScripts = require("./src/utils/userScripts.js")
 const keybinding = require("./src/utils/keybinding.js")
 const swapper = require("./src/utils/swapper.js")
-const clientUpdater = require("./src/modals/clientUpdater/script.js")
+const clientUpdater = require("./src/utils/clientUpdater.js")
 
 let mainWindow
 const domain = config.get("client.proxyDomain") ? "https://historynotes.club" : "https://voxiom.io"

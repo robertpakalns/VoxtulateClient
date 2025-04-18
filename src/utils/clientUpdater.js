@@ -1,5 +1,5 @@
 const { autoUpdater } = require("electron-updater")
-const { message } = require("../../functions.js")
+const { message } = require("../functions.js")
 
 const clientUpdater = () => {
     autoUpdater.checkForUpdates()
