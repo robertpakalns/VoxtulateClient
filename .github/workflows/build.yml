@@ -22,7 +22,14 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: ${{ runner.os }}-node-
 
-      - run: echo "v=$(node -p 'require("./package.json").version')" >> $GITHUB_ENV
+        shell: bash
+      - run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            $version = node -p "require('./package.json').version"
+            echo "v=$version" >> $env:GITHUB_ENV
+          else
+            echo "v=$(node -p \"require('./package.json').version\")" >> $GITHUB_ENV
+          fi
       - run: echo "Version is $v"
 
       - run: npm install
