@@ -110,6 +110,30 @@
     filter: drop-shadow(0 0 2px #4CAF50);
 }
 
+.swapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.swapper input[type="radio"] {
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    border: 2px solid #4CAF50;
+    border-radius: 10px;
+}
+
+.swapper input[type="radio"]:hover {
+    box-shadow: 0 0 5px #4CAF50;
+}
+
+.swapper input[type="radio"]:checked {
+    background-color: #4CAF50;
+}
+
 .relaunch {
     color: #f44336 !important;
 }

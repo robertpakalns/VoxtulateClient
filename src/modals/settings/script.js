@@ -43,7 +43,6 @@ class SettingsModal extends Modal {
             adblocker: "client.adblocker",
             fpsUncap: "client.fpsUncap",
             fullscreen: "client.fullscreen",
-            enableSwapper: "client.swapper",
             hint: "client.hint",
             proxyDomain: "client.proxyDomain",
 
@@ -63,6 +62,10 @@ class SettingsModal extends Modal {
             el(id).checked = config.get(key)
             el(id).event("change", e => config.set(key, e.target.checked))
         }
+
+        el("swapperNull").event("change", () => config.set("client.swapper", null))
+        el("swapperList").event("change", () => config.set("client.swapper", "list"))
+        el("swapperFull").event("change", () => config.set("client.swapper", "full"))
 
         el("crosshairURL").value = config.get("crosshair.url") ?? ""
         el("chatOpacity").value = config.get("interface.chatOpacity") ?? "100"
@@ -121,7 +124,7 @@ class SettingsModal extends Modal {
         el("openSwapper").event("click", () => shell.openPath(path.join(configDir, "swapper")))
         el("openFolder").event("click", () => shell.openPath(configDir))
 
-        for (const e of ["fpsUncap", "proxyDomain", "rpc", "rpcNotification", "adblocker", "inventorySorting", "fullscreen", "enableSwapper", "enableKeybinding"])
+        for (const e of ["swapperFull", "swapperList", "swapperNull", "fpsUncap", "proxyDomain", "rpc", "rpcNotification", "adblocker", "inventorySorting", "fullscreen", "enableKeybinding"])
             el(e).event("click", () => popup("rgb(231, 76, 60)", "Restart the client to apply this setting."))
     }
 }

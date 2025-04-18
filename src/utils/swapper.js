@@ -1,4 +1,4 @@
-const { existsSync, mkdirSync, readdirSync } = require("fs")
+const { existsSync, mkdirSync, readdirSync, readFileSync } = require("fs")
 const { Config, configDir } = require("../config.js")
 const path = require("path")
 const config = new Config
@@ -10,6 +10,7 @@ const swapper = webContents => {
         "www.googletagmanager.com",
         "matomo.voxiom.io"
     ])
+    const swapperList = JSON.parse(readFileSync(path.join(__dirname, "../../assets/swapperList.json")))
 
     const { adblocker, swapper } = config.get("client")
 
@@ -17,12 +18,11 @@ const swapper = webContents => {
     if (!existsSync(swapperFolder)) mkdirSync(swapperFolder, { recursive: true })
     const swapperFiles = new Set(readdirSync(swapperFolder))
 
-    const swapFile = url => {
+    const swapFile = name => {
 
         // Resource detection based on the file name and extension
-        const resource = new URL(url).pathname.split("/").pop()
-        if (!swapperFiles.has(resource)) return null
-        const localFilePath = path.join(swapperFolder, resource)
+        if (!swapperFiles.has(name)) return null
+        const localFilePath = path.join(swapperFolder, name)
         if (existsSync(localFilePath)) return `file://${localFilePath}`
     }
 
@@ -37,8 +37,13 @@ const swapper = webContents => {
         if (adblocker && reject.has(new URL(url).host)) return callback({ cancel: true })
 
         // Swapper
-        if (swapper) {
-            const swap = swapFile(url)
+        if (swapper === "full") {
+            const swap = swapFile(new URL(url).pathname.split("/").pop())
+            if (swap) return callback({ redirectURL: swap })
+        }
+
+        if (swapper === "list") {
+            const swap = swapFile(swapperList[url])
             if (swap) return callback({ redirectURL: swap })
         }
 

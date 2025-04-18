@@ -20,7 +20,7 @@ The Voxtulate Client stores its data, including user information, tokens, and ca
 4. Be careful: swapper works only with file name and extension, no paths in swapped file name
 
 ### Default Keybinding
-| Keybinding | Action                 |
+| Key        | Action                 |
 |------------|------------------------|
 | `Escape`   | Close Modal Window     |
 | `F1`       | Open Settings Window   |
