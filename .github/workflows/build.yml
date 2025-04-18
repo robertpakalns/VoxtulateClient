@@ -30,8 +30,8 @@ jobs:
 
       - uses: softprops/action-gh-release@v2.0.6      
         with:
-          tag_name: v${{ steps.get_version_name.outputs.version }}
-          name: Release ${{ steps.get_version_name.outputs.version }}
+          tag_name: v${{ steps.get_version.outputs.version }}
+          name: Release ${{ steps.get_version.outputs.version }}
           draft: true
           prerelease: false
           token: ${{ secrets.GITHUB_TOKEN }}
