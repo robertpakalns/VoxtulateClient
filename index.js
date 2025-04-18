@@ -2,14 +2,14 @@ const { app, BrowserWindow, ipcMain, dialog, protocol, session } = require("elec
 const { Config, configPath } = require("./src/config.js")
 const { readFileSync, writeFileSync } = require("fs")
 const { message } = require("./src/functions.js")
-const DiscordRPC = require("./src/discord.js")
+const DiscordRPC = require("./src/utils/discord.js")
 const path = require("path")
 const rpc = new DiscordRPC
 const config = new Config
 const userScripts = require("./src/utils/userScripts.js")
 const keybinding = require("./src/utils/keybinding.js")
 const swapper = require("./src/utils/swapper.js")
-const clientUpdater = require("./src/utils/clientUpdater.js")
+const clientUpdater = require("./src/modals/clientUpdater/script.js")
 
 let mainWindow
 const domain = config.get("client.proxyDomain") ? "https://historynotes.club" : "https://voxiom.io"
@@ -39,12 +39,12 @@ const createMain = async () => {
     webContents.on("did-navigate-in-page", () => {
         const url = webContents.getURL()
         webContents.send("update-url", url)
-        rpc.setJoinURL(url.replace(`${domain}/`, "voxtulate://"))
+        rpc.setJoinURL(url.replace(domain, ""))
     })
     webContents.on("did-finish-load", () => {
         const url = webContents.getURL()
         webContents.send("update-url", url)
-        rpc.setJoinURL(url.replace(`${domain}/`, "voxtulate://"))
+        rpc.setJoinURL(url.replace(domain, ""))
 
         userScripts(webContents)
     })

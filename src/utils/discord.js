@@ -1,20 +1,16 @@
-const { message } = require("./functions.js")
+const { message } = require("../functions.js")
 const { Client } = require("discord-rpc")
-const { Config } = require("./config.js")
+const { Config } = require("../config.js")
 const config = new Config
 
-const links = {
+const staticLinks = {
     "/": "Viewing main lobby",
     "/experimental": "Viewing main lobby",
-    "/account": () => "Viewing their account",
-    "/player": name => `Viewing player: ${name}`,
-    "/leaderboard": type => `Viewing leaderboard: ${type}`,
     "/loadouts": "Viewing their inventory",
     "/loadouts/inventory": "Viewing their inventory",
     "/loadouts/market": "Viewing market",
     "/loadouts/sales": "Viewing their sales",
     "/loadouts/history": "Viewing their sales history",
-    "/shop": () => "Viewing shop",
     "/changelog": "Viewing changelog",
     "/settings": "Viewing settings",
     "/friends": "Viewing their friends",
@@ -22,7 +18,14 @@ const links = {
     "/friends/requests": "Viewing their friend requests",
     "/clans": "Viewing their clan",
     "/clans/active": "Viewing their clan",
-    "/clans/search": "Searching clans",
+    "/clans/search": "Viewing clans"
+}
+
+const dynamicLinks = {
+    "/account": () => "Viewing their account",
+    "/player": name => `Viewing player: ${name}`,
+    "/leaderboard": type => `Viewing leaderboard: ${type}`,
+    "/shop": () => "Viewing shop",
     "/clans/view": name => `Viewing clan: ${name}`
 }
 
@@ -68,15 +71,21 @@ class DiscordRPC {
     setJoinURL(url) {
         if (!this.connected) return
 
-        const path = url.replace("voxtulate://", "/")
-        const match = Object.keys(links).find(key => typeof links[key] === "function" ? path.startsWith(key) : path === key)
+        let result = "Playing Voxiom.io"
 
-        const result = url.includes("#") ? "Playing a match" : match ?
-            (typeof links[match] === "function" ? links[match](match ? path.replace(`${match}/`, "").split("?")[0] : path) : links[match]) :
-            "Playing Voxiom.io"
+        if (url.includes("#")) result = "Playing a match"
+        else if (staticLinks[url]) result = staticLinks[url]
+        else {
+            for (const key in dynamicLinks) {
+                if (url.startsWith(key)) {
+                    result = dynamicLinks[key](url.replace(`${key}/`, "").split("/")[0])
+                    break
+                }
+            }
+        }
 
         this.state = result
-        this.joinURL = url
+        this.joinURL = "voxtulate:/" + url
     }
 }
 
