@@ -6,7 +6,7 @@ const DiscordRPC = require("./src/utils/discord.js")
 const path = require("path")
 const rpc = new DiscordRPC
 const config = new Config
-const userScripts = require("./src/utils/userScripts.js")
+const { userScripts } = require("./src/utils/userScripts.js")
 const keybinding = require("./src/utils/keybinding.js")
 const swapper = require("./src/utils/swapper.js")
 const clientUpdater = require("./src/utils/clientUpdater.js")
@@ -45,9 +45,10 @@ const createMain = async () => {
         const url = webContents.getURL()
         webContents.send("update-url", url)
         rpc.setJoinURL(url.replace(domain, ""))
-
-        userScripts(webContents)
     })
+
+    userScripts(webContents)
+    webContents.on("did-start-loading", () => userScripts(webContents))
 
     webContents.on("new-window", (e, url) => {
         e.preventDefault()

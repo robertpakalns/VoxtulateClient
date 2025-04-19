@@ -1,12 +1,11 @@
-const { el, createEl, popup } = require("../../functions.js")
+const { userScriptsPath } = require("../../../src/utils/userScripts.js")
 const { Config, configPath, configDir } = require("../../config.js")
+const { el, createEl, popup } = require("../../functions.js")
+const { readFileSync, writeFileSync } = require("fs")
 const { ipcRenderer, shell } = require("electron")
-const { readFileSync } = require("fs")
 const Modal = require("../modal.js")
 const path = require("path")
 const config = new Config
-
-const userscripts = readFileSync(path.join(configDir, "userscripts.json"), "utf8")
 
 class SettingsModal extends Modal {
     constructor() {
@@ -36,9 +35,9 @@ class SettingsModal extends Modal {
         }
 
         const toggleKeybinding = () => {
-            const keybinding = el("enableKeybinding").checked
-            el("keybindingTable").class("disabled", !keybinding)
-            el("keybindingTable").element.querySelectorAll("input").forEach(el => el.disabled = !keybinding)
+            const checked = el("enableKeybinding").checked
+            el("keybindingTable").class("disabled", !checked)
+            el("keybindingTable").element.querySelectorAll("input").forEach(el => el.disabled = !checked)
         }
 
         const checkedObject = {
@@ -126,8 +125,47 @@ class SettingsModal extends Modal {
         el("openSwapper").event("click", () => shell.openPath(path.join(configDir, "swapper")))
         el("openFolder").event("click", () => shell.openPath(configDir))
 
+        const restartMessage = () => popup("rgb(231, 76, 60)", "Restart the client to apply this setting.")
         for (const e of ["swapperFull", "swapperList", "swapperNull", "fpsUncap", "proxyDomain", "rpc", "rpcNotification", "adblocker", "inventorySorting", "fullscreen", "enableKeybinding"])
-            el(e).event("click", () => popup("rgb(231, 76, 60)", "Restart the client to apply this setting."))
+            el(e).event("click", restartMessage)
+
+        // User scripts and styles
+        const userScriptsConfig = JSON.parse(readFileSync(userScriptsPath, "utf8"))
+        const { enable: userScriptsEnabled, scripts, styles } = userScriptsConfig
+
+        const userScriptsRow = (obj, key, id) => {
+            const _checkbox = createEl("input", { type: "checkbox", checked: obj[key] })
+            _checkbox.addEventListener("change", e => {
+                restartMessage()
+                obj[key] = e.target.checked
+                writeFileSync(userScriptsPath, JSON.stringify(userScriptsConfig, null, 2))
+            })
+
+            const _text = createEl("span", {}, "", [key])
+            const _cont = createEl("div", {}, "content", [_checkbox, _text])
+
+            el(id).element.appendChild(_cont)
+        }
+
+        for (const key in scripts) userScriptsRow(scripts, key, "userScripts")
+        for (const key in styles) userScriptsRow(styles, key, "userStyles")
+
+        el("userScriptsEnabled").checked = userScriptsEnabled
+        el("userScriptsEnabled").event("change", e => {
+            toggleUserScripts()
+            restartMessage()
+            userScriptsConfig.enable = e.target.checked
+            writeFileSync(userScriptsPath, JSON.stringify(userScriptsConfig, null, 2))
+        })
+
+        const toggleUserScripts = () => {
+            const checked = el("userScriptsEnabled").checked
+            el("userScriptsBlock").class("disabled", !checked)
+            el("userScripts").element.querySelectorAll("input").forEach(el => el.disabled = !checked)
+            el("userStyles").element.querySelectorAll("input").forEach(el => el.disabled = !checked)
+        }
+
+        toggleUserScripts()
     }
 }
 
