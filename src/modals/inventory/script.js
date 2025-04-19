@@ -18,7 +18,6 @@ class InventoryModal extends Modal {
     async init() {
         super.init()
         this.modal.id = "inventoryModal"
-        this.marketData = await sessionFetch(getAsset("voxiom/voxiomMarket.json"))
     }
 
     setData(data) {
@@ -57,7 +56,9 @@ class InventoryModal extends Modal {
         return result
     }
 
-    renderPage() {
+    async renderPage() {
+        this.marketData = await sessionFetch(getAsset("voxiom/voxiomMarket.json"))
+
         const cont = document.querySelector(".cont")
 
         const rarities = {

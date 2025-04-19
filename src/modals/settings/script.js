@@ -6,6 +6,8 @@ const Modal = require("../modal.js")
 const path = require("path")
 const config = new Config
 
+const userscripts = readFileSync(path.join(configDir, "userscripts.json"), "utf8")
+
 class SettingsModal extends Modal {
     constructor() {
         super()

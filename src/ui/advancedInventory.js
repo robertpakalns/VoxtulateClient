@@ -36,8 +36,6 @@ const advancedInventory = async () => {
 
         if (url === "/market/public") marketData = JSON.parse(data)
         if (url === "/market/my_listed_items") listedData = JSON.parse(data)
-        // if (url === "/profile/me") accountData = JSON.parse(data)
-        // if (url.includes("/profile/player")) playerData = JSON.parse(data)
 
         return r
     }))
