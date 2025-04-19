@@ -1,15 +1,15 @@
-const { createEl, timeLeft, isNum, copyNode, creationTime, sessionFetch, getAsset } = require("../functions.js")
+const { createEl, isNum, copyNode, creationTime } = require("../functions.js")
 const { readFileSync, writeFileSync } = require("fs")
 const { ipcRenderer, shell } = require("electron")
 const { Config } = require("../config.js")
 const path = require("path")
 const config = new Config
-const InventoryModal = require("../modals/inventory/script.js")
 const SettingsModal = require("../modals/settings/script.js")
 const UpdatesModal = require("../modals/updates/script.js")
 const InfoModal = require("../modals/info/script.js")
+const advancedInventory = require("./advancedInventory.js")
 
-let marketData, listedData, accountData, playerData
+let accountData, playerData
 const { console: enableConsole, chatOpacity, inventorySorting, clientStyles: styles } = config.get("interface")
 
 const enableStyles = () => {
@@ -41,13 +41,15 @@ const enableStyles = () => {
     const crosshair = createEl("img", { src: config.get("crosshair.url") }, "voxiomCrosshair")
     document.body.prepend(crosshair)
 
-    const updateStyle = (selector, property, value) => document.querySelectorAll(selector).forEach(el => el.style[property] = value)
+    const updateStyle = (selector, property, value) => {
+        const el = document.querySelector(selector)
+        if (el) el.style[property] = value
+    }
 
     ipcRenderer.on("change-styles", (_, enable) => enableStyles.textContent = enable ? customCSS : "")
     ipcRenderer.on("toggle-hint", (_, enable) => updateStyle(".hint", "display", enable ? "block" : "none"))
     ipcRenderer.on("change-opacity", (_, opacity) => updateStyle(".lpfJAq, .lpdfTz", "opacity", `${opacity}%`))
     ipcRenderer.on("set-console", (_, enable) => {
-        console.log({ enable })
         updateStyle('body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"]', "opacity", enable ? "0%" : "100%")
         updateStyle(".voxiomConsole", "opacity", enable ? "100%" : "0%")
     })
@@ -55,79 +57,6 @@ const enableStyles = () => {
         updateStyle(".voxiomCrosshair", "display", enable ? "block" : "none")
         crosshair.src = url
     })
-}
-
-const advancedInventory = async () => {
-    const market = await sessionFetch(getAsset("voxiom/voxiomMarket.json"))
-    const gemPath = path.join(__dirname, "../../assets/icons/gem.webp")
-
-    const inmenu = new InventoryModal
-
-    const _fetch = fetch
-    window.fetch = (...args) => _fetch(...args).then(r => r.clone().text().then(data => {
-        const [url] = args
-        if (url === "/profile/myinv") {
-            const { name = "", id = "", rotation = "", creation = "", model = "", rarity = "", equipped = "" } = inmenu.settings
-            const parsedData = JSON.parse(data)
-            const newData = {
-                ...parsedData,
-                data: parsedData.data.map(el => {
-                    const skin = market.data[el.type - 1]
-                    return { ...el, name: skin.name, rotation: skin.rotation, model: skin.type, rarity: skin.rarity }
-                }).filter(el =>
-                    (!name || el.name.toLowerCase().includes(name.toLowerCase())) &&
-                    (!id || el.type.toString().includes(id)) &&
-                    (rotation === "" || el.rotation === (rotation === "true")) &&
-                    (model === "" || el.model === model) &&
-                    (rarity === "" || el.rarity === rarity) &&
-                    (equipped === "" || el.slot !== null === (equipped === "true"))
-                ).sort((a, b) => !creation ? 0 : creation === "true" ? b.creation_time - a.creation_time : a.creation_time - b.creation_time)
-            }
-            inmenu.setData(newData)
-            return new Response(JSON.stringify(newData), r)
-        }
-
-        if (url === "/market/public") marketData = JSON.parse(data)
-        if (url === "/market/my_listed_items") listedData = JSON.parse(data)
-        if (url === "/profile/me") accountData = JSON.parse(data)
-        if (url.includes("/profile/player")) playerData = JSON.parse(data)
-
-        return r
-    }))
-
-    inmenu.init()
-    inmenu.work()
-
-    const _inventoryButton = createEl("div", {}, "voxiomSkinsButton", ["Advanced Sorting"])
-    _inventoryButton.addEventListener("click", async () => {
-        document.querySelector("#inventoryModal").classList.toggle("open")
-        inmenu.currentPage = 0
-        inmenu.renderPage()
-    })
-
-    // const _previewButton = createEl("div", {}, "voxiomSkinsButton", ["Preview"])
-
-    const observer = new MutationObserver(() => {
-        const { pathname } = window.location
-        const isMarket = pathname === "/loadouts/market" || (pathname === "/loadouts" && document.querySelector(".dzKqCZ"))
-        const isSales = pathname === "/loadouts/sales"
-
-        if (inmenu.data?.data?.length > 0 &&
-            !document.querySelector(".voxiomSkinsButton") &&
-            ["/loadouts", "/loadouts/inventory"].includes(pathname)
-            // ) document.querySelector(".iRauPR")?.append(_inventoryButton, _previewButton)
-        ) document.querySelector(".iRauPR")?.append(_inventoryButton)
-        if (!isMarket && !isSales) return
-
-        document.querySelectorAll(".kiKVOk").forEach((el, i) => {
-            if (el.parentElement.parentElement.querySelector(".voxiomSkinName")) return
-            const skin = isMarket ? marketData.data.market_items[i / 2] : listedData.data.player_market_items[i / 2]
-            const _image = isMarket || isSales ? createEl("img", { src: gemPath }, "gem") : ""
-            const _name = createEl("div", { textContent: isSales || isMarket ? `${timeLeft(skin.listed_time + 1209600000)} | ${skin.price}` : "" }, "voxiomSkinName", [_image])
-            el.parentElement.parentElement.appendChild(_name)
-        })
-    })
-    observer.observe(document.querySelector("#app"), { childList: true, subtree: true })
 }
 
 const createModals = () => {
@@ -158,6 +87,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const blocksCont = createEl("div", { className: "voxiomBlocks voxiomCreate" })
     const hintCont = createEl("div", { id: "hintCont" }, "hint", [`Press ${Settings} to open settings, ${Info} to open info window`])
     document.body.append(consoleCont, blocksCont)
+
+    const _fetch = fetch
+    window.fetch = (...args) => _fetch(...args).then(r => r.clone().text().then(data => {
+        const [url] = args
+
+        if (url === "/profile/me") accountData = JSON.parse(data)
+        if (url.includes("/profile/player")) playerData = JSON.parse(data)
+
+        return r
+    }))
 
     const cloneData = (type, data) => {
         if (!data) return
