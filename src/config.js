@@ -46,46 +46,70 @@ if (!existsSync(configDir)) mkdirSync(configDir, { recursive: true })
 if (!existsSync(configPath)) writeFileSync(configPath, JSON.stringify(defaultConfig, null, 2))
 
 class Config {
+    static configInstance = null
+    static file = configPath
+
     constructor() {
-        this.file = configPath
-        this.config = JSON.parse(readFileSync(this.file, "utf8"))
-        this.fillConfig()
-        this.cleanConfig()
+        if (Config.configInstance) this.config = Config.configInstance
+        else {
+            this.config = JSON.parse(readFileSync(Config.file, "utf8"))
+            Config.configInstance = this.config
+            this.fillConfig()
+            this.cleanConfig()
+        }
     }
 
     get(key) {
-        return key.split(".").reduce((acc, el) => acc && acc[el], this.config)
+        let result = this.config
+        for (const el of key.split(".")) {
+            if (result === null || typeof result !== "object") return undefined
+            result = result[el]
+        }
+        return result
     }
 
     set(key, value) {
-        key.split(".").reduce((obj, k, i, keys) => obj[k] = i === keys.length - 1 ? value : obj[k] || {}, this.config)
-        writeFileSync(this.file, JSON.stringify(this.config, null, 2))
+        const keys = key.split(".")
+        const lastKey = keys.pop()
+
+        let result = this.config
+        for (const k of keys) {
+            if (typeof result[k] !== "object" || result[k] === null) result[k] = {}
+            result = result[k]
+        }
+        result[lastKey] = value
+
+        writeFileSync(Config.file, JSON.stringify(this.config, null, 2))
     }
 
     default() {
         this.config = defaultConfig
-        writeFileSync(this.file, JSON.stringify(this.config, null, 2))
+        writeFileSync(Config.file, JSON.stringify(this.config, null, 2))
     }
 
     // Fills the config with default values if missing
     fillConfig(source = defaultConfig, target = this.config) {
-        for (const key in source) if (source.hasOwnProperty(key)) {
-            if (target[key] === undefined) target[key] = source[key]
-            else if (typeof source[key] === "object" && source[key] !== null) {
-                if (typeof target[key] !== "object" || target[key] === null) target[key] = {}
-                this.fillConfig(source[key], target[key])
+        for (const key in source) {
+            const s = source[key]
+            const t = target[key]
+
+            if (typeof s === "object" && s !== null) {
+                if (typeof t !== "object" || t === null) target[key] = {}
+                this.fillConfig(s, target[key])
             }
+            else if (t === undefined) target[key] = s
         }
-        writeFileSync(this.file, JSON.stringify(this.config, null, 2))
+
+        writeFileSync(Config.file, JSON.stringify(this.config, null, 2))
     }
 
     // Cleans the config from unregistered values
     cleanConfig(source = defaultConfig, target = this.config) {
         for (const key in target) {
-            if (!source.hasOwnProperty(key)) delete target[key]
-            else if (typeof source[key] === "object" && source[key] !== null && typeof target[key] === "object") this.cleanConfig(source[key], target[key])
+            if (!(key in source)) delete target[key]
+            else if (typeof source[key] === "object" && source[key] !== null) this.cleanConfig(source[key], target[key])
         }
-        writeFileSync(this.file, JSON.stringify(this.config, null, 2))
+        writeFileSync(Config.file, JSON.stringify(this.config, null, 2));
     }
 }
 
