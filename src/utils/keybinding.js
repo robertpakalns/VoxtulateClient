@@ -10,11 +10,13 @@ const keybinding = mainWindow => {
 
     webContents.on("before-input-event", (e, { code, type }) => {
         if (keySet.has(code)) e.preventDefault()
+        if (code == "F4") e.preventDefault() // TEMP
 
         // Fix of the in-game pause button due to older electron version
         if (code !== Close_Modal && code === "Escape" && type === "keyUp") return webContents.send("toggle-window", "null")
 
         switch (code) {
+            case "F4": webContents.send("toggle-window", "menuModal"); break // TEMP
             case Close_Modal: if (type === "keyUp") webContents.send("toggle-window", "null"); break
             case Settings: webContents.send("toggle-window", "settingsModal"); break
             case Info: webContents.send("toggle-window", "infoModal"); break

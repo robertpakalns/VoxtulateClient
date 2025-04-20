@@ -32,7 +32,7 @@ class InfoModal extends Modal {
             keybindingBody.appendChild(tr)
         }
 
-        document.querySelector("#version").textContent = version
+        // document.querySelector("#version").textContent = version
 
         document.querySelectorAll(".url").forEach(el => el.addEventListener("click", e => {
             e.preventDefault()

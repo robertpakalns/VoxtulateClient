@@ -7,6 +7,7 @@ const config = new Config
 const SettingsModal = require("../modals/settings/script.js")
 const UpdatesModal = require("../modals/updates/script.js")
 const InfoModal = require("../modals/info/script.js")
+const MenuModal = require("../modals/menu/script.js")
 const advancedInventory = require("./advancedInventory.js")
 
 let accountData, playerData
@@ -75,6 +76,10 @@ const createModals = () => {
     const umenu = new UpdatesModal
     umenu.init()
     umenu.work()
+
+    const mmenu = new MenuModal
+    mmenu.init()
+    mmenu.work()
 
     if (inventorySorting) advancedInventory()
 }

@@ -509,3 +509,42 @@ input:disabled {
     margin: 10px;
     padding: 10px;
 }
+
+/* Menu */
+
+.sideBar {
+    height: 100%;
+    background: rgba(150, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sideBarList {}
+
+.sideBarItem {
+    padding: 10px;
+    font-size: 1.2rem;
+}
+
+.mainContent {
+    background: rgba(0, 0, 20, 0.5);
+    height: 100%;
+    flex: 1;
+}
+
+.icon {
+    padding: 10px;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon img {
+    height: 30px;
+}
+
+#version {
+    padding: 10px;
+}
