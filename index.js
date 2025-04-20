@@ -9,7 +9,7 @@ const config = new Config
 const { userScripts } = require("./src/utils/userScripts.js")
 const keybinding = require("./src/utils/keybinding.js")
 const swapper = require("./src/utils/swapper.js")
-const clientUpdater = require("./src/utils/clientUpdater.js")
+const { autoUpdater } = require("electron-updater")
 
 let mainWindow
 const domain = config.get("client.proxyDomain") ? "https://historynotes.club" : "https://voxiom.io"
@@ -74,11 +74,17 @@ app.on("ready", () => {
         config.set("client.firstJoin", false)
     }
 
-    clientUpdater()
-
     ipcMain.on("join-game", (_, url) => mainWindow.loadURL(url))
 
     const { webContents } = mainWindow
+
+    autoUpdater.checkForUpdates()
+    autoUpdater.on("update-available", () => webContents.send("client-update", null))
+    autoUpdater.on("download-progress", value => webContents.send("client-update", value))
+    autoUpdater.on("update-downloaded", () => webContents.send("client-update", true))
+    ipcMain.on("client-update", (_, data) => {
+        if (data === "update") autoUpdater.quitAndInstall()
+    })
 
     const f = { filters: [{ name: "JSON Files", extensions: ["json"] }] }
     ipcMain.on("import-client-settings", () => dialog.showOpenDialog(f).then(({ canceled, filePaths }) => {
@@ -94,7 +100,7 @@ app.on("ready", () => {
         if (!canceled && filePath) webContents.send("get-game-settings", filePath)
     }))
 
-    for (const e of ["change-crosshair", "change-opacity", "set-console", "toggle-hint", "change-styles"])
+    for (const e of ["change-crosshair", "change-opacity", "set-console", "toggle-hint", "change-styles", "client-update"])
         ipcMain.on(e, (_, ...a) => webContents.send(e, ...a))
 
     const confirmAction = (message, callback) => {

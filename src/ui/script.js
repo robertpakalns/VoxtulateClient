@@ -1,4 +1,4 @@
-const { createEl, isNum, copyNode, creationTime } = require("../functions.js")
+const { createEl, isNum, creationTime } = require("../functions.js")
 const { readFileSync, writeFileSync } = require("fs")
 const { ipcRenderer, shell } = require("electron")
 const { Config } = require("../config.js")
@@ -97,6 +97,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
         return r
     }))
+
+    const copyNode = (label, value, id) => {
+        if (document.querySelector(`#${id}`)) {
+            document.querySelector(`#${id}`).children[1].textContent = value
+            return
+        }
+
+        const node = document.querySelector(".bejTKB")
+        if (!node) return
+
+        const copy = node.cloneNode(true)
+        copy.id = id
+        node.parentElement.appendChild(copy)
+
+        copy.children[0].innerHTML = label
+        copy.children[1].innerHTML = value
+    }
 
     const cloneData = (type, data) => {
         if (!data) return

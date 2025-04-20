@@ -1,8 +1,8 @@
 const { Config, defaultConfig } = require("../../config.js")
-const { createEl, popup } = require("../../functions.js")
+const { createEl, popup, el } = require("../../functions.js")
 const { version } = require("../../../package.json")
 const { readFileSync } = require("fs")
-const { shell } = require("electron")
+const { shell, ipcRenderer } = require("electron")
 const Modal = require("../modal.js")
 const path = require("path")
 const config = new Config
@@ -47,6 +47,21 @@ class InfoModal extends Modal {
             navigator.clipboard.writeText(e.target.innerText)
             popup("rgb(206, 185, 45)", "Copied!")
         }))
+
+        const updateStatus = el("updateStatus").element
+        ipcRenderer.on("client-update", (_, data) => {
+            if (data === null) popup("rgb(45, 206, 72)", "Update available!")
+            else if (data === true) {
+                const _updateButton = createEl("button", { textContent: "Update!" })
+                _updateButton.addEventListener("click", () => {
+                    ipcRenderer.send("client-update", "update")
+                    updateStatus.innerText = "Updating..."
+                })
+                updateStatus.innerText = ""
+                updateStatus.appendChild(_updateButton)
+            }
+            else updateStatus.innerText = `Downloading... ${Math.round(data.percent)}%`
+        })
     }
 }
 

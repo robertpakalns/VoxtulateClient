@@ -73,23 +73,6 @@ const setData = (db, array, store) => new Promise(res => {
 
 const isNum = (a, b) => isNaN(a / b) ? 0 : (a / b).toFixed(2) || "No Data"
 
-const copyNode = (label, value, id) => {
-    if (document.querySelector(`#${id}`)) {
-        document.querySelector(`#${id}`).children[1].textContent = value
-        return
-    }
-
-    const node = document.querySelector(".bejTKB")
-    if (!node) return
-
-    const copy = node.cloneNode(true)
-    copy.id = id
-    node.parentElement.appendChild(copy)
-
-    copy.children[0].innerHTML = label
-    copy.children[1].innerHTML = value
-}
-
 const sessionFetch = url => JSON.parse(sessionStorage.getItem(url)) || fetch(url)
     .then(r => r.json())
     .then(data => {
@@ -101,4 +84,4 @@ const message = (title, message) => dialog.showMessageBox({ icon: path.join(__di
 
 const getAsset = path => `https://raw.githubusercontent.com/robertpakalns/tricko-assets/main/${path}`
 
-module.exports = { el, createEl, creationTime, timeLeft, output, popup, openDB, getData, setData, isNum, copyNode, sessionFetch, message, getAsset }
+module.exports = { el, createEl, creationTime, timeLeft, output, popup, openDB, getData, setData, isNum, sessionFetch, message, getAsset }
