@@ -140,7 +140,9 @@
 
 .modal footer {
     display: flex;
+    flex: 1;
     justify-content: center;
+    align-items: flex-end;
     margin-bottom: 10px;
     gap: 20px;
 }
@@ -180,6 +182,7 @@ input:disabled {
 }
 
 .modal table {
+    margin: auto;
     border-collapse: collapse;
 }
 
@@ -511,7 +514,6 @@ input:disabled {
 }
 
 /* Menu */
-
 .sideBar {
     height: 100%;
     background: rgba(150, 0, 0, 0.5);
@@ -520,9 +522,15 @@ input:disabled {
     justify-content: space-between;
 }
 
-.sideBarList {}
+.sideBarList {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
 
 .sideBarItem {
+    width: 100%;
+    text-align: left;
     padding: 10px;
     font-size: 1.2rem;
 }
@@ -533,8 +541,14 @@ input:disabled {
     flex: 1;
 }
 
+.mainContentBlock {
+    display: none;
+    height: 600px;
+    overflow-y: auto;
+}
+
 .icon {
-    padding: 10px;
+    padding: 15px;
     display: flex;
     gap: 5px;
     align-items: center;
@@ -547,4 +561,16 @@ input:disabled {
 
 #version {
     padding: 10px;
+}
+
+.active {
+    display: flex;
+    flex-direction: column;
+}
+
+.credit {
+    margin: auto;
+    width: fit-content;
+    display: flex;
+    gap: 3px;
 }

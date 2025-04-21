@@ -6,7 +6,6 @@ const path = require("path")
 const config = new Config
 const SettingsModal = require("../modals/settings/script.js")
 const UpdatesModal = require("../modals/updates/script.js")
-const InfoModal = require("../modals/info/script.js")
 const MenuModal = require("../modals/menu/script.js")
 const advancedInventory = require("./advancedInventory.js")
 
@@ -68,10 +67,6 @@ const createModals = () => {
     const smenu = new SettingsModal
     smenu.init()
     smenu.work()
-
-    const imenu = new InfoModal
-    imenu.init()
-    imenu.work()
 
     const umenu = new UpdatesModal
     umenu.init()

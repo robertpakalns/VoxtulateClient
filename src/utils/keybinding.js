@@ -19,7 +19,7 @@ const keybinding = mainWindow => {
             case "F4": webContents.send("toggle-window", "menuModal"); break // TEMP
             case Close_Modal: if (type === "keyUp") webContents.send("toggle-window", "null"); break
             case Settings: webContents.send("toggle-window", "settingsModal"); break
-            case Info: webContents.send("toggle-window", "infoModal"); break
+            case Info: webContents.send("toggle-window", "infoModal"); break // REMOVE
             case Updates: webContents.send("toggle-window", "updatesModal"); break
             case Reload: webContents.reload(); break
             case Fullscreen: mainWindow.setFullScreen(!mainWindow.isFullScreen()); break

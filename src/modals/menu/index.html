@@ -8,10 +8,10 @@
             </div>
 
             <div class="sideBarList">
-                <div class="sideBarItem">Settings</div>
-                <div class="sideBarItem">User Scripts</div>
-                <div class="sideBarItem">Changelog</div>
-                <div class="sideBarItem">Info</div>
+                <button id="settingsButton" class="sideBarItem">Settings</button>
+                <button id="userScriptsButton" class="sideBarItem">User Scripts</button>
+                <button id="changelogButton" class="sideBarItem">Changelog</button>
+                <button id="infoButton" class="sideBarItem">Info</button>
             </div>
 
             <div class="sideBarFooter">
@@ -19,6 +19,66 @@
             </div>
 
         </div>
-        <div class="mainContent"></div>
+        <div class="mainContent">
+
+            <div class="mainContentBlock" name="settingsButton">settings</div>
+
+            <div class="mainContentBlock" name="userScriptsButton">userscripts</div>
+
+            <div class="mainContentBlock" name="changelogButton">changelog</div>
+
+            <div class="mainContentBlock" name="infoButton">
+                <main>
+                    <header>Client Directory</header>
+
+                    <table>
+                        <tbody id="dirBody"></tbody>
+                    </table>
+                </main>
+
+                <main>
+                    <header>Keybindings</header>
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>Name</td>
+                                <td>Default Key</td>
+                                <td>User Key</td>
+                            </tr>
+                        </thead>
+                        <tbody id="keyBody"></tbody>
+                    </table>
+                </main>
+
+                <main>
+                    <header>Credits</header>
+                    <div class="credit">
+                        <h1>VVC (NamekujiLSDs)</h1> |
+                        <a class="url" href="https://namekujilsds.github.io/VVC">Website</a> |
+                        <a class="url" href="https://discord.com/invite/EcZytWAJkn">Discord</a>
+                    </div>
+                    <div class="credit">
+                        <h1>Voxiom.io (ThriveR)</h1> |
+                        <a class="url" href="https://voxiom.io">Website</a> |
+                        <a class="url" href="https://discord.com/invite/GBFtRcY">Discord</a>
+                    </div>
+                    <div class="credit">
+                        <h1>Juice Client (irrvlo)</h1> |
+                        <a class="url" href="https://juice.irrvlo.xyz">Website</a> |
+                        <a class="url" href="https://discord.gg/FjzAAdSjng">Discord</a>
+                    </div>
+                </main>
+
+                <footer>
+                    <div><a class="url" href="https://discord.gg/yPjrUrvSzv">Community Server</a></div>
+                    <div>Powered by Tricko</div>
+                    <div>by robertpakalns</div>
+                </footer>
+
+            </div>
+
+        </div>
+
     </div>
+</div>
 </div>
