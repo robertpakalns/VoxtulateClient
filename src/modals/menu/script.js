@@ -1,8 +1,9 @@
 const { createEl, el, popup, sessionFetch, getAsset } = require("../../functions.js")
+const { userScriptsPath } = require("../../../src/utils/userScripts.js")
+const { readFileSync, writeFileSync } = require("fs")
 const { version } = require("../../../package.json")
 const { ipcRenderer, shell } = require("electron")
 const Modal = require("../modal.js")
-const { readFileSync } = require("fs")
 const path = require("path")
 
 const { Config, defaultConfig, configDir } = require("../../config.js")
@@ -62,7 +63,65 @@ class MenuModal extends Modal {
             else _version.innerText = `Downloading... ${Math.round(data.percent)}%`
         })
 
+        this.renderUserscriptsPage()
         this.renderInfoPage()
+    }
+
+    renderUserscriptsPage() {
+        const restartMessage = () => popup("rgb(231, 76, 60)", "Restart the client to apply this setting.")
+
+        const userScriptsConfig = JSON.parse(readFileSync(userScriptsPath, "utf8"))
+        const { enable: userScriptsEnabled, scripts, styles } = userScriptsConfig
+
+        const userScriptsRow = (obj, key, id) => {
+            const _checkbox = createEl("input", { type: "checkbox", checked: obj[key] })
+            _checkbox.addEventListener("change", e => {
+                restartMessage()
+                obj[key] = e.target.checked
+                writeFileSync(userScriptsPath, JSON.stringify(userScriptsConfig, null, 2))
+            })
+
+            const _text = createEl("span", {}, "", [key])
+            const _cont = createEl("div", {}, "content", [_checkbox, _text])
+
+            el(id).element.appendChild(_cont)
+        }
+
+        for (const key in scripts) userScriptsRow(scripts, key, "userScripts")
+        for (const key in styles) userScriptsRow(styles, key, "userStyles")
+
+        el("userScriptsEnabled").checked = userScriptsEnabled
+        el("userScriptsEnabled").event("change", e => {
+            toggleUserScripts()
+            restartMessage()
+            userScriptsConfig.enable = e.target.checked
+            writeFileSync(userScriptsPath, JSON.stringify(userScriptsConfig, null, 2))
+        })
+
+        const toggleUserScripts = () => {
+            const checked = el("userScriptsEnabled").checked
+            el("userScriptsBlock").class("disabled", !checked)
+            el("userScripts").element.querySelectorAll("input").forEach(el => el.disabled = !checked)
+            el("userStyles").element.querySelectorAll("input").forEach(el => el.disabled = !checked)
+        }
+
+        toggleUserScripts()
+
+        const dirObj = {
+            "Scripts Folder": "scripts",
+            "Styles Folder": "styles",
+            "Userscripts Config": "userscripts.json"
+        }
+
+        for (const el in dirObj) {
+            const _name = createEl("td", { textContent: el })
+            const _button = createEl("button", {}, "", "Open")
+            _button.addEventListener("click", () => shell.openPath(path.join(configDir, dirObj[el])))
+            const _buttonTd = createEl("td", {}, "", [_button])
+            const _tr = createEl("tr", {}, "", [_name, _buttonTd])
+
+            document.querySelector("#userscriptsDirBody").appendChild(_tr)
+        }
     }
 
     async renderChangelogPage() {

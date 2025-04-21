@@ -128,44 +128,6 @@ class SettingsModal extends Modal {
         const restartMessage = () => popup("rgb(231, 76, 60)", "Restart the client to apply this setting.")
         for (const e of ["swapperFull", "swapperList", "swapperNull", "fpsUncap", "proxyDomain", "rpc", "rpcNotification", "adblocker", "inventorySorting", "fullscreen", "enableKeybinding"])
             el(e).event("click", restartMessage)
-
-        // User scripts and styles
-        const userScriptsConfig = JSON.parse(readFileSync(userScriptsPath, "utf8"))
-        const { enable: userScriptsEnabled, scripts, styles } = userScriptsConfig
-
-        const userScriptsRow = (obj, key, id) => {
-            const _checkbox = createEl("input", { type: "checkbox", checked: obj[key] })
-            _checkbox.addEventListener("change", e => {
-                restartMessage()
-                obj[key] = e.target.checked
-                writeFileSync(userScriptsPath, JSON.stringify(userScriptsConfig, null, 2))
-            })
-
-            const _text = createEl("span", {}, "", [key])
-            const _cont = createEl("div", {}, "content", [_checkbox, _text])
-
-            el(id).element.appendChild(_cont)
-        }
-
-        for (const key in scripts) userScriptsRow(scripts, key, "userScripts")
-        for (const key in styles) userScriptsRow(styles, key, "userStyles")
-
-        el("userScriptsEnabled").checked = userScriptsEnabled
-        el("userScriptsEnabled").event("change", e => {
-            toggleUserScripts()
-            restartMessage()
-            userScriptsConfig.enable = e.target.checked
-            writeFileSync(userScriptsPath, JSON.stringify(userScriptsConfig, null, 2))
-        })
-
-        const toggleUserScripts = () => {
-            const checked = el("userScriptsEnabled").checked
-            el("userScriptsBlock").class("disabled", !checked)
-            el("userScripts").element.querySelectorAll("input").forEach(el => el.disabled = !checked)
-            el("userStyles").element.querySelectorAll("input").forEach(el => el.disabled = !checked)
-        }
-
-        toggleUserScripts()
     }
 }
 

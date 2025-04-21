@@ -563,7 +563,7 @@ input:disabled {
     padding: 10px;
 }
 
-.active {
+.mainContent .active {
     display: flex;
     flex-direction: column;
 }
@@ -622,4 +622,13 @@ input:disabled {
     100% {
         transform: rotate(360deg);
     }
+}
+
+.userScriptsCont {
+    padding: 10px;
+}
+
+#userScriptsBlock {
+    display: flex;
+    gap: 20px;
 }

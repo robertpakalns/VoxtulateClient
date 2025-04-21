@@ -23,7 +23,30 @@
 
             <div class="mainContentBlock" name="settingsButton">settings</div>
 
-            <div class="mainContentBlock" name="userScriptsButton">userscripts</div>
+            <div class="mainContentBlock" name="userScriptsButton">
+                <div class="userScriptsCont">
+
+                    <header>Directories</header>
+                    <table>
+                        <tbody id="userscriptsDirBody"></tbody>
+                    </table>
+
+                    <div class="content">
+                        <input type="checkbox" id="userScriptsEnabled">
+                        <div>Enable Userscripts</div>
+                    </div>
+                    <div id="userScriptsBlock">
+                        <div>
+                            <div>Scripts</div>
+                            <div id="userScripts"></div>
+                        </div>
+                        <div>
+                            <div>Styles</div>
+                            <div id="userStyles"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="mainContentBlock" name="changelogButton">
                 <div id="clientUpdates">
@@ -34,7 +57,7 @@
 
             <div class="mainContentBlock" name="infoButton">
                 <main>
-                    <header>Client Directories</header>
+                    <header>Directories</header>
                     <table>
                         <tbody id="dirBody"></tbody>
                     </table>
