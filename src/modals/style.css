@@ -16,7 +16,7 @@
     user-select: none;
     display: flex;
     flex-direction: column;
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -294,7 +294,7 @@ input:disabled {
 .overlay {
     width: 100%;
     height: 100%;
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     background: rgba(0, 0, 0, 0.5);
@@ -573,4 +573,53 @@ input:disabled {
     width: fit-content;
     display: flex;
     gap: 3px;
+}
+
+#clientUpdates {
+    display: flex;
+    overflow: auto;
+    flex: 1;
+}
+
+#clientUpdatesText {
+    overflow: auto;
+    flex: 1;
+}
+
+#clientUpdatesNavigator {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+
+#clientUpdatesNavigator>button {
+    padding: 10px;
+}
+
+/* Loading */
+.loader {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.spin {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 4px solid #3498db;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }

@@ -1,5 +1,5 @@
+const { createEl, el, popup, sessionFetch, getAsset } = require("../../functions.js")
 const { version } = require("../../../package.json")
-const { createEl, el, popup } = require("../../functions.js")
 const { ipcRenderer, shell } = require("electron")
 const Modal = require("../modal.js")
 const { readFileSync } = require("fs")
@@ -17,6 +17,7 @@ class MenuModal extends Modal {
     init() {
         super.init()
         this.modal.id = "menuModal"
+        this.changelogData = null
     }
 
     work() {
@@ -29,7 +30,10 @@ class MenuModal extends Modal {
             item.addEventListener("click", e => {
                 document.querySelectorAll(".mainContent > div").forEach(el => el.classList.remove("active"))
                 const targetDiv = document.querySelector(`.mainContent div[name="${e.target.id}"]`)
-                if (targetDiv) targetDiv.classList.add("active")
+                if (targetDiv) {
+                    targetDiv.classList.add("active")
+                    if (!this.changelogData) this.renderChangelogPage()
+                }
             })
         })
 
@@ -58,8 +62,35 @@ class MenuModal extends Modal {
             else _version.innerText = `Downloading... ${Math.round(data.percent)}%`
         })
 
-        // Render pages
         this.renderInfoPage()
+    }
+
+    async renderChangelogPage() {
+
+        // Load data
+        const _spin = createEl("div", {}, "spin")
+        const _loading = createEl("div", {}, "loader", [_spin])
+
+        el("clientUpdatesText").element.appendChild(_loading)
+
+        this.changelogData = await sessionFetch(getAsset("tricko/voxtulateUpdates.json"))
+        el("clientUpdatesText").element.removeChild(_loading)
+
+        // Render page
+        for (const update of this.changelogData) {
+            const title = createEl("h3", {}, "updatesTitle", [`${update.version} - ${update.date}`])
+            const description = createEl("ul")
+
+            for (const list of update.description) description.appendChild(createEl("li", {}, "", [list]))
+
+            const cont = createEl("div", {}, "updatesCont", [title, description])
+            el("clientUpdatesText").element.append(cont)
+
+            const _nav = createEl("button", {}, "", [update.version])
+            _nav.addEventListener("click", () => cont.scrollIntoView({ behavior: "smooth" }))
+
+            el("clientUpdatesNavigator").element.append(_nav)
+        }
     }
 
     renderInfoPage() {
@@ -79,11 +110,11 @@ class MenuModal extends Modal {
 
         const dirObj = {
             "Client User Data": "/",
-            "Config File": "/config.json",
-            "Swapper Folder": "/swapper",
-            "Scripts Folder": "/scripts",
-            "Styles Folder": "/styles",
-            "Userscripts Config": "/userscripts.json"
+            "Config File": "config.json",
+            "Swapper Folder": "swapper",
+            "Scripts Folder": "scripts",
+            "Styles Folder": "styles",
+            "Userscripts Config": "userscripts.json"
         }
 
         for (const el in dirObj) {
