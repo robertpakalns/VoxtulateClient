@@ -21,6 +21,10 @@ class MenuModal extends Modal {
         this.changelogData = null
     }
 
+    restartMessage() {
+        popup("rgb(231, 76, 60)", "Restart the client to apply this setting.")
+    }
+
     work() {
         el("version").element.textContent = `v${version}`
         el("voxtulateIcon").element.src = path.join(__dirname, "../../../assets/icon.png")
@@ -63,20 +67,17 @@ class MenuModal extends Modal {
             else _version.innerText = `Downloading... ${Math.round(data.percent)}%`
         })
 
-        this.renderUserscriptsPage()
+        this.renderCustomizationPage()
         this.renderInfoPage()
     }
 
-    renderUserscriptsPage() {
-        const restartMessage = () => popup("rgb(231, 76, 60)", "Restart the client to apply this setting.")
-
+    renderCustomizationPage() {
         const userScriptsConfig = JSON.parse(readFileSync(userScriptsPath, "utf8"))
         const { enable: userScriptsEnabled, scripts, styles } = userScriptsConfig
 
         const userScriptsRow = (obj, key, id) => {
             const _checkbox = createEl("input", { type: "checkbox", checked: obj[key] })
             _checkbox.addEventListener("change", e => {
-                restartMessage()
                 obj[key] = e.target.checked
                 writeFileSync(userScriptsPath, JSON.stringify(userScriptsConfig, null, 2))
             })
@@ -93,7 +94,6 @@ class MenuModal extends Modal {
         el("userScriptsEnabled").checked = userScriptsEnabled
         el("userScriptsEnabled").event("change", e => {
             toggleUserScripts()
-            restartMessage()
             userScriptsConfig.enable = e.target.checked
             writeFileSync(userScriptsPath, JSON.stringify(userScriptsConfig, null, 2))
         })
@@ -107,21 +107,81 @@ class MenuModal extends Modal {
 
         toggleUserScripts()
 
-        const dirObj = {
-            "Scripts Folder": "scripts",
-            "Styles Folder": "styles",
-            "Userscripts Config": "userscripts.json"
+        // Import/export data
+        el("importClientSettings").event("click", () => ipcRenderer.send("import-client-settings"))
+        el("exportClientSettings").event("click", () => ipcRenderer.send("export-client-settings"))
+        el("importGameSettings").event("click", () => ipcRenderer.send("import-game-settings"))
+        el("exportGameSettings").event("click", () => ipcRenderer.send("export-game-settings"))
+
+        // Custom crosshair
+        const fileIconURL = path.join(__dirname, "../../../assets/icons/file.svg")
+        document.querySelector(".file-icon").src = fileIconURL
+        document.querySelectorAll(".copy").forEach(el => el.addEventListener("click", e => {
+            navigator.clipboard.writeText(e.target.innerText)
+            popup("rgb(206, 185, 45)", "Copied!")
+        }))
+        el("enableCrosshair").checked = config.get("crosshair.enable")
+        el("enableCrosshair").event("change", e => {
+            toggleCrosshair()
+            config.set("crosshair.enable", e.target.checked)
+            ipcRenderer.send("change-crosshair", e.target.checked, el("crosshairURL").value)
+        })
+
+        el("crosshairURL").value = config.get("crosshair.url") ?? ""
+        el("crosshairURL").event("input", e => {
+            config.set("crosshair.url", e.target.value)
+            ipcRenderer.send("change-crosshair", el("enableCrosshair").checked, el("crosshairURL").value)
+        })
+
+        el("crosshairFile").event("change", ({ target: { files: [file] } }) => {
+            if (!file) return
+            const { path } = file
+            config.set("crosshair.url", path)
+            el("crosshairURL").element.value = path
+            ipcRenderer.send("change-crosshair", el("enableCrosshair").checked, el("crosshairURL").value)
+        })
+
+        const toggleCrosshair = () => {
+            const checked = el("enableCrosshair").checked
+            el("crosshairURL").element.disabled = !checked
+            el("crosshairFile").element.disabled = !checked
+            el("crosshairContent").class("disabled", !checked)
         }
 
-        for (const el in dirObj) {
-            const _name = createEl("td", { textContent: el })
-            const _button = createEl("button", {}, "", "Open")
-            _button.addEventListener("click", () => shell.openPath(path.join(configDir, dirObj[el])))
-            const _buttonTd = createEl("td", {}, "", [_button])
-            const _tr = createEl("tr", {}, "", [_name, _buttonTd])
+        toggleCrosshair()
 
-            document.querySelector("#userscriptsDirBody").appendChild(_tr)
+        // Keybinding
+        const keybindingRow = (name, key) => {
+            const _inputChild = createEl("input", { type: "text", value: key })
+            _inputChild.addEventListener("keydown", e => {
+                e.preventDefault()
+                _inputChild.value = e.code
+                config.set(`keybinding.content.${name}`, e.code)
+            })
+
+            const _name = createEl("td", { textContent: name })
+            const _input = createEl("td", {}, "", [_inputChild])
+            const tr = createEl("tr", {}, "", [_name, _input])
+
+            el("keybindingBody").element.appendChild(tr)
         }
+
+        const toggleKeybinding = () => {
+            const checked = el("enableKeybinding").checked
+            el("keybindingTable").class("disabled", !checked)
+            el("keybindingTable").element.querySelectorAll("input").forEach(el => el.disabled = !checked)
+        }
+
+        const { content: c2 } = config.get("keybinding")
+        for (const key in c2) keybindingRow(key, c2[key])
+
+        toggleKeybinding()
+        el("enableKeybinding").checked = config.get("keybinding.enable")
+        el("enableKeybinding").event("change", e => {
+            this.restartMessage()
+            toggleKeybinding()
+            config.set("crosshair.url", e.target.value)
+        })
     }
 
     async renderChangelogPage() {
@@ -153,20 +213,6 @@ class MenuModal extends Modal {
     }
 
     renderInfoPage() {
-        const { content: userKeybinding } = config.get("keybinding")
-        const { content: defaultKeybinding } = defaultConfig.keybinding
-
-        for (const key in userKeybinding) {
-            const _name = createEl("td", { textContent: key })
-            const _default = createEl("td", { textContent: defaultKeybinding[key] })
-            const _user = createEl("td", { textContent: userKeybinding[key] })
-            const _tr = createEl("tr", {}, "", [_name, _default, _user])
-
-            document.querySelector("#keyBody").appendChild(_tr)
-        }
-
-        document.querySelectorAll(`#keyBody tr td:nth-child(${config.get("keybinding.enable") ? 2 : 3})`).forEach(el => el.style.opacity = "0.2")
-
         const dirObj = {
             "Client User Data": "/",
             "Config File": "config.json",

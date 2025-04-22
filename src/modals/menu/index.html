@@ -1,5 +1,6 @@
 <div class="modal">
     <div style="display: flex; height: 100%">
+
         <div class="sideBar">
 
             <div class="icon">
@@ -9,9 +10,7 @@
 
             <div class="sideBarList">
                 <button id="settingsButton" class="sideBarItem">Settings</button>
-                <button id="keybindingButton" class="sideBarItem">Keybinding</button>
-                <button id="swapperButton" class="sideBarItem">Swapper</button>
-                <button id="userScriptsButton" class="sideBarItem">User Scripts</button>
+                <button id="customizationButton" class="sideBarItem">Customization</button>
                 <button id="changelogButton" class="sideBarItem">Changelog</button>
                 <button id="infoButton" class="sideBarItem">Info</button>
             </div>
@@ -21,22 +20,34 @@
             </div>
 
         </div>
+
         <div class="mainContent">
 
-            <div class="mainContentBlock" name="settingsButton">settings</div>
+            <div class="mainContentBlock" name="settingsButton">
+                <header>Settings</header>
+            </div>
 
-            <div class="mainContentBlock" name="keybindingButton">keybinding</div>
+            <div class="mainContentBlock" name="customizationButton">
 
-            <div class="mainContentBlock" name="swapperButton">swapper</div>
+                <header>Customization</header>
 
-            <div class="mainContentBlock" name="userScriptsButton">
-                <div class="userScriptsCont">
+                <div class="block">
+                    <h1>Crosshair</h1>
+                    <div class="content">
+                        <input type="checkbox" id="enableCrosshair">
+                        <div>Enable Crosshair</div>
+                    </div>
+                    <div id="crosshairContent">
+                        <input type="url" id="crosshairURL">
+                        <input type="file" id="crosshairFile">
+                        <label for="crosshairFile" class="file-upload-label">
+                            <img class="file-icon">
+                        </label>
+                    </div>
+                </div>
 
-                    <header>Directories</header>
-                    <table>
-                        <tbody id="userscriptsDirBody"></tbody>
-                    </table>
-
+                <div class="block">
+                    <h1>Userscripts</h1>
                     <div class="content">
                         <input type="checkbox" id="userScriptsEnabled">
                         <div>Enable Userscripts</div>
@@ -52,9 +63,46 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="block">
+                    <h1>Import/Export Settings</h1>
+                    <div class="content">
+                        <div>Client Settings</div>
+                        <button id="importClientSettings">Import</button>
+                        <button id="exportClientSettings">Export</button>
+                    </div>
+
+                    <div class="content">
+                        <div>Game Settings</div>
+                        <button id="importGameSettings">Import</button>
+                        <button id="exportGameSettings">Export</button>
+                    </div>
+                </div>
+
+                <div class="block">
+                    <h1>Keybinding</h1>
+                    <div class="content">
+                        <input type="checkbox" id="enableKeybinding">
+                        <div>Enable Custom Keybinding</div>
+                    </div>
+                    <div class="subText">
+                        Setting multiple options to the same key might lead to unpredictable behavior</div>
+                    <table id="keybindingTable">
+                        <thead>
+                            <tr>
+                                <td>Name</td>
+                                <td>Key</td>
+                            </tr>
+                        </thead>
+                        <tbody id="keybindingBody"></tbody>
+                    </table>
+
+                </div>
+
             </div>
 
             <div class="mainContentBlock" name="changelogButton">
+                <header>Changelog</header>
                 <div id="clientUpdates">
                     <div id="clientUpdatesText"></div>
                     <div id="clientUpdatesNavigator"></div>
@@ -62,6 +110,7 @@
             </div>
 
             <div class="mainContentBlock" name="infoButton">
+
                 <main>
                     <header>Directories</header>
                     <table>
@@ -70,17 +119,14 @@
                 </main>
 
                 <main>
-                    <header>Keybindings</header>
-                    <table>
-                        <thead>
-                            <tr>
-                                <td>Name</td>
-                                <td>Default Key</td>
-                                <td>User Key</td>
-                            </tr>
-                        </thead>
-                        <tbody id="keyBody"></tbody>
-                    </table>
+                    <header>Client Safety</header>
+                    <p>
+                        This project is open-source. All Voxtulate Client source code is publicly available in the
+                        <a class="url" href="https://github.com/robertpakalns/VoxtulateClient">GitHub repository</a>.
+                        All builds are executed via GitHub Actions. If you have concerns about the safety of your
+                        private information while using Voxtulate Client, feel free to inspect the source code. Trust in
+                        the client is based on trust in the developer.
+                    </p>
                 </main>
 
                 <main>

@@ -43,7 +43,7 @@
 }
 
 .block {
-    margin-bottom: 20px;
+    margin: 20px 10px;
 }
 
 .content {
@@ -163,7 +163,8 @@
 .disabled,
 input:disabled,
 textarea:disabled,
-input:disabled {
+input:disabled,
+label:disabled {
     opacity: 20%;
     cursor: not-allowed;
 }
@@ -177,6 +178,7 @@ input:disabled {
 }
 
 .modal header {
+    padding: 10px;
     font-size: 1.2rem;
     text-align: center;
 }
@@ -227,15 +229,6 @@ input:disabled {
     display: none;
 }
 
-.file-upload-label {
-    color: gold;
-    cursor: pointer;
-}
-
-.file-upload-label:hover {
-    text-shadow: 0 0 10px #4CAF50;
-}
-
 .modal table {
     font-size: 0.75rem;
 }
@@ -263,18 +256,6 @@ input:disabled {
 
 .copy:active {
     background: rgba(255, 255, 255, 0.5);
-}
-
-.file-icon {
-    height: 10px;
-}
-
-.file-icon:hover {
-    filter: drop-shadow(0 0 5px #4CAF50);
-}
-
-#crosshairURL {
-    width: 160px;
 }
 
 /* Modals */
@@ -624,11 +605,28 @@ input:disabled {
     }
 }
 
-.userScriptsCont {
-    padding: 10px;
-}
-
 #userScriptsBlock {
     display: flex;
     gap: 20px;
+}
+
+#crosshairURL {
+    width: 300px;
+}
+
+.file-icon {
+    height: 10px;
+}
+
+.file-icon:hover {
+    filter: drop-shadow(0 0 5px #4CAF50);
+}
+
+.file-upload-label {
+    color: gold;
+    cursor: pointer;
+}
+
+.file-upload-label:hover {
+    text-shadow: 0 0 10px #4CAF50;
 }

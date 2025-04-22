@@ -5,7 +5,7 @@
 Unofficial Voxiom client, for real Voxtulators  
 
 ### Client Safety 
-This project is open-source. All Voxtulate Client source code is publicly available in the [GitHub repository](https://github.com/robertpakalns/VoxtulateClient). All builds are executed via GitHub Actions. If you have concerns about the safety of your private information while using the Voxtulate Client, feel free to inspect the source code. Trust in the client is based on trust in the developer.
+This project is open-source. All Voxtulate Client source code is publicly available in the [GitHub repository](https://github.com/robertpakalns/VoxtulateClient). All builds are executed via GitHub Actions. If you have concerns about the safety of your private information while using Voxtulate Client, feel free to inspect the source code. Trust in the client is based on trust in the developer.
 
 ### Protocol
 Voxtulate Client uses `voxtulate://` protocol to open the client. For example, `voxtulate://url/to/page` opens the client with the page `https://voxiom.io/url/to/page`.
