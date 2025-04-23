@@ -1,14 +1,17 @@
 const { createEl } = require("../functions.js")
+const { readFileSync } = require("fs")
+const path = require("path")
 
 class Modal {
-    
+
     constructor() {
         this.modal = null
-        this.modalHTML = null
+        this.modalHTMLPath = null
     }
 
     init() {
-        this.modal = createEl("div", { innerHTML: this.modalHTML }, "wrapper")
+        const modalHTML = readFileSync(path.join(__dirname, this.modalHTMLPath), "utf8")
+        this.modal = createEl("div", { innerHTML: modalHTML }, "wrapper")
         document.body.appendChild(this.modal)
 
         const close = createEl("div", {}, "close", ["×"])

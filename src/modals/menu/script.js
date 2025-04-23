@@ -12,7 +12,7 @@ const config = new Config
 class MenuModal extends Modal {
     constructor() {
         super()
-        this.modalHTML = readFileSync(path.join(__dirname, "./index.html"), "utf8")
+        this.modalHTMLPath = "./menu/index.html"
     }
 
     init() {
@@ -181,6 +181,16 @@ class MenuModal extends Modal {
             this.restartMessage()
             toggleKeybinding()
             config.set("crosshair.url", e.target.value)
+        })
+
+        // Swapper
+        document.querySelector(`input[value="${config.get("client.swapper")}"]`).checked = true
+        const swapperRadios = document.querySelectorAll("input[name='swapper']")
+        swapperRadios.forEach(el => {
+            el.addEventListener("change", (e => {
+                this.restartMessage()
+                if (e.target.checked) config.set("client.swapper", e.target.value)
+            }))
         })
     }
 

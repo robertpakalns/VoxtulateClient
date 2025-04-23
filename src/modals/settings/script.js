@@ -1,15 +1,13 @@
-const { Config, configPath, configDir } = require("../../config.js")
-const { el, createEl, popup } = require("../../functions.js")
-const { readFileSync } = require("fs")
-const { ipcRenderer, shell } = require("electron")
+const { Config } = require("../../config.js")
+const { el, popup } = require("../../functions.js")
+const { ipcRenderer } = require("electron")
 const Modal = require("../modal.js")
-const path = require("path")
 const config = new Config
 
 class SettingsModal extends Modal {
     constructor() {
         super()
-        this.modalHTML = readFileSync(path.join(__dirname, "./index.html"), "utf8")
+        this.modalHTMLPath = "./settings/index.html"
     }
 
     init() {
@@ -38,10 +36,6 @@ class SettingsModal extends Modal {
             el(id).event("change", e => config.set(key, e.target.checked))
         }
 
-        el("swapperNull").event("change", () => config.set("client.swapper", null))
-        el("swapperList").event("change", () => config.set("client.swapper", "list"))
-        el("swapperFull").event("change", () => config.set("client.swapper", "full"))
-
         el("chatOpacity").value = config.get("interface.chatOpacity") ?? "100"
 
         ipcRenderer.on("update-url", (_, url) => el("currentURL").element.innerText = url || "Unknown URL")
@@ -63,12 +57,8 @@ class SettingsModal extends Modal {
         el("clearData").event("click", () => ipcRenderer.send("clear-data"))
         el("restart").event("click", () => ipcRenderer.send("relaunch"))
 
-        el("openConfigs").event("click", () => shell.openPath(configPath))
-        el("openSwapper").event("click", () => shell.openPath(path.join(configDir, "swapper")))
-        el("openFolder").event("click", () => shell.openPath(configDir))
-
         const restartMessage = () => popup("rgb(231, 76, 60)", "Restart the client to apply this setting.")
-        for (const e of ["swapperFull", "swapperList", "swapperNull", "fpsUncap", "proxyDomain", "rpc", "rpcNotification", "adblocker", "inventorySorting", "fullscreen"])
+        for (const e of ["fpsUncap", "proxyDomain", "rpc", "rpcNotification", "adblocker", "inventorySorting", "fullscreen"])
             el(e).event("click", restartMessage)
     }
 }

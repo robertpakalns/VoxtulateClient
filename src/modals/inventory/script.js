@@ -1,13 +1,11 @@
 const { openDB, getData, setData, creationTime, getAsset } = require("../../functions.js")
 const { el, createEl, sessionFetch } = require("../../functions.js")
-const { readFileSync } = require("fs")
 const Modal = require("../modal.js")
-const path = require("path")
 
 class InventoryModal extends Modal {
     constructor() {
         super()
-        this.modalHTML = readFileSync(path.join(__dirname, "./index.html"), "utf8")
+        this.modalHTMLPath = "./inventory/index.html"
         this.settings = null
         this.data = null
         this.marketData = null
