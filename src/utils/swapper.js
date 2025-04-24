@@ -29,7 +29,7 @@ const swapper = webContents => {
     webContents.session.webRequest.onBeforeRequest(({ url }, callback) => {
 
         // This is a temporal solution for getting the skin render function 
-        if (url.includes("7cb119bcceb97088c8ad.js")) return callback({ redirectURL: path.join(__dirname, "../../assets/script-0.9.2.0.js") })
+        if (url.endsWith("7cb119bcceb97088c8ad.js")) return callback({ redirectURL: path.join(__dirname, "../../assets/script-0.9.2.0.js") })
 
         if (url.startsWith("file://")) return callback({})
 

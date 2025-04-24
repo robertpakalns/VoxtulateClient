@@ -53,9 +53,9 @@ class Config {
         if (Config.configInstance) this.config = Config.configInstance
         else {
             this.config = JSON.parse(readFileSync(Config.file, "utf8"))
-            Config.configInstance = this.config
             this.fillConfig()
             this.cleanConfig()
+            Config.configInstance = this.config
         }
     }
 
