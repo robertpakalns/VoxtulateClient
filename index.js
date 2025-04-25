@@ -73,7 +73,7 @@ app.on("ready", () => {
     if (deepLink) mainWindow.loadURL(`${domain}/${decodeURIComponent(deepLink.slice(12)).replace(/\/$/, "").replace(/\/#/g, "#")}`)
 
     if (config.get("client.firstJoin")) {
-        setTimeout(() => message("Welcome", "Welcome to Voxtulate Client! Press F1 and F2 for more information. Have a good game!"), 3000)
+        setTimeout(() => message("Welcome", "Welcome to Voxtulate Client! Press F1 to open menu. Have a good game!"), 3000)
         config.set("client.firstJoin", false)
     }
 

@@ -29,8 +29,12 @@ let userScripts
 let userStyles
 
 const getUserScriptsFiles = () => {
+    const originalData = JSON.parse(readFileSync(userScriptsPath, "utf8"))
+    const { enable, scripts, styles } = originalData
 
-    const { enable, scripts, styles } = JSON.parse(readFileSync(userScriptsPath, "utf8"))
+    const originalEnable = enable
+    const originalScripts = JSON.stringify(scripts)
+    const originalStyles = JSON.stringify(styles)
 
     userScripts = readdirSync(userScriptsDir).filter(script => script.endsWith(".js"))
     userStyles = readdirSync(userStylesDir).filter(style => style.endsWith(".css"))
@@ -38,7 +42,11 @@ const getUserScriptsFiles = () => {
     handleObject(scripts, userScripts)
     handleObject(styles, userStyles)
 
-    writeFileSync(userScriptsPath, JSON.stringify({ enable, scripts, styles }, null, 2))
+    if (
+        originalEnable !== enable ||
+        originalScripts !== JSON.stringify(scripts) ||
+        originalStyles !== JSON.stringify(styles)
+    ) writeFileSync(userScriptsPath, JSON.stringify({ enable, scripts, styles }, null, 2))
 }
 
 const setUserScripts = webContents => {

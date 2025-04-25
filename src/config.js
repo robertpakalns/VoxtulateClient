@@ -57,8 +57,8 @@ class Config {
         }
     }
 
-    writeConfig() {
-        writeFileSync(Config.file, JSON.stringify(this.config, null, 2))
+    writeConfig(obj = this.config) {
+        writeFileSync(Config.file, JSON.stringify(obj, null, 2))
     }
 
     get(key) {
@@ -91,6 +91,8 @@ class Config {
 
     // Fills the config with default values if missing
     fillConfig(source = defaultConfig, target = this.config) {
+        const originalConfig = JSON.stringify(target)
+
         for (const key in source) {
             const s = source[key]
             const t = target[key]
@@ -102,16 +104,19 @@ class Config {
             else if (t === undefined) target[key] = s
         }
 
-        this.writeConfig()
+        if (originalConfig !== JSON.stringify(target)) this.writeConfig(target)
     }
 
     // Cleans the config from unregistered values
     cleanConfig(source = defaultConfig, target = this.config) {
+        const originalConfig = JSON.stringify(target)
+
         for (const key in target) {
             if (!(key in source)) delete target[key]
             else if (typeof source[key] === "object" && source[key] !== null) this.cleanConfig(source[key], target[key])
         }
-        this.writeConfig();
+
+        if (originalConfig !== JSON.stringify(target)) this.writeConfig(target)
     }
 }
 
