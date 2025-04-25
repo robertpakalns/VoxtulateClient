@@ -3,23 +3,23 @@ const path = require("path")
 const InventoryModal = require("../modals/inventory/script.js")
 
 const advancedInventory = async () => {
-    let marketData, listedData
+    let inventoryData, listedData, marketData
 
-    const market = await sessionFetch(getAsset("voxiom/voxiomMarket.json"))
     const gemPath = path.join(__dirname, "../../assets/icons/gem.webp")
 
     const inmenu = new InventoryModal
 
     const _fetch = fetch
-    window.fetch = (...args) => _fetch(...args).then(r => r.clone().text().then(data => {
+    window.fetch = (...args) => _fetch(...args).then(r => r.clone().text().then(async data => {
         const [url] = args
         if (url === "/profile/myinv") {
+            marketData = await sessionFetch(getAsset("voxiom/voxiomMarket.json"))
             const { name = "", id = "", rotation = "", creation = "", model = "", rarity = "", equipped = "" } = inmenu.settings
             const parsedData = JSON.parse(data)
             const newData = {
                 ...parsedData,
                 data: parsedData.data.map(el => {
-                    const skin = market.data[el.type - 1]
+                    const skin = marketData.data[el.type - 1]
                     return { ...el, name: skin.name, rotation: skin.rotation, model: skin.type, rarity: skin.rarity }
                 }).filter(el =>
                     (!name || el.name.toLowerCase().includes(name.toLowerCase())) &&
@@ -34,7 +34,7 @@ const advancedInventory = async () => {
             return new Response(JSON.stringify(newData), r)
         }
 
-        if (url === "/market/public") marketData = JSON.parse(data)
+        if (url === "/market/public") inventoryData = JSON.parse(data)
         if (url === "/market/my_listed_items") listedData = JSON.parse(data)
 
         return r
@@ -66,7 +66,7 @@ const advancedInventory = async () => {
 
         document.querySelectorAll(".kiKVOk").forEach((el, i) => {
             if (el.parentElement.parentElement.querySelector(".voxiomSkinName")) return
-            const skin = isMarket ? marketData.data.market_items[i / 2] : listedData.data.player_market_items[i / 2]
+            const skin = isMarket ? inventoryData.data.market_items[i / 2] : listedData.data.player_market_items[i / 2]
             const _image = isMarket || isSales ? createEl("img", { src: gemPath }, "gem") : ""
             const _name = createEl("div", { textContent: isSales || isMarket ? `${timeLeft(skin.listed_time + 1209600000)} | ${skin.price}` : "" }, "voxiomSkinName", [_image])
             el.parentElement.parentElement.appendChild(_name)
