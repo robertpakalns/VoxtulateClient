@@ -4,7 +4,6 @@ const { ipcRenderer, shell } = require("electron")
 const { Config } = require("../config.js")
 const path = require("path")
 const config = new Config
-const SettingsModal = require("../modals/settings/script.js")
 const MenuModal = require("../modals/menu/script.js")
 const advancedInventory = require("./advancedInventory.js")
 
@@ -63,13 +62,9 @@ const createModals = () => {
     const modalStyles = createEl("style", { textContent: modalCSS })
     document.head.appendChild(modalStyles)
 
-    const smenu = new SettingsModal
-    smenu.init()
-    smenu.work()
-
-    const mmenu = new MenuModal
-    mmenu.init()
-    mmenu.work()
+    const menuModal = new MenuModal
+    menuModal.init()
+    menuModal.work()
 
     if (inventorySorting) advancedInventory()
 }
