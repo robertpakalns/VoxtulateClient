@@ -29,10 +29,8 @@ const defaultConfig = {
     keybinding: {
         enable: false,
         content: {
-            Close_Modal: "Escape",
-            Settings: "F1",
-            Info: "F2",
-            Updates: "F3",
+            CloseModal: "Escape",
+            MenuModal: "F1",
             Reload: "F5",
             Fullscreen: "F11",
             DevTools: "F12"
