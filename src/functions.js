@@ -12,11 +12,11 @@ const el = id => ({
 })
 
 const createEl = (tag, attrs = {}, className = "", append = []) => {
-    const elem = document.createElement(tag)
-    if (className) elem.classList.add(className)
-    Object.keys(attrs).forEach(attr => elem[attr] = attrs[attr])
-    elem.append(...append)
-    return elem
+    const element = document.createElement(tag)
+    if (className) element.classList.add(className)
+    for (const attr of Object.keys(attrs)) element[attr] = attrs[attr]
+    element.append(...append)
+    return element
 }
 
 const output = (v, e) => `${v} ${v != 1 ? e + "s" : e}`

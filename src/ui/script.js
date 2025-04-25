@@ -105,16 +105,18 @@ document.addEventListener("DOMContentLoaded", () => {
         copy.children[1].innerHTML = value
     }
 
-    const cloneData = (type, data) => {
+    const cloneData = (name, data, path) => {
         if (!data) return
-        const { pathname } = window.location
-        if (["/account", `/player/${type}`].includes(pathname) || pathname.endsWith("/ctg")) copyNode("KPG", isNum(data.ctg.total_kills, data.ctg.total_games_played), "kpg")
-        if (pathname === `/account/br` || pathname.endsWith("/br")) copyNode("KPG", isNum(data.br.total_kills, data.br.total_games_played), "kpg")
-        if (["/account", `/player/${type}`].includes(pathname)) {
-            copyNode("Creation Date", creationTime(data.creation_time), "createdAt")
-            copyNode("Gems", data.gems, "gems")
-        }
+
+        const validPaths = new Set(["/account", "/account/br", "/account/ctg", `/player/${name}`, `/player/${name}/br`, `/player/${name}/ctg`])
+        if (!validPaths.has(path)) return
+
+        const mode = path.endsWith("/br") ? "br" : "ctg"
+        copyNode("KPG", isNum(data[mode].total_kills, data[mode].total_games_played), "kpg")
+        copyNode("Creation Date", creationTime(data.creation_time), "createdAt")
+        copyNode("Gems", data.gems, "gems")
     }
+
     setInterval(() => {
         // Hint message
         if (!document.querySelector("#hintCont")) document.querySelector(".ljNuSc")?.appendChild(hintCont)
@@ -133,16 +135,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Player data
         const { pathname } = window.location
-        if (pathname.startsWith("/account")) cloneData("account", accountData?.data)
-        if (pathname.startsWith("/player/")) cloneData(pathname.split("/")[2], playerData?.data)
+        if (pathname.startsWith("/account")) cloneData("account", accountData?.data, pathname)
+        if (pathname.startsWith("/player/")) cloneData(pathname.split("/")[2], playerData?.data, pathname)
     }, 50)
 
     document.addEventListener("click", e => {
         const el = e.target.closest(".dELrkI")
-        if (el) {
-            e.preventDefault()
-            shell.openPath(el.href)
-        }
+        if (!el) return
+        e.preventDefault()
+        shell.openPath(el.href)
     })
 
     createModals()

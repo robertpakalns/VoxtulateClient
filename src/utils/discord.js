@@ -73,7 +73,7 @@ class DiscordRPC {
 
         let result = "Playing Voxiom.io"
 
-        if (url.includes("#")) result = "Playing a match"
+        if (url.startsWith("/#") || url.startsWith("/experimental#")) result = "Playing a match"
         else if (staticLinks[url]) result = staticLinks[url]
         else {
             for (const key in dynamicLinks) {

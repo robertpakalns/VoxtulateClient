@@ -1,15 +1,15 @@
 const { app, BrowserWindow, ipcMain, dialog, protocol, session } = require("electron")
+const { setUserScripts, getUserScriptsFiles } = require("./src/utils/userScripts.js")
 const { Config, configPath } = require("./src/config.js")
+const keybinding = require("./src/utils/keybinding.js")
 const { readFileSync, writeFileSync } = require("fs")
-const { message } = require("./src/functions.js")
 const DiscordRPC = require("./src/utils/discord.js")
+const { autoUpdater } = require("electron-updater")
+const { message } = require("./src/functions.js")
+const swapper = require("./src/utils/swapper.js")
 const path = require("path")
 const rpc = new DiscordRPC
 const config = new Config
-const { setUserScripts, getUserScriptsFiles } = require("./src/utils/userScripts.js")
-const keybinding = require("./src/utils/keybinding.js")
-const swapper = require("./src/utils/swapper.js")
-const { autoUpdater } = require("electron-updater")
 
 let mainWindow
 const domain = config.get("client.proxyDomain") ? "https://historynotes.club" : "https://voxiom.io"
@@ -50,7 +50,6 @@ const createMain = async () => {
     })
 
     getUserScriptsFiles()
-    setUserScripts(webContents)
     webContents.on("did-start-loading", getUserScriptsFiles)
 
     webContents.on("new-window", (e, url) => {
