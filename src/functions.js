@@ -80,7 +80,15 @@ const sessionFetch = url => JSON.parse(sessionStorage.getItem(url)) || fetch(url
         return data
     })
 
-const message = (title, message) => dialog.showMessageBox({ icon: path.join(__dirname, "../assets/icon.ico"), title: `Voxtulate Client | ${title}`, message })
+const message = (title, message) => {
+    const obj = {
+        win32: "ico",
+        darwin: "icns",
+        linux: "png"
+    }
+    const ext = obj[process.platform] || null
+    return dialog.showMessageBox({ icon: ext ? path.join(__dirname, `../assets/icon.${ext}`) : undefined, title: `Voxtulate Client | ${title}`, message })
+}
 
 const getAsset = path => `https://raw.githubusercontent.com/robertpakalns/tricko-assets/main/${path}`
 

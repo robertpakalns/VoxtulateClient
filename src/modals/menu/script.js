@@ -226,7 +226,12 @@ class MenuModal extends Modal {
         })
 
         // Swapper
-        document.querySelector(`input[value="${config.get("client.swapper") || "disabled"}"]`).checked = true
+        const swapperEl = document.querySelector(`input[value="${config.get("client.swapper")}"]`)
+        if (swapperEl) swapperEl.checked = true
+        else {
+            document.querySelector('input[name="swapper"][value="disabled"]').checked = true
+            config.set("client.swapper", "disabled")
+        }
         const swapperRadios = document.querySelectorAll("input[name='swapper']")
         swapperRadios.forEach(el => el.addEventListener("change", (e => {
             this.restartMessage()
