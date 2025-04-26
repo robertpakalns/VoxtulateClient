@@ -1,4 +1,4 @@
-const { openDB, getData, setData, creationTime, getAsset } = require("../../functions.js")
+const { openDB, getData, setData, creationTime, getAsset, inventoryFilter, inventorySort } = require("../../functions.js")
 const { el, createEl, sessionFetch } = require("../../functions.js")
 const Modal = require("../modal.js")
 
@@ -88,21 +88,13 @@ class InventoryModal extends Modal {
         }
 
         const render = async () => {
-            const s = this.settings
             cont.innerHTML = ""
 
             const start = this.currentPage * this.itemsPerPage
             const end = start + this.itemsPerPage
             const limitedData = [...this.data.data]
-                .filter(el =>
-                    (!s.name || el.name.toLowerCase().includes(s.name.toLowerCase())) &&
-                    (!s.id || el.type.toString().includes(s.id)) &&
-                    (s.rotation === "" || el.rotation === (s.rotation === "true")) &&
-                    (s.model === "" || el.model === s.model) &&
-                    (s.rarity === "" || el.rarity === s.rarity) &&
-                    (s.equipped === "" || el.slot !== null === (s.equipped === "true"))
-                )
-                .sort((a, b) => !s.creation ? 0 : s.creation === "true" ? b.creation_time - a.creation_time : a.creation_time - b.creation_time)
+                .filter(el => inventoryFilter(el, this.settings))
+                .sort((a, b) => inventorySort(a, b, this.settings))
 
             const slicedData = [...limitedData].slice(start, end)
 
@@ -182,15 +174,8 @@ class InventoryModal extends Modal {
             const data = await this.getURL(this.data.data)
 
             const exportedData = [...this.data.data]
-                .filter(el =>
-                    (!settings.name || el.name.toLowerCase().includes(settings.name.toLowerCase())) &&
-                    (!settings.id || el.type.toString().includes(settings.id)) &&
-                    (settings.rotation === "" || el.rotation === (settings.rotation === "true")) &&
-                    (settings.model === "" || el.model === settings.model) &&
-                    (settings.rarity === "" || el.rarity === settings.rarity) &&
-                    (settings.equipped === "" || el.slot !== null === (settings.equipped === "true"))
-                )
-                .sort((a, b) => !settings.creation ? 0 : settings.creation === "true" ? b.creation_time - a.creation_time : a.creation_time - b.creation_time)
+                .filter(el => inventoryFilter(el, settings))
+                .sort((a, b) => inventorySort(a, b, settings))
 
             const size = 256
             const columns = Math.ceil(Math.sqrt(exportedData.length))

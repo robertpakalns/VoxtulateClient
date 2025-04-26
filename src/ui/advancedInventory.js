@@ -1,4 +1,4 @@
-const { createEl, timeLeft, sessionFetch, getAsset } = require("../functions.js")
+const { createEl, timeLeft, sessionFetch, getAsset, inventoryFilter, inventorySort } = require("../functions.js")
 const path = require("path")
 const InventoryModal = require("../modals/inventory/script.js")
 
@@ -14,21 +14,16 @@ const advancedInventory = async () => {
         const [url] = args
         if (url === "/profile/myinv") {
             marketData = await sessionFetch(getAsset("voxiom/voxiomMarket.json"))
-            const { name = "", id = "", rotation = "", creation = "", model = "", rarity = "", equipped = "" } = inmenu.settings
             const parsedData = JSON.parse(data)
             const newData = {
                 ...parsedData,
-                data: parsedData.data.map(el => {
-                    const skin = marketData.data[el.type - 1]
-                    return { ...el, name: skin.name, rotation: skin.rotation, model: skin.type, rarity: skin.rarity }
-                }).filter(el =>
-                    (!name || el.name.toLowerCase().includes(name.toLowerCase())) &&
-                    (!id || el.type.toString().includes(id)) &&
-                    (rotation === "" || el.rotation === (rotation === "true")) &&
-                    (model === "" || el.model === model) &&
-                    (rarity === "" || el.rarity === rarity) &&
-                    (equipped === "" || el.slot !== null === (equipped === "true"))
-                ).sort((a, b) => !creation ? 0 : creation === "true" ? b.creation_time - a.creation_time : a.creation_time - b.creation_time)
+                data: parsedData.data
+                    .map(el => {
+                        const skin = marketData.data[el.type - 1]
+                        return { ...el, name: skin.name, rotation: skin.rotation, model: skin.type, rarity: skin.rarity }
+                    })
+                    .filter(el => inventoryFilter(el, inmenu.settings))
+                    .sort((a, b) => inventorySort(a, b, inmenu.settings))
             }
             inmenu.setData(newData)
             return new Response(JSON.stringify(newData), r)
@@ -64,13 +59,14 @@ const advancedInventory = async () => {
         ) document.querySelector(".iRauPR")?.append(_inventoryButton)
         if (!isMarket && !isSales) return
 
-        document.querySelectorAll(".kiKVOk").forEach((el, i) => {
-            if (el.parentElement.parentElement.querySelector(".voxiomSkinName")) return
-            const skin = isMarket ? inventoryData.data.market_items[i / 2] : listedData.data.player_market_items[i / 2]
+        if (document.querySelector(".voxiomSkinName")) return
+        for (const [i, el] of document.querySelectorAll(".cJoQGw").entries()) {
+            const skin = isMarket ? inventoryData.data.market_items[i] : listedData.data.player_market_items[i]
             const _image = isMarket || isSales ? createEl("img", { src: gemPath }, "gem") : ""
-            const _name = createEl("div", { textContent: isSales || isMarket ? `${timeLeft(skin.listed_time + 1209600000)} | ${skin.price}` : "" }, "voxiomSkinName", [_image])
-            el.parentElement.parentElement.appendChild(_name)
-        })
+            const text = isSales || isMarket ? `${timeLeft(skin.listed_time + 1209600000)} | ${skin.price}` : ""
+            const _name = createEl("div", { textContent: text }, "voxiomSkinName", [_image])
+            el.appendChild(_name)
+        }
     })
     observer.observe(document.querySelector("#app"), { childList: true, subtree: true })
 }

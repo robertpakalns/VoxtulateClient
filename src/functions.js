@@ -84,4 +84,18 @@ const message = (title, message) => dialog.showMessageBox({ icon: path.join(__di
 
 const getAsset = path => `https://raw.githubusercontent.com/robertpakalns/tricko-assets/main/${path}`
 
-module.exports = { el, createEl, creationTime, timeLeft, output, popup, openDB, getData, setData, isNum, sessionFetch, message, getAsset }
+const inventoryFilter = (element, settings) =>
+    (!settings.name || element.name.toLowerCase().includes(settings.name.toLowerCase())) &&
+    (!settings.id || element.type.toString().includes(settings.id)) &&
+    (settings.rotation === "" || element.rotation === (settings.rotation === "true")) &&
+    (settings.model === "" || element.model === settings.model) &&
+    (settings.rarity === "" || element.rarity === settings.rarity) &&
+    (settings.equipped === "" || element.slot !== null === (settings.equipped === "true"))
+
+const inventorySort = (a, b, settings) =>
+    !settings.creation ?
+        0 : settings.creation === "true" ?
+            b.creation_time - a.creation_time :
+            a.creation_time - b.creation_time
+
+module.exports = { el, createEl, creationTime, timeLeft, output, popup, openDB, getData, setData, isNum, sessionFetch, message, getAsset, inventoryFilter, inventorySort }

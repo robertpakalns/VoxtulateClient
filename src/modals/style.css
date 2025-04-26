@@ -1,3 +1,36 @@
+/* Modals */
+.wrapper {
+    display: none;
+}
+
+.close {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 1.4rem;
+    margin: 5px 10px;
+}
+
+.overlay {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+}
+
+.open {
+    display: block !important;
+}
+
+/* Styles */
+::-webkit-scrollbar {
+    display: none;
+}
+
 .modal * {
     -webkit-user-drag: none;
     user-select: none;
@@ -23,18 +56,8 @@
     animation: hop ease 0.3s;
 }
 
-.modal input,
-.modal textarea {
+.modal input {
     color: white;
-}
-
-.modal section {
-    display: grid;
-    grid-template-columns: repeat(2, 400px);
-}
-
-.modal main {
-    margin: 10px;
 }
 
 .modal h1 {
@@ -51,11 +74,6 @@
     display: flex;
     align-items: center;
     gap: 8px;
-}
-
-.subText {
-    font-size: 0.6rem;
-    color: gray;
 }
 
 .modal input[type="text"],
@@ -96,48 +114,6 @@
     text-shadow: 0 0 10px #4CAF50;
 }
 
-.modal textarea {
-    resize: none;
-    width: 100%;
-    height: 175px;
-    background: transparent;
-    border: 2px solid gray;
-    border-radius: 5px;
-    outline: none;
-}
-
-.modal textarea:hover {
-    filter: drop-shadow(0 0 2px #4CAF50);
-}
-
-.swapper {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.swapper input[type="radio"] {
-    cursor: pointer;
-    outline: none;
-    appearance: none;
-    width: 10px;
-    height: 10px;
-    border: 2px solid #4CAF50;
-    border-radius: 10px;
-}
-
-.swapper input[type="radio"]:hover {
-    box-shadow: 0 0 5px #4CAF50;
-}
-
-.swapper input[type="radio"]:checked {
-    background-color: #4CAF50;
-}
-
-.relaunch {
-    color: #f44336 !important;
-}
-
 .modal footer {
     display: flex;
     flex: 1;
@@ -161,7 +137,6 @@
 
 .disabled,
 input:disabled,
-textarea:disabled,
 input:disabled,
 label:disabled {
     opacity: 20%;
@@ -170,10 +145,6 @@ label:disabled {
 
 .modal input:disabled:hover {
     box-shadow: none;
-}
-
-::-webkit-scrollbar {
-    display: none;
 }
 
 .modal header {
@@ -185,6 +156,7 @@ label:disabled {
 .modal table {
     margin: auto;
     border-collapse: collapse;
+    font-size: 0.75rem;
 }
 
 .modal tbody tr:nth-child(odd) {
@@ -208,86 +180,12 @@ label:disabled {
     color: #00A1E4;
 }
 
-.page {
-    max-width: 650px;
-    text-align: left;
-    margin: auto;
-}
-
-.page main {
-    padding: 20px 0;
-    width: fit-content;
-    margin: auto;
-}
-
-.modal p {
-    margin: 0 20px;
-}
-
 .modal input[type="file"] {
     display: none;
 }
 
-.modal table {
-    font-size: 0.75rem;
-}
-
 .modal thead {
     font-weight: 900;
-}
-
-.copy {
-    user-select: none;
-    font-size: 0.75rem;
-    border-radius: 5px;
-    display: inline-block;
-    cursor: pointer;
-    outline: none;
-    padding: 2px 5px;
-    color: #ffe4e1;
-    background: rgba(255, 255, 255, 0.1);
-    transition: background-color 0.1s ease;
-}
-
-.copy:hover {
-    background: rgba(255, 255, 255, 0.3);
-}
-
-.copy:active {
-    background: rgba(255, 255, 255, 0.5);
-}
-
-/* Modals */
-.wrapper {
-    display: none;
-}
-
-.close {
-    cursor: pointer;
-    position: absolute;
-    top: 0;
-    right: 0;
-    font-size: 1.4rem;
-    margin: 5px 10px;
-}
-
-.overlay {
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
-}
-
-.open {
-    display: block !important;
-}
-
-#inventoryModal *,
-#updatesModal * {
-    font-family: "Roboto", sans-serif;
 }
 
 /* Inventory */
@@ -483,16 +381,6 @@ label:disabled {
     }
 }
 
-/* Updates */
-.updatesTitle {
-    margin: 10px;
-}
-
-.updatesCont {
-    margin: 10px;
-    padding: 10px;
-}
-
 /* Menu */
 .sideBar {
     height: calc(100% - 20px);
@@ -548,36 +436,89 @@ label:disabled {
     flex-direction: column;
 }
 
-.credit {
-    margin: auto;
-    width: fit-content;
-    display: flex;
-    gap: 3px;
-}
-
-#clientUpdates {
-    display: flex;
-    overflow: auto;
-    flex: 1;
-}
-
-#clientUpdatesText {
-    overflow: auto;
-    flex: 1;
-}
-
-#clientUpdatesNavigator {
-    margin-top: 30px;
+/* Customization */
+.swapper {
     display: flex;
     flex-direction: column;
-    overflow: auto;
+    align-items: flex-start;
 }
 
-#clientUpdatesNavigator>button {
-    padding: 10px;
+.swapper input[type="radio"] {
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    border: 2px solid #4CAF50;
+    border-radius: 10px;
 }
 
-/* Loading */
+.swapper input[type="radio"]:hover {
+    box-shadow: 0 0 5px #4CAF50;
+}
+
+.swapper input[type="radio"]:checked {
+    background-color: #4CAF50;
+}
+
+#crosshairURL {
+    width: 300px;
+}
+
+.file-icon {
+    height: 10px;
+}
+
+.file-icon:hover {
+    filter: drop-shadow(0 0 5px #4CAF50);
+}
+
+.file-upload-label {
+    color: gold;
+    cursor: pointer;
+}
+
+.file-upload-label:hover {
+    text-shadow: 0 0 10px #4CAF50;
+}
+
+#userScriptsBlock {
+    display: flex;
+    gap: 20px;
+}
+
+/* Settings */
+.relaunch {
+    color: #f44336 !important;
+}
+
+.subText {
+    font-size: 0.6rem;
+    color: gray;
+}
+
+.copy {
+    user-select: none;
+    font-size: 0.75rem;
+    border-radius: 5px;
+    display: inline-block;
+    cursor: pointer;
+    outline: none;
+    padding: 2px 5px;
+    color: #ffe4e1;
+    background: rgba(255, 255, 255, 0.1);
+    transition: background-color 0.1s ease;
+}
+
+.copy:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.copy:active {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Changelog */
 .loader {
     height: 100%;
     display: flex;
@@ -604,28 +545,41 @@ label:disabled {
     }
 }
 
-#userScriptsBlock {
+#clientUpdates {
     display: flex;
-    gap: 20px;
+    overflow: auto;
+    flex: 1;
 }
 
-#crosshairURL {
-    width: 300px;
+#clientUpdatesText {
+    overflow: auto;
+    flex: 1;
 }
 
-.file-icon {
-    height: 10px;
+#clientUpdatesNavigator {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
 }
 
-.file-icon:hover {
-    filter: drop-shadow(0 0 5px #4CAF50);
+#clientUpdatesNavigator>button {
+    padding: 10px;
 }
 
-.file-upload-label {
-    color: gold;
-    cursor: pointer;
+.updatesTitle {
+    margin: 10px;
 }
 
-.file-upload-label:hover {
-    text-shadow: 0 0 10px #4CAF50;
+.updatesCont {
+    margin: 10px;
+    padding: 10px;
+}
+
+/* Info */
+.credit {
+    margin: auto;
+    width: fit-content;
+    display: flex;
+    gap: 3px;
 }

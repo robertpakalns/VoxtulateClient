@@ -72,10 +72,10 @@ const createModals = () => {
 document.addEventListener("DOMContentLoaded", () => {
     enableStyles()
 
-    const { Settings, Info } = config.get("keybinding.content")
+    const { MenuModal } = config.get("keybinding.content")
     const consoleCont = createEl("div", { className: "voxiomConsole voxiomCreate" })
     const blocksCont = createEl("div", { className: "voxiomBlocks voxiomCreate" })
-    const hintCont = createEl("div", { id: "hintCont" }, "hint", [`Press ${Settings} to open settings, ${Info} to open info window`])
+    const hintCont = createEl("div", { id: "hintCont" }, "hint", [`Press ${MenuModal} to open menu`])
     document.body.append(consoleCont, blocksCont)
 
     const _fetch = fetch
@@ -117,10 +117,18 @@ document.addEventListener("DOMContentLoaded", () => {
         copyNode("Gems", data.gems, "gems")
     }
 
-    setInterval(() => {
+    const observer = new MutationObserver(() => {
         // Hint message
         if (!document.querySelector("#hintCont")) document.querySelector(".ljNuSc")?.appendChild(hintCont)
 
+        // Player data
+        const { pathname } = window.location
+        if (pathname.startsWith("/account")) cloneData("account", accountData?.data, pathname)
+        if (pathname.startsWith("/player/")) cloneData(pathname.split("/")[2], playerData?.data, pathname)
+    })
+    observer.observe(document.querySelector("#app"), { childList: true, subtree: true })
+
+    setInterval(() => {
         // Mini console
         const t = document.querySelector('body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"]')
         if (t && t.innerHTML !== "") {
@@ -132,11 +140,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Blocks
         blocksCont.innerHTML = document.querySelector(".biWqsQ")?.innerText.match(/Current mode: (\w+)/)[1] || ""
-
-        // Player data
-        const { pathname } = window.location
-        if (pathname.startsWith("/account")) cloneData("account", accountData?.data, pathname)
-        if (pathname.startsWith("/player/")) cloneData(pathname.split("/")[2], playerData?.data, pathname)
     }, 50)
 
     document.addEventListener("click", e => {
