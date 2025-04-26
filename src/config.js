@@ -8,7 +8,7 @@ const defaultConfig = {
         adblocker: true,
         fpsUncap: true,
         fullscreen: false,
-        swapper: null,
+        swapper: "disabled",
         hint: true,
         proxyDomain: false
     },
