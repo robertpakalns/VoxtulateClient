@@ -23,9 +23,7 @@ Voxtulate Client stores its data, including user information, tokens, and cache,
 | Key        | Action                 |
 |------------|------------------------|
 | `Escape`   | Close Modal Window     |
-| `F1`       | Open Settings Window   |
-| `F2`       | Open Info Window       |
-| `F3`       | Open Updates Window    |
+| `F1`       | Open Menu Window       |
 | `F5`       | Reload Page            |
 | `F11`      | Toggle Fullscreen Mode |
 | `F12`      | Toggle Developer Tools |
@@ -43,12 +41,12 @@ Voxtulate Client stores its data, including user information, tokens, and cache,
 - Developer Tools (`F12`)
 - Discord RPC Support
 - Keybinding Option For Client Features
+- Menu Modal
 - Minimized Console
   * FPS
   * Coordinates
   * Latency
 - Resource Swapper
-- Settings, Info, Upates Windows
 - Unlimited FPS
 
 ### Dependencies
