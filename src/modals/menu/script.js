@@ -85,7 +85,7 @@ class MenuModal extends Modal {
 
             inventorySorting: "interface.inventorySorting",
             console: "interface.console",
-            customStyles: "interface.clientStyles",
+            customStyles: "interface.clientStyles"
         }
 
         for (const [id, key] of Object.entries(checkedObject)) {
@@ -93,12 +93,9 @@ class MenuModal extends Modal {
             el(id).event("change", e => config.set(key, e.target.checked))
         }
 
-
-
         ipcRenderer.on("update-url", (_, url) => el("currentURL").element.innerText = url || "Unknown URL")
         ipcRenderer.send("update-url")
         el("joinLink").event("click", () => ipcRenderer.send("join-game", el("joinLinkURL").value))
-
 
         el("hint").event("change", e => ipcRenderer.send("toggle-hint", e.target.checked))
         el("console").event("change", e => ipcRenderer.send("set-console", e.target.checked))
