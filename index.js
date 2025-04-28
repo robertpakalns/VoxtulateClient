@@ -1,11 +1,11 @@
 const { app, BrowserWindow, ipcMain, dialog, protocol, session } = require("electron")
 const { setUserScripts, getUserScriptsFiles } = require("./src/utils/userScripts.js")
+const { message, confirmAction } = require("./src/functions.js")
 const { Config, configPath } = require("./src/config.js")
 const keybinding = require("./src/utils/keybinding.js")
 const { readFileSync, writeFileSync } = require("fs")
 const DiscordRPC = require("./src/utils/discord.js")
 const { autoUpdater } = require("electron-updater")
-const { message } = require("./src/functions.js")
 const swapper = require("./src/utils/swapper.js")
 const path = require("path")
 const rpc = new DiscordRPC
@@ -104,18 +104,6 @@ app.on("ready", () => {
 
     for (const e of ["change-crosshair", "change-opacity", "set-console", "toggle-hint", "change-styles", "client-update"])
         ipcMain.on(e, (_, ...a) => webContents.send(e, ...a))
-
-    const confirmAction = (message, callback) => {
-        const result = dialog.showMessageBoxSync({
-            type: "question",
-            buttons: ["Yes", "No"],
-            defaultId: 1,
-            icon: path.join(__dirname, "assets/icon.ico"),
-            title: "Voxtulate Client | Confirm",
-            message
-        })
-        if (result === 0) callback()
-    }
 
     ipcMain.on("clear-settings", () => confirmAction("Are you sure you want to clear client settings?", () => {
         config.default()

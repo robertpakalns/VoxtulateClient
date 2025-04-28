@@ -436,6 +436,10 @@ label:disabled {
     flex-direction: column;
 }
 
+#joinLinkURL {
+    width: 300px;
+}
+
 /* Customization */
 .swapper {
     display: flex;
@@ -487,11 +491,11 @@ label:disabled {
     gap: 20px;
 }
 
-/* Settings */
-.relaunch {
+.warning {
     color: #f44336 !important;
 }
 
+/* Settings */
 .subText {
     font-size: 0.6rem;
     color: gray;

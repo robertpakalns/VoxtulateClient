@@ -80,14 +80,29 @@ const sessionFetch = url => JSON.parse(sessionStorage.getItem(url)) || fetch(url
         return data
     })
 
+
+// Dialog windows
+const obj = {
+    win32: "ico",
+    darwin: "icns",
+    linux: "png"
+}
 const message = (title, message) => {
-    const obj = {
-        win32: "ico",
-        darwin: "icns",
-        linux: "png"
-    }
     const ext = obj[process.platform] || null
     return dialog.showMessageBox({ icon: ext ? path.join(__dirname, `../assets/icon.${ext}`) : undefined, title: `Voxtulate Client | ${title}`, message })
+}
+
+const confirmAction = (message, callback) => {
+    const ext = obj[process.platform] || null
+    const result = dialog.showMessageBoxSync({
+        type: "question",
+        buttons: ["Yes", "No"],
+        defaultId: 1,
+        icon: path.join(__dirname, `../assets/icon.${ext}`),
+        title: "Voxtulate Client | Confirm",
+        message
+    })
+    if (result === 0) callback()
 }
 
 const getAsset = path => `https://raw.githubusercontent.com/robertpakalns/tricko-assets/main/${path}`
@@ -106,4 +121,4 @@ const inventorySort = (a, b, settings) =>
             b.creation_time - a.creation_time :
             a.creation_time - b.creation_time
 
-module.exports = { el, createEl, creationTime, timeLeft, output, popup, openDB, getData, setData, isNum, sessionFetch, message, getAsset, inventoryFilter, inventorySort }
+module.exports = { el, createEl, creationTime, timeLeft, output, popup, openDB, getData, setData, isNum, sessionFetch, message, confirmAction, getAsset, inventoryFilter, inventorySort }

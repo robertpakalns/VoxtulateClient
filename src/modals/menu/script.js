@@ -9,6 +9,10 @@ const path = require("path")
 const { Config, configDir } = require("../../config.js")
 const config = new Config
 
+// Experimental function for handling file paths on macos
+const { pathToFileURL } = require("url")
+const loadAsset = relativePath => pathToFileURL(path.join(__dirname, relativePath)).href
+
 class MenuModal extends Modal {
     constructor() {
         super()
@@ -27,7 +31,8 @@ class MenuModal extends Modal {
 
     work() {
         el("version").element.textContent = `v${version}`
-        el("voxtulateIcon").element.src = path.join(__dirname, "../../../assets/icon.png")
+        // el("voxtulateIcon").element.src = path.join(__dirname, "../../../assets/icon.png")
+        el("voxtulateIcon").element.src = loadAsset("../../../assets/icon.png")
 
         document.querySelector(".mainContent > div[name='settingsButton']").classList.add("active") // Open by default
 
@@ -157,7 +162,8 @@ class MenuModal extends Modal {
         el("exportGameSettings").event("click", () => ipcRenderer.send("export-game-settings"))
 
         // Custom crosshair
-        const fileIconURL = path.join(__dirname, "../../../assets/icons/file.svg")
+        // const fileIconURL = path.join(__dirname, "../../../assets/icons/file.svg")
+        const fileIconURL = loadAsset("../../../assets/icons/file.svg")
         document.querySelector(".file-icon").src = fileIconURL
         el("enableCrosshair").checked = config.get("crosshair.enable")
         el("enableCrosshair").event("change", e => {
