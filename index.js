@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain, dialog, protocol, session } = require("electron")
 const { setUserScripts, getUserScriptsFiles } = require("./src/utils/userScripts.js")
-const { message, confirmAction } = require("./src/functions.js")
+const { message, confirmAction, getIcon } = require("./src/functions.js")
 const { Config, configPath } = require("./src/config.js")
 const keybinding = require("./src/utils/keybinding.js")
 const { readFileSync, writeFileSync } = require("fs")
@@ -17,7 +17,7 @@ const domain = config.get("client.proxyDomain") ? "https://historynotes.club" : 
 const createMain = async () => {
     mainWindow = new BrowserWindow({
         title: "Voxtulate Client",
-        icon: path.join(__dirname, "assets/icon.ico"),
+        icon: getIcon(),
         webPreferences: {
             preload: path.join(__dirname, "src/ui/script.js"),
             webSecurity: false

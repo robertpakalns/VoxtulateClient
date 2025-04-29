@@ -189,6 +189,10 @@ label:disabled {
 }
 
 /* Inventory */
+#inventoryModal * {
+    font-family: "Roboto", sans-serif;
+}
+
 .selectMenu {
     margin: 10px auto;
     display: flex;

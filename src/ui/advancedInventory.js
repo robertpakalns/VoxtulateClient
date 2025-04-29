@@ -1,11 +1,10 @@
-const { createEl, timeLeft, sessionFetch, getAsset, inventoryFilter, inventorySort } = require("../functions.js")
-const path = require("path")
+const { createEl, timeLeft, sessionFetch, getAsset, inventoryFilter, inventorySort, loadAsset } = require("../functions.js")
 const InventoryModal = require("../modals/inventory/script.js")
 
 const advancedInventory = async () => {
     let inventoryData, listedData, marketData
 
-    const gemPath = path.join(__dirname, "../../assets/icons/gem.webp")
+    const gemPath = loadAsset("icons/gem.webp")
 
     const inmenu = new InventoryModal
 

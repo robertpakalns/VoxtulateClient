@@ -1,4 +1,4 @@
-const { createEl, isNum, creationTime } = require("../functions.js")
+const { createEl, isNum, creationTime, loadAsset } = require("../functions.js")
 const { readFileSync, writeFileSync } = require("fs")
 const { ipcRenderer, shell } = require("electron")
 const { Config } = require("../config.js")
@@ -13,9 +13,9 @@ const { console: enableConsole, chatOpacity, inventorySorting, clientStyles: sty
 const enableStyles = () => {
 
     // Custom client styles
-    const fontURL = path.join(__dirname, "../../assets/fonts/Roboto.ttf").replace(/\\/g, "/")
-    const textURL = path.join(__dirname, "../../assets/text.webp").replace(/\\/g, "/")
-    const bgURL = path.join(__dirname, "../../assets/bg.webp").replace(/\\/g, "/")
+    const fontURL = loadAsset("fonts/Roboto.ttf").replace(/\\/g, "/")
+    const textURL = loadAsset("text.webp").replace(/\\/g, "/")
+    const bgURL = loadAsset("bg.webp").replace(/\\/g, "/")
     const customCSS = readFileSync(path.join(__dirname, "../../src/ui/clientStylesCustom.css"), "utf8") + `
     @font-face { font-family: "Roboto"; src: url(${fontURL}) format("truetype") }
     * { font-family: "Roboto", sans-serif }
@@ -23,7 +23,7 @@ const enableStyles = () => {
     img[src="/./package/ea55824826de52b7ccc3.png"] { content: url(${textURL}) }`
 
     // Styles for the client features
-    const monoFontURL = path.join(__dirname, "../../assets/fonts/RobotoMono.ttf").replace(/\\/g, "/")
+    const monoFontURL = loadAsset("fonts/RobotoMono.ttf").replace(/\\/g, "/")
     const clientCSS = readFileSync(path.join(__dirname, "../../src/ui/clientStylesMain.css"), "utf8") + `
     @font-face { font-family: "Roboto-Mono"; src: url(${monoFontURL}) format("truetype") }
     body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"] { opacity: ${enableConsole ? "0%" : "100%"} }
