@@ -3,25 +3,25 @@ appId: pro.tricko.voxtulate
 npmRebuild: false
 directories:
   output: "dist"
+artifactName: "${name}-${os}.${ext}"
 win:
-  target:
-    - target: nsis
+  target: nsis
   icon: "assets/icon.ico"
-  artifactName: "${name}-win.${ext}"
 mac:
   target: dmg
   icon: "assets/icon.icns"
-  artifactName: "${name}-mac.${ext}"
 linux:
   target:
     - AppImage
     - tar.gz
   category: Game
   icon: "assets/icon.png"
-  artifactName: "${name}-linux.${ext}"
 nsis:
   oneClick: true
   deleteAppDataOnUninstall: true
   runAfterFinish: true
   uninstallDisplayName: "${productName}"
   shortcutName: "${productName}"
+  differentialPackage: false
+dmg:
+ writeUpdateInfo: false

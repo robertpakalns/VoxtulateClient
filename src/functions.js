@@ -1,6 +1,9 @@
 const { pathToFileURL } = require("url")
-const { dialog } = require("electron")
+const { dialog, nativeImage } = require("electron")
 const path = require("path")
+
+const assetsPath = path.resolve(__dirname, "../assets")
+const loadAsset = relativePath => pathToFileURL(path.join(assetsPath, relativePath)).href
 
 const el = id => ({
     get element() { return document.getElementById(id) },
@@ -37,7 +40,7 @@ const timeLeft = date => {
 const popup = (color, text) => {
     document.querySelector(".popup")?.remove()
 
-    const _popup = createEl("div", {}, "popup", [createEl("img", { src: loadAsset("icons/bell.png") }), text])
+    const _popup = createEl("div", {}, "popup", [createEl("img", { src: loadAsset("icons/bell.svg") }), text])
     _popup.style.background = color
 
     const audio = new Audio(loadAsset("sounds/pop.mp3"))
@@ -91,7 +94,7 @@ const obj = {
 
 const getIcon = () => {
     const ext = obj[process.platform] || null
-    return ext ? path.join(__dirname, `../assets/icon.${ext}`) : undefined
+    return ext ? nativeImage.createFromPath(path.join(__dirname, `../assets/icon.${ext}`)) : undefined
 }
 
 const message = (title, message) => dialog.showMessageBox({ icon: getIcon(), title: `Voxtulate Client | ${title}`, message })
@@ -110,9 +113,6 @@ const confirmAction = (message, callback) => {
 
 // Assets
 const getAsset = path => `https://raw.githubusercontent.com/robertpakalns/tricko-assets/main/${path}`
-
-const assetsPath = path.resolve(__dirname, "../assets")
-const loadAsset = (relativePath) => pathToFileURL(path.join(assetsPath, relativePath)).href
 
 // Inventory
 const inventoryFilter = (element, settings) =>
