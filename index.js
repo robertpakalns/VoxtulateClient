@@ -1,7 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog, protocol, session } = require("electron")
 const { setUserScripts, getUserScriptsFiles } = require("./src/utils/userScripts.js")
-const { message, confirmAction, getIcon } = require("./src/functions.js")
-const { Config, configPath } = require("./src/config.js")
+const { message, confirmAction, getIcon } = require("./src/utils/functions.js")
+const { Config, configPath } = require("./src/utils/config.js")
 const keybinding = require("./src/utils/keybinding.js")
 const { readFileSync, writeFileSync } = require("fs")
 const DiscordRPC = require("./src/utils/discord.js")
@@ -19,7 +19,7 @@ const createMain = async () => {
         title: "Voxtulate Client",
         icon: getIcon(),
         webPreferences: {
-            preload: path.join(__dirname, "src/ui/script.js"),
+            preload: path.join(__dirname, "src/preload/preload.js"),
             webSecurity: false
         }
     })

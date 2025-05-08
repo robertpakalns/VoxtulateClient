@@ -1,4 +1,4 @@
-const { createEl } = require("../functions.js")
+const { createEl } = require("../utils/functions.js")
 const { readFileSync } = require("fs")
 const path = require("path")
 

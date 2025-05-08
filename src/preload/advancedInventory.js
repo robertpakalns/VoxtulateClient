@@ -1,4 +1,4 @@
-const { createEl, timeLeft, sessionFetch, getAsset, inventoryFilter, inventorySort, loadAsset } = require("../functions.js")
+const { createEl, timeLeft, sessionFetch, getAsset, inventoryFilter, inventorySort, loadAsset } = require("../utils/functions.js")
 const InventoryModal = require("../modals/inventory/script.js")
 
 const advancedInventory = async () => {

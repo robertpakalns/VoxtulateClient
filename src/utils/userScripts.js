@@ -1,5 +1,5 @@
 const { readFileSync, mkdirSync, existsSync, readdirSync, writeFileSync } = require("fs")
-const { configDir } = require("../config.js")
+const { configDir } = require("./config.js")
 const path = require("path")
 
 const defaultConfig = {

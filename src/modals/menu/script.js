@@ -1,4 +1,4 @@
-const { createEl, el, popup, sessionFetch, getAsset, loadAsset } = require("../../functions.js")
+const { createEl, el, popup, sessionFetch, getAsset, loadAsset } = require("../../utils/functions.js")
 const { userScriptsPath } = require("../../../src/utils/userScripts.js")
 const { readFileSync, writeFileSync } = require("fs")
 const { version } = require("../../../package.json")
@@ -6,7 +6,7 @@ const { ipcRenderer, shell } = require("electron")
 const Modal = require("../modal.js")
 const path = require("path")
 
-const { Config, configDir } = require("../../config.js")
+const { Config, configDir } = require("../../utils/config.js")
 const config = new Config
 
 class MenuModal extends Modal {

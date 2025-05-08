@@ -1,5 +1,5 @@
-const { openDB, getData, setData, creationTime, getAsset, inventoryFilter, inventorySort } = require("../../functions.js")
-const { el, createEl, sessionFetch } = require("../../functions.js")
+const { openDB, getData, setData, creationTime, getAsset, inventoryFilter, inventorySort } = require("../../utils/functions.js")
+const { el, createEl, sessionFetch } = require("../../utils/functions.js")
 const Modal = require("../modal.js")
 
 class InventoryModal extends Modal {

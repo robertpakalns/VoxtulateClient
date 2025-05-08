@@ -2,7 +2,7 @@ const { pathToFileURL } = require("url")
 const { dialog, nativeImage } = require("electron")
 const path = require("path")
 
-const assetsPath = path.resolve(__dirname, "../assets")
+const assetsPath = path.resolve(__dirname, "../../assets")
 const loadAsset = relativePath => pathToFileURL(path.join(assetsPath, relativePath)).href
 
 // Display values

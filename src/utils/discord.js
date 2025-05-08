@@ -1,6 +1,6 @@
-const { message } = require("../functions.js")
+const { message } = require("./functions.js")
 const { Client } = require("discord-rpc")
-const { Config } = require("../config.js")
+const { Config } = require("./config.js")
 const config = new Config
 
 const staticLinks = {

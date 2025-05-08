@@ -1,4 +1,4 @@
-const { Config, defaultConfig } = require("../config.js")
+const { Config, defaultConfig } = require("./config.js")
 const config = new Config
 
 const keybinding = mainWindow => {

@@ -1,7 +1,7 @@
-const { createEl, isNum, creationTime, loadAsset } = require("../functions.js")
+const { createEl, isNum, creationTime, loadAsset } = require("../utils/functions.js")
 const { readFileSync, writeFileSync } = require("fs")
 const { ipcRenderer, shell } = require("electron")
-const { Config } = require("../config.js")
+const { Config } = require("../utils/config.js")
 const path = require("path")
 const config = new Config
 const MenuModal = require("../modals/menu/script.js")
@@ -16,7 +16,7 @@ const enableStyles = () => {
     const fontURL = loadAsset("fonts/Roboto.ttf").replace(/\\/g, "/")
     const textURL = loadAsset("text.webp").replace(/\\/g, "/")
     const bgURL = loadAsset("bg.webp").replace(/\\/g, "/")
-    const customCSS = readFileSync(path.join(__dirname, "../../src/ui/clientStylesCustom.css"), "utf8") + `
+    const customCSS = readFileSync(path.join(__dirname, "./clientStylesCustom.css"), "utf8") + `
     @font-face { font-family: "Roboto"; src: url(${fontURL}) format("truetype") }
     * { font-family: "Roboto", sans-serif }
     .bNczYf { background: url(${bgURL}) }
@@ -24,7 +24,7 @@ const enableStyles = () => {
 
     // Styles for the client features
     const monoFontURL = loadAsset("fonts/RobotoMono.ttf").replace(/\\/g, "/")
-    const clientCSS = readFileSync(path.join(__dirname, "../../src/ui/clientStylesMain.css"), "utf8") + `
+    const clientCSS = readFileSync(path.join(__dirname, "./clientStylesMain.css"), "utf8") + `
     @font-face { font-family: "Roboto-Mono"; src: url(${monoFontURL}) format("truetype") }
     body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"] { opacity: ${enableConsole ? "0%" : "100%"} }
     .lpfJAq, .lpdfTz { opacity: ${chatOpacity}% }
@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 ipcRenderer.on("set-game-settings", (_, data) => localStorage.setItem("persist:root", JSON.parse(data)))
 ipcRenderer.on("get-game-settings", (_, file) => writeFileSync(file, localStorage.getItem("persist:root")))
-ipcRenderer.on("toggle-window", (_, modal) => {
+ipcRenderer.on("toggle-window", (_, modal) => { // Toggles modals on keybinds
     const openedModal = document.querySelector(".wrapper.open")
 
     if (document.querySelector(".bNczYf")) {
