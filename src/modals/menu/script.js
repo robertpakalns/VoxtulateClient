@@ -31,25 +31,26 @@ class MenuModal extends Modal {
 
         document.querySelector(".mainContent > div[name='settingsButton']").classList.add("active") // Open by default
 
-        document.querySelectorAll(".sideBarItem").forEach(item => {
-            item.addEventListener("click", e => {
-                document.querySelectorAll(".mainContent > div").forEach(el => el.classList.remove("active"))
-                const targetDiv = document.querySelector(`.mainContent div[name="${e.target.id}"]`)
-                if (targetDiv) {
-                    targetDiv.classList.add("active")
-                    if (!this.changelogData) this.renderChangelogPage()
-                }
-            })
+        for (const item of document.querySelectorAll(".sideBarItem")) item.addEventListener("click", e => {
+            const activeDiv = document.querySelector(".mainContentBlock.active")
+            if (activeDiv) activeDiv.classList.remove("active")
+
+            const targetDiv = document.querySelector(`.mainContent div[name="${e.target.id}"]`)
+            if (!targetDiv) return
+
+            targetDiv.classList.add("active")
+            if (!this.changelogData) this.renderChangelogPage()
         })
 
-        document.querySelectorAll(".url").forEach(el => el.addEventListener("click", e => {
+        for (const el of document.querySelectorAll(".url")) el.addEventListener("click", e => {
             e.preventDefault()
             shell.openPath(el.href)
-        }))
-        document.querySelectorAll(".copy").forEach(el => el.addEventListener("click", e => {
+        })
+
+        for (const el of document.querySelectorAll(".copy")) el.addEventListener("click", e => {
             navigator.clipboard.writeText(e.target.innerText)
             popup("rgb(206, 185, 45)", "Copied!")
-        }))
+        })
 
         // Update client
         const _version = el("version").element
@@ -144,8 +145,8 @@ class MenuModal extends Modal {
         const toggleUserScripts = () => {
             const checked = el("userScriptsEnabled").checked
             el("userScriptsBlock").class("disabled", !checked)
-            el("userScripts").element.querySelectorAll("input").forEach(el => el.disabled = !checked)
-            el("userStyles").element.querySelectorAll("input").forEach(el => el.disabled = !checked)
+            for (const item of el("userScripts").element.querySelectorAll("input")) item.disabled = !checked
+            for (const item of el("userStyles").element.querySelectorAll("input")) item.disabled = !checked
         }
 
         toggleUserScripts()
@@ -208,7 +209,7 @@ class MenuModal extends Modal {
         const toggleKeybinding = () => {
             const checked = el("enableKeybinding").checked
             el("keybindingTable").class("disabled", !checked)
-            el("keybindingTable").element.querySelectorAll("input").forEach(el => el.disabled = !checked)
+            for (const item of el("keybindingTable").element.querySelectorAll("input")) item.disabled = !checked
         }
 
         const { content: c2 } = config.get("keybinding")
@@ -230,10 +231,10 @@ class MenuModal extends Modal {
             config.set("client.swapper", "disabled")
         }
         const swapperRadios = document.querySelectorAll("input[name='swapper']")
-        swapperRadios.forEach(el => el.addEventListener("change", (e => {
+        for (const el of swapperRadios) el.addEventListener("change", e => {
             this.restartMessage()
             if (e.target.checked) config.set("client.swapper", e.target.value)
-        })))
+        })
     }
 
     async renderChangelogPage() {

@@ -115,27 +115,28 @@ class InventoryModal extends Modal {
             name: "", id: "", rotation: "", creation: "", model: "", rarity: "", equipped: "", equipped_date: ""
         }
 
-        document.querySelectorAll(".voxiomSelect").forEach(select => {
+        for (const select of document.querySelectorAll(".voxiomSelect")) {
             const menu = select.querySelector(".voxiomSelectMenu")
             const selected = select.querySelector(".selected")
             const options = select.querySelectorAll(".option")
 
             selected?.addEventListener("click", () => menu.classList.toggle("active"))
-            options.forEach(option => {
+            for (const option of options) {
                 if (option.dataset.value === this.settings[select.id]) selected.textContent = option.textContent
                 option.addEventListener("click", async () => {
                     this.currentPage = 0
                     selected.textContent = option.textContent
                     this.settings[select.id] = option.dataset.value
                     menu.classList.remove("active")
-                    this.renderPage()
+                    await this.renderPage()
                 })
-            })
-        })
+            }
+        }
 
-        document.addEventListener("click", e => document.querySelectorAll(".voxiomSelectMenu.active").forEach(menu => {
-            if (!menu.parentNode.contains(e.target)) menu.classList.remove("active")
-        }))
+        document.addEventListener("click", e => {
+            for (const el of document.querySelectorAll(".voxiomSelectMenu.active"))
+                if (!el.parentNode.contains(e.target)) el.classList.remove("active")
+        })
 
         el("name").event("input", async e => {
             this.currentPage = 0

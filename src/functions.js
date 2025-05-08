@@ -5,6 +5,24 @@ const path = require("path")
 const assetsPath = path.resolve(__dirname, "../assets")
 const loadAsset = relativePath => pathToFileURL(path.join(assetsPath, relativePath)).href
 
+// Display values
+const output = (v, e) => `${v} ${v != 1 ? e + "s" : e}`
+
+const creationTime = date => new Date(date).toLocaleDateString("en-US")
+
+const timeUnits = { d: 86400000, h: 3600000, min: 60000, s: 1000 }
+const timeLeft = date => {
+    let ms = new Date(date).getTime() - Date.now()
+    return Object.entries(timeUnits).map(([unit, value]) => {
+        const uv = Math.floor(ms / value)
+        ms %= value
+        return uv > 0 ? `${uv}${unit}` : null
+    }).filter(Boolean).slice(0, 2).join("") + " left"
+}
+
+const isNum = (a, b) => isNaN(a / b) ? 0 : (a / b).toFixed(2) || "No Data"
+
+// DOM elements
 const el = id => ({
     get element() { return document.getElementById(id) },
     get checked() { return this.element.checked },
@@ -21,20 +39,6 @@ const createEl = (tag, attrs = {}, className = "", append = []) => {
     for (const attr of Object.keys(attrs)) element[attr] = attrs[attr]
     element.append(...append)
     return element
-}
-
-const output = (v, e) => `${v} ${v != 1 ? e + "s" : e}`
-
-const creationTime = date => new Date(date).toLocaleDateString("en-US")
-
-const timeUnits = { d: 86400000, h: 3600000, min: 60000, s: 1000 }
-const timeLeft = date => {
-    let ms = new Date(date).getTime() - Date.now()
-    return Object.entries(timeUnits).map(([unit, value]) => {
-        const uv = Math.floor(ms / value)
-        ms %= value
-        return uv > 0 ? `${uv}${unit}` : null
-    }).filter(Boolean).slice(0, 2).join("") + " left"
 }
 
 const popup = (color, text) => {
@@ -58,6 +62,7 @@ const popup = (color, text) => {
     document.body.appendChild(_popup)
 }
 
+// IndexedDB
 const openDB = store => new Promise(res => {
     const req = indexedDB.open("SkinCacheDB", 1)
     req.onupgradeneeded = e => {
@@ -74,16 +79,6 @@ const setData = (db, array, store) => new Promise(res => {
     for (const el of array) tx.objectStore(store).put(el)
     tx.oncomplete = res
 })
-
-const isNum = (a, b) => isNaN(a / b) ? 0 : (a / b).toFixed(2) || "No Data"
-
-const sessionFetch = url => JSON.parse(sessionStorage.getItem(url)) || fetch(url)
-    .then(r => r.json())
-    .then(data => {
-        sessionStorage.setItem(url, JSON.stringify(data))
-        return data
-    })
-
 
 // Dialog windows
 const obj = {
@@ -113,6 +108,13 @@ const confirmAction = (message, callback) => {
 
 // Assets
 const getAsset = path => `https://raw.githubusercontent.com/robertpakalns/tricko-assets/main/${path}`
+
+const sessionFetch = url => JSON.parse(sessionStorage.getItem(url)) || fetch(url)
+    .then(r => r.json())
+    .then(data => {
+        sessionStorage.setItem(url, JSON.stringify(data))
+        return data
+    })
 
 // Inventory
 const inventoryFilter = (element, settings) =>

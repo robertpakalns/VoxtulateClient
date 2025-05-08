@@ -70,6 +70,10 @@ const createModals = () => {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+
+    // Disable code execution if wrong domain
+    if (!["voxiom.io", "historynotes.club"].includes(location.hostname)) return
+
     enableStyles()
 
     const { MenuModal } = config.get("keybinding.content")
@@ -83,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const [url] = args
 
         if (url === "/profile/me") accountData = JSON.parse(data)
-        if (url.includes("/profile/player")) playerData = JSON.parse(data)
+        if (url.startsWith("/profile/player")) playerData = JSON.parse(data)
 
         return r
     }))
