@@ -93,8 +93,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }))
 
     const copyNode = (label, value, id) => {
-        if (document.querySelector(`#${id}`)) {
-            document.querySelector(`#${id}`).children[1].textContent = value
+        const nodeId = `node_${id}`
+
+        if (document.querySelector(`#${nodeId}`)) {
+            document.querySelector(`#${nodeId}`).children[1].textContent = value
             return
         }
 
@@ -102,11 +104,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!node) return
 
         const copy = node.cloneNode(true)
-        copy.id = id
+        copy.id = nodeId
         node.parentElement.appendChild(copy)
 
-        copy.children[0].innerHTML = label
-        copy.children[1].innerHTML = value
+        copy.children[0].textContent = label
+        copy.children[1].textContent = value
     }
 
     const cloneData = (name, data, path) => {
@@ -135,15 +137,15 @@ document.addEventListener("DOMContentLoaded", () => {
     setInterval(() => {
         // Mini console
         const t = document.querySelector('body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"]')
-        if (t && t.innerHTML !== "") {
+        if (t && t.textContent !== "") {
             const c = t.innerHTML
             const [_, x, y, z] = c.match(/Player Block Position:<br>\s*x: ([^<]+) y: ([^<]+) z: ([^<]+)/)
             consoleCont.innerHTML = `${parseInt(c.match(/FPS: ([\d]+)/)[1])} FPS<br>${x} ${y} ${z}<br>${(c.match(/Latency: ([\d]+ms)/)[1])}`
         }
-        else consoleCont.innerHTML = ""
+        else consoleCont.textContent = ""
 
         // Blocks
-        blocksCont.innerHTML = document.querySelector(".biWqsQ")?.innerText.match(/Current mode: (\w+)/)[1] || ""
+        blocksCont.textContent = document.querySelector(".biWqsQ")?.textContent.match(/Current mode: (\w+)/)[1] || ""
     }, 50)
 
     document.addEventListener("click", e => {

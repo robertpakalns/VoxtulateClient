@@ -2,9 +2,6 @@ const { pathToFileURL } = require("url")
 const { dialog, nativeImage } = require("electron")
 const path = require("path")
 
-const assetsPath = path.resolve(__dirname, "../../assets")
-const loadAsset = relativePath => pathToFileURL(path.join(assetsPath, relativePath)).href
-
 // Display values
 const output = (v, e) => `${v} ${v != 1 ? e + "s" : e}`
 
@@ -62,6 +59,8 @@ const popup = (color, text) => {
     document.body.appendChild(_popup)
 }
 
+const restartMessage = () => popup("rgb(231, 76, 60)", "Restart the client to apply this setting.")
+
 // IndexedDB
 const openDB = store => new Promise(res => {
     const req = indexedDB.open("SkinCacheDB", 1)
@@ -107,6 +106,9 @@ const confirmAction = (message, callback) => {
 }
 
 // Assets
+const assetsPath = path.resolve(__dirname, "../../assets")
+const loadAsset = relativePath => pathToFileURL(path.join(assetsPath, relativePath)).href
+
 const getAsset = path => `https://raw.githubusercontent.com/robertpakalns/tricko-assets/main/${path}`
 
 const sessionFetch = url => JSON.parse(sessionStorage.getItem(url)) || fetch(url)
@@ -131,4 +133,11 @@ const inventorySort = (a, b, settings) =>
             b.creation_time - a.creation_time :
             a.creation_time - b.creation_time
 
-module.exports = { el, createEl, creationTime, timeLeft, output, popup, openDB, getData, setData, isNum, sessionFetch, message, confirmAction, getAsset, loadAsset, inventoryFilter, inventorySort, getIcon }
+module.exports = {
+    output, creationTime, timeLeft, isNum,
+    el, createEl, popup, restartMessage,
+    openDB, getData, setData,
+    getIcon, message, confirmAction,
+    loadAsset, getAsset, sessionFetch,
+    inventorySort, inventoryFilter
+}
