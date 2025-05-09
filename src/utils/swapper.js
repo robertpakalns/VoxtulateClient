@@ -2,13 +2,15 @@ const { existsSync, mkdirSync, readdirSync, readFileSync } = require("fs")
 const { Config, configDir } = require("./config.js")
 const path = require("path")
 const config = new Config
+const fetch = require("node-fetch")
 
 const swapper = webContents => {
     const reject = new Set([
         "api.adinplay.com",
         "www.google-analytics.com",
         "www.googletagmanager.com",
-        "matomo.voxiom.io"
+        "matomo.voxiom.io",
+        "api.gameanalytics.com"
     ])
     const swapperList = JSON.parse(readFileSync(path.join(__dirname, "../../assets/swapperList.json")))
 
@@ -28,8 +30,12 @@ const swapper = webContents => {
 
     webContents.session.webRequest.onBeforeRequest(({ url }, callback) => {
 
-        // This is a temporal solution for getting the skin render function 
-        if (url.endsWith("7cb119bcceb97088c8ad.js")) return callback({ redirectURL: path.join(__dirname, "../../assets/script-0.9.2.0.js") })
+        if (url.startsWith("https://voxiom.io/socket.io")) return callback({ cancel: true })
+
+        // Replace the script to get the skin render function
+        // This is a temporal solution for getting the skin render function
+        // Updated: 5/9/2025
+        if (url.endsWith("901e41c927c6d3ee5699.js")) return callback({ redirectURL: path.join(__dirname, "../../assets/script-0.9.2.0.js") })
 
         if (url.startsWith("file://")) return callback({})
 
