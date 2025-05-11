@@ -1,6 +1,23 @@
-const { openDB, getData, setData, creationTime, getAsset, inventoryFilter, inventorySort } = require("../../utils/functions.js")
+const { creationTime, getAsset, loadAsset, inventoryFilter, inventorySort } = require("../../utils/functions.js")
 const { el, createEl, sessionFetch } = require("../../utils/functions.js")
 const Modal = require("../modal.js")
+
+const openDB = store => new Promise(res => {
+    const req = indexedDB.open("SkinCacheDB", 1)
+    req.onupgradeneeded = e => {
+        const db = e.target.result
+        if (!db.objectStoreNames.contains(store)) db.createObjectStore(store, { keyPath: "key" }).createIndex("by_type", "type")
+    }
+    req.onsuccess = e => res(e.target.result)
+})
+
+const getDBData = (db, store) => new Promise(res => db.transaction(store, "readonly").objectStore(store).getAll().onsuccess = e => res(e.target.result))
+
+const setDBData = (db, array, store) => new Promise(res => {
+    const tx = db.transaction(store, "readwrite")
+    for (const el of array) tx.objectStore(store).put(el)
+    tx.oncomplete = res
+})
 
 class InventoryModal extends Modal {
     constructor() {
@@ -25,7 +42,8 @@ class InventoryModal extends Modal {
     async getURL(data) {
         const store = "skins"
         const db = await openDB(store)
-        const items = await getData(db, store)
+        const items = await getDBData(db, store)
+        console.log(items)
 
         const cache = new Map(items.map(el => [el.key, el.value]))
         const newEntries = []
@@ -50,14 +68,20 @@ class InventoryModal extends Modal {
             }
         }
 
-        if (newEntries.length > 0) await setData(db, newEntries, store)
+        if (newEntries.length > 0) await setDBData(db, newEntries, store)
         return result
     }
 
     async renderPage() {
-        this.marketData = await sessionFetch(getAsset("voxiom/voxiomMarket.json"))
-
         const cont = document.querySelector(".cont")
+        cont.innerHTML = ""
+
+        if (typeof window.renderSkin !== "function") {
+            document.querySelector(".selectMenu").innerHTML = "window.renderSkin function not found. If you see this message, please report it to the developer."
+            return
+        }
+
+        if (!this.marketData) this.marketData = await sessionFetch(getAsset("voxiom/voxiomMarket.json"))
 
         const rarities = {
             Common: "255, 255, 255",
@@ -87,27 +111,21 @@ class InventoryModal extends Modal {
             for (const el of data) setImage(el, urls[`${el.type}_${el.seed}`])
         }
 
-        const render = async () => {
-            cont.innerHTML = ""
+        const start = this.currentPage * this.itemsPerPage
+        const end = start + this.itemsPerPage
+        const limitedData = [...this.data.data]
+            .filter(el => inventoryFilter(el, this.settings))
+            .sort((a, b) => inventorySort(a, b, this.settings))
 
-            const start = this.currentPage * this.itemsPerPage
-            const end = start + this.itemsPerPage
-            const limitedData = [...this.data.data]
-                .filter(el => inventoryFilter(el, this.settings))
-                .sort((a, b) => inventorySort(a, b, this.settings))
+        const slicedData = [...limitedData].slice(start, end)
 
-            const slicedData = [...limitedData].slice(start, end)
+        const totalPages = Math.ceil(limitedData.length / this.itemsPerPage)
+        document.querySelector(".count").innerText = `Page: ${this.currentPage + 1}/${totalPages}\n Filtered: ${limitedData.length}\nTotal: ${this.data.data.length}`
 
-            const totalPages = Math.ceil(limitedData.length / this.itemsPerPage)
-            document.querySelector(".count").innerText = `Page: ${this.currentPage + 1}/${totalPages}\n Filtered: ${limitedData.length}\nTotal: ${this.data.data.length}`
+        el("left").class("disabled", this.currentPage === 0)
+        el("right").class("disabled", this.currentPage + 1 >= totalPages)
 
-            el("left").class("disabled", this.currentPage === 0)
-            el("right").class("disabled", this.currentPage + 1 >= totalPages)
-
-            await renderURL(slicedData)
-        }
-
-        render()
+        await renderURL(slicedData)
     }
 
     work() {
@@ -141,12 +159,12 @@ class InventoryModal extends Modal {
         el("name").event("input", async e => {
             this.currentPage = 0
             this.settings.name = e.target.value
-            this.renderPage()
+            await this.renderPage()
         })
         el("id").event("input", async e => {
             this.currentPage = 0
             this.settings.id = e.target.value
-            this.renderPage()
+            await this.renderPage()
         })
         el("apply").event("click", () => {
             sessionStorage.setItem("skinSettings", JSON.stringify(this.settings))
@@ -158,17 +176,15 @@ class InventoryModal extends Modal {
         })
 
         el("left").event("click", async () => {
-            if (this.currentPage > 0) {
-                this.currentPage--
-                this.renderPage()
-            }
+            if (this.currentPage == 0) return
+            this.currentPage--
+            await this.renderPage()
         })
 
         el("right").event("click", async () => {
-            if ((this.currentPage + 1) * this.itemsPerPage < this.data.data.length) {
-                this.currentPage++
-                this.renderPage()
-            }
+            if ((this.currentPage + 1) * this.itemsPerPage >= this.data.data.length) return
+            this.currentPage++
+            await this.renderPage()
         })
 
         const exportSkins = async settings => {
@@ -199,8 +215,7 @@ class InventoryModal extends Modal {
             const iconSize = 15
             const padding = 3
             const icon = new Image()
-            icon.crossOrigin = "Anonymous"
-            icon.src = "https://tricko.pro/assets/icon.webp"
+            icon.src = loadAsset("icons/tricko-32.png")
 
             icon.onload = () => {
                 ctx.globalAlpha = 0.2

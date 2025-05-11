@@ -57,4 +57,4 @@ Voxtulate Client is based on `Electron.js` framework (`Node.js`) with version `1
 - Voxiom.io (ThriveR) - [Website](https://voxiom.io) | [Discord](https://discord.com/invite/GBFtRcY)
 - Juice Client (irrvlo) - [Website](https://juice.irrvlo.xyz) | [Discord](https://discord.gg/FjzAAdSjng)
 
-by robertpakalns | [Community Server](https://discord.gg/yPjrUrvSzv) | Powered by Tricko
+by robertpakalns | [Community Server](https://discord.gg/SEExvCQeNc) | Powered by Tricko

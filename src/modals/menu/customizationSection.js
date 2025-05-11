@@ -107,10 +107,9 @@ const createCustomizationSection = () => {
 
     toggleKeybinding()
     el("enableKeybinding").checked = config.get("keybinding.enable")
-    el("enableKeybinding").event("change", e => {
+    el("enableKeybinding").event("change", () => {
         restartMessage()
         toggleKeybinding()
-        config.set("crosshair.url", e.target.value)
     })
 
     // Swapper

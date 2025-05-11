@@ -33,7 +33,8 @@ class MenuModal extends Modal {
             if (!targetDiv) return
 
             targetDiv.classList.add("active")
-            createChangelogSection()
+
+            if (targetDiv.getAttribute("name") === "changelogButton") createChangelogSection()
         })
 
         for (const el of document.querySelectorAll(".url")) el.addEventListener("click", e => {

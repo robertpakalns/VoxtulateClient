@@ -61,24 +61,6 @@ const popup = (color, text) => {
 
 const restartMessage = () => popup("rgb(231, 76, 60)", "Restart the client to apply this setting.")
 
-// IndexedDB
-const openDB = store => new Promise(res => {
-    const req = indexedDB.open("SkinCacheDB", 1)
-    req.onupgradeneeded = e => {
-        const db = e.target.result
-        if (!db.objectStoreNames.contains(store)) db.createObjectStore(store, { keyPath: "key" }).createIndex("by_type", "type")
-    }
-    req.onsuccess = e => res(e.target.result)
-})
-
-const getData = (db, store) => new Promise(res => db.transaction(store, "readonly").objectStore(store).getAll().onsuccess = e => res(e.target.result))
-
-const setData = (db, array, store) => new Promise(res => {
-    const tx = db.transaction(store, "readwrite")
-    for (const el of array) tx.objectStore(store).put(el)
-    tx.oncomplete = res
-})
-
 // Dialog windows
 const obj = {
     win32: "ico",
@@ -136,7 +118,6 @@ const inventorySort = (a, b, settings) =>
 module.exports = {
     output, creationTime, timeLeft, isNum,
     el, createEl, popup, restartMessage,
-    openDB, getData, setData,
     getIcon, message, confirmAction,
     loadAsset, getAsset, sessionFetch,
     inventorySort, inventoryFilter
