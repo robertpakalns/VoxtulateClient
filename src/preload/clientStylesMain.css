@@ -64,7 +64,7 @@
     left: 15px
 }
 
-.popup {
+#popup {
     padding: 10px;
     display: flex;
     justify-content: center;
@@ -79,11 +79,11 @@
     transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.popup img {
+#popup img {
     height: 15px;
     margin-right: 7px;
 }
 
-.popup:hover {
+#popup:hover {
     transform: scale(1.05);
 }

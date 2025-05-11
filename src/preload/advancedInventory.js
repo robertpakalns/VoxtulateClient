@@ -39,7 +39,7 @@ const advancedInventory = async () => {
 
     const _inventoryButton = createEl("div", {}, "voxiomSkinsButton", ["Advanced Sorting"])
     _inventoryButton.addEventListener("click", () => {
-        document.querySelector("#inventoryModal").classList.toggle("open")
+        document.getElementById("inventoryModal").classList.toggle("open")
         inmenu.currentPage = 0
         inmenu.renderPage()
     })
@@ -67,7 +67,7 @@ const advancedInventory = async () => {
             el.appendChild(_name)
         }
     })
-    observer.observe(document.querySelector("#app"), { childList: true, subtree: true })
+    observer.observe(document.getElementById("app"), { childList: true, subtree: true })
 }
 
 module.exports = advancedInventory

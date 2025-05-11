@@ -39,9 +39,9 @@ const createEl = (tag, attrs = {}, className = "", append = []) => {
 }
 
 const popup = (color, text) => {
-    document.querySelector(".popup")?.remove()
+    document.getElementById("popup")?.remove()
 
-    const _popup = createEl("div", {}, "popup", [createEl("img", { src: loadAsset("icons/bell.svg") }), text])
+    const _popup = createEl("div", { id: "popup" }, "", [createEl("img", { src: loadAsset("icons/bell.svg") }), text])
     _popup.style.background = color
 
     const audio = new Audio(loadAsset("sounds/pop.mp3"))

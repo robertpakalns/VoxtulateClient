@@ -28,9 +28,10 @@ const swapper = webContents => {
     }
 
     webContents.session.webRequest.onBeforeRequest(({ url }, callback) => {
-        if (url.startsWith("file://")) return callback({})
 
-        const { host, pathname } = new URL(url)
+        const { protocol, host, pathname } = new URL(url)
+
+        if (protocol === "file:") return callback({})
 
         // Block ads and other scripts which are not voxiom related
         if (adblocker && reject.has(host)) return callback({ cancel: true })

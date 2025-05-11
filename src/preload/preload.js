@@ -49,8 +49,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const copyNode = (label, value, id) => {
         const nodeId = `node_${id}`
 
-        if (document.querySelector(`#${nodeId}`)) {
-            document.querySelector(`#${nodeId}`).children[1].textContent = value
+        if (document.getElementById(nodeId)) {
+            document.getElementById(nodeId).children[1].textContent = value
             return
         }
 
@@ -79,14 +79,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const observer = new MutationObserver(() => {
         // Hint message
-        if (!document.querySelector("#hintCont")) document.querySelector(".ljNuSc")?.appendChild(hintCont)
+        if (!document.getElementById("hintCont")) document.querySelector(".ljNuSc")?.appendChild(hintCont)
 
         // Player data
         const { pathname } = window.location
         if (pathname.startsWith("/account")) cloneData("account", accountData?.data, pathname)
         if (pathname.startsWith("/player/")) cloneData(pathname.split("/")[2], playerData?.data, pathname)
     })
-    observer.observe(document.querySelector("#app"), { childList: true, subtree: true })
+    observer.observe(document.getElementById("app"), { childList: true, subtree: true })
 
     setInterval(() => {
         // Mini console
@@ -119,7 +119,7 @@ ipcRenderer.on("toggle-window", (_, modal) => { // Toggles modals on keybinds
 
     if (document.querySelector(".bNczYf")) {
         openedModal?.classList.toggle("open")
-        if (openedModal?.id !== modal) document.querySelector(`#${modal}`)?.classList.toggle("open")
+        if (openedModal?.id !== modal) document.getElementById(modal)?.classList.toggle("open")
         return
     }
 
@@ -127,10 +127,10 @@ ipcRenderer.on("toggle-window", (_, modal) => { // Toggles modals on keybinds
     if (openedModal) {
         openedModal.classList.toggle("open")
         if (modal === "null" || openedModal.id === modal) document.querySelector("canvas").requestPointerLock()
-        else document.querySelector(`#${modal}`).classList.toggle("open")
+        else document.getElementById(modal).classList.toggle("open")
     }
     else if (modal !== "null") {
-        document.querySelector(`#${modal}`).classList.toggle("open")
+        document.getElementById(modal).classList.toggle("open")
         document.exitPointerLock()
     }
 })

@@ -49,7 +49,7 @@ const createCustomizationSection = () => {
 
     // Custom crosshair
     const fileIconURL = loadAsset("icons/file.svg")
-    document.querySelector(".file-icon").src = fileIconURL
+    document.getElementById("file-icon").src = fileIconURL
     el("enableCrosshair").checked = config.get("crosshair.enable")
     el("enableCrosshair").event("change", e => {
         toggleCrosshair()

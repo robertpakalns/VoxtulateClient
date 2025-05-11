@@ -20,7 +20,7 @@ const createInfoSection = () => {
         const _buttonTd = createEl("td", {}, "", [_button])
         const _tr = createEl("tr", {}, "", [_name, _buttonTd])
 
-        document.querySelector("#dirBody").appendChild(_tr)
+        document.getElementById("dirBody").appendChild(_tr)
     }
 }
 

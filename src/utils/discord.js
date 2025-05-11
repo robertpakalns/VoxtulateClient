@@ -68,24 +68,24 @@ class DiscordRPC {
         })
     }
 
-    setJoinURL(url) {
+    setJoinURL(path) {
         if (!this.connected) return
 
         let result = "Playing Voxiom.io"
 
-        if (url.startsWith("/#") || url.startsWith("/experimental#")) result = "Playing a match"
-        else if (staticLinks[url]) result = staticLinks[url]
+        if (path.startsWith("/#") || path.startsWith("/experimental#")) result = "Playing a match"
+        else if (staticLinks[path]) result = staticLinks[path]
         else {
             for (const key in dynamicLinks) {
-                if (url.startsWith(key)) {
-                    result = dynamicLinks[key](url.replace(`${key}/`, "").split("/")[0])
+                if (path.startsWith(key)) {
+                    result = dynamicLinks[key](path.replace(`${key}/`, "").split("/")[0])
                     break
                 }
             }
         }
 
         this.state = result
-        this.joinURL = "voxtulate:/" + url
+        this.joinURL = "voxtulate:/" + path
     }
 }
 

@@ -193,7 +193,7 @@ label:disabled {
     font-family: "Roboto", sans-serif;
 }
 
-.selectMenu {
+#inventorySelectMenu {
     margin: 10px auto;
     display: flex;
     align-items: center;
@@ -212,7 +212,7 @@ label:disabled {
     cursor: pointer;
 }
 
-.cont {
+#inventoryCont {
     margin: 10px;
     flex: 1;
     overflow-y: auto;
@@ -302,14 +302,14 @@ label:disabled {
     background: #59ce5d;
 }
 
-.count,
+#count,
 .close {
     position: absolute;
     top: 0;
     cursor: pointer;
 }
 
-.count {
+#count {
     left: 0;
     font-size: 0.6rem;
     color: gray;
@@ -473,20 +473,20 @@ label:disabled {
     width: 300px;
 }
 
-.file-icon {
+#file-icon {
     height: 10px;
 }
 
-.file-icon:hover {
+#file-icon:hover {
     filter: drop-shadow(0 0 5px #4CAF50);
 }
 
-.file-upload-label {
+#file-upload-label {
     color: gold;
     cursor: pointer;
 }
 
-.file-upload-label:hover {
+#file-upload-label:hover {
     text-shadow: 0 0 10px #4CAF50;
 }
 

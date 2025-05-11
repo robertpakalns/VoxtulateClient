@@ -43,7 +43,6 @@ class InventoryModal extends Modal {
         const store = "skins"
         const db = await openDB(store)
         const items = await getDBData(db, store)
-        console.log(items)
 
         const cache = new Map(items.map(el => [el.key, el.value]))
         const newEntries = []
@@ -73,11 +72,11 @@ class InventoryModal extends Modal {
     }
 
     async renderPage() {
-        const cont = document.querySelector(".cont")
+        const cont = document.getElementById("inventoryCont")
         cont.innerHTML = ""
 
         if (typeof window.renderSkin !== "function") {
-            document.querySelector(".selectMenu").innerHTML = "window.renderSkin function not found. If you see this message, please report it to the developer."
+            document.getElementById("inventorySelectMenu").innerHTML = "window.renderSkin function not found. If you see this message, please report it to the developer."
             return
         }
 
@@ -120,7 +119,7 @@ class InventoryModal extends Modal {
         const slicedData = [...limitedData].slice(start, end)
 
         const totalPages = Math.ceil(limitedData.length / this.itemsPerPage)
-        document.querySelector(".count").innerText = `Page: ${this.currentPage + 1}/${totalPages}\n Filtered: ${limitedData.length}\nTotal: ${this.data.data.length}`
+        document.getElementById("count").innerText = `Page: ${this.currentPage + 1}/${totalPages}\n Filtered: ${limitedData.length}\nTotal: ${this.data.data.length}`
 
         el("left").class("disabled", this.currentPage === 0)
         el("right").class("disabled", this.currentPage + 1 >= totalPages)
@@ -133,7 +132,9 @@ class InventoryModal extends Modal {
             name: "", id: "", rotation: "", creation: "", model: "", rarity: "", equipped: "", equipped_date: ""
         }
 
-        for (const select of document.querySelectorAll(".voxiomSelect")) {
+        const inventorySelect = document.getElementById("inventorySelectMenu")
+
+        for (const select of inventorySelect.querySelectorAll(".voxiomSelect")) {
             const menu = select.querySelector(".voxiomSelectMenu")
             const selected = select.querySelector(".selected")
             const options = select.querySelectorAll(".option")
@@ -152,7 +153,7 @@ class InventoryModal extends Modal {
         }
 
         document.addEventListener("click", e => {
-            for (const el of document.querySelectorAll(".voxiomSelectMenu.active"))
+            for (const el of inventorySelect.querySelectorAll(".voxiomSelectMenu.active"))
                 if (!el.parentNode.contains(e.target)) el.classList.remove("active")
         })
 
