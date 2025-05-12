@@ -39,8 +39,9 @@ const swapper = webContents => {
         if (host === "voxiom.io" || host === "historynotes.club") {
             if (pathname.startsWith("/socket.io")) return callback({ cancel: true })
 
-            // Replace the script to get the skin render function
-            // This is a temporal solution for getting the skin render function
+            // Replaces the resource (script)
+            // Gets a reference to the skin render function as window.renderSkin
+            // This is a temporary solution for getting the skin render function
             // Updated: 5/9/2025
             if (pathname.endsWith("901e41c927c6d3ee5699.js")) return callback({ redirectURL: path.join(__dirname, "../../assets/script-0.9.2.0.js") })
 

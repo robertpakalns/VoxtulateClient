@@ -22,6 +22,9 @@ const createCustomizationSection = () => {
         el(id).element.appendChild(_cont)
     }
 
+    if (Object.keys(scripts).length === 0) el("userScripts").element.innerText = "..."
+    if (Object.keys(styles).length === 0) el("userStyles").element.innerText = "..."
+
     for (const key in scripts) userScriptsRow(scripts, key, "userScripts")
     for (const key in styles) userScriptsRow(styles, key, "userStyles")
 

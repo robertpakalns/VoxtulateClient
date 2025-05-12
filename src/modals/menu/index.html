@@ -1,18 +1,18 @@
 <div class="modal">
-    <div style="display: flex; height: 100%">
+    <div id="menuWrapper">
 
-        <div class="sideBar">
+        <div id="menuSideBar">
 
-            <div class="icon">
+            <div id="menuHeader">
                 <img id="voxtulateIcon">
                 <header>Voxtulate Client</header>
             </div>
 
-            <div class="sideBarList">
-                <button id="settingsButton" class="sideBarItem">Settings</button>
-                <button id="customizationButton" class="sideBarItem">Customization</button>
-                <button id="changelogButton" class="sideBarItem">Changelog</button>
-                <button id="infoButton" class="sideBarItem">Info</button>
+            <div id="menuSideBarList">
+                <button id="settingsSection" class="sideBarItem">Settings</button>
+                <button id="customizationSection" class="sideBarItem">Customization</button>
+                <button id="changelogSection" class="sideBarItem">Changelog</button>
+                <button id="infoSection" class="sideBarItem">Info</button>
             </div>
 
             <div class="sideBarFooter">
@@ -21,9 +21,9 @@
 
         </div>
 
-        <div class="mainContent">
+        <div id="menuMainContent">
 
-            <div class="mainContentBlock" name="settingsButton">
+            <div class="mainContentBlock" name="settingsSection">
 
                 <header>Settings</header>
 
@@ -105,7 +105,7 @@
 
             </div>
 
-            <div class="mainContentBlock" name="customizationButton">
+            <div class="mainContentBlock" name="customizationSection">
 
                 <header>Customization</header>
 
@@ -159,7 +159,7 @@
 
                 <div class="block">
                     <h1>Resource Swapper</h1>
-                    <div class="content swapper">
+                    <div id="swapper" class="content">
                         <div>
                             <input type="radio" name="swapper" value="disabled">
                             <span>Disabled</span>
@@ -197,7 +197,7 @@
 
             </div>
 
-            <div class="mainContentBlock" name="changelogButton">
+            <div class="mainContentBlock" name="changelogSection">
                 <header>Changelog</header>
                 <div id="clientUpdates">
                     <div id="clientUpdatesText"></div>
@@ -205,7 +205,7 @@
                 </div>
             </div>
 
-            <div class="mainContentBlock" name="infoButton">
+            <div class="mainContentBlock" name="infoSection">
 
                 <div class="block">
                     <header>Directories</header>

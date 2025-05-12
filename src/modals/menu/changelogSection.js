@@ -3,14 +3,16 @@ const { createEl, el, sessionFetch, getAsset } = require("../../utils/functions.
 let changelogData
 const createChangelogSection = async () => {
 
+    const _section = document.getElementById("clientUpdates")
+    const _text = _section.querySelector("#clientUpdatesText")
+
     // Load data
     const _spin = createEl("div", {}, "spin")
     const _loading = createEl("div", {}, "loader", [_spin])
 
-    el("clientUpdatesText").element.appendChild(_loading)
-
+    _text.appendChild(_loading)
     changelogData = await sessionFetch(getAsset("tricko/voxtulateUpdates.json"))
-    el("clientUpdatesText").element.removeChild(_loading)
+    _text.removeChild(_loading)
 
     // Render page
     for (const update of changelogData) {
@@ -20,12 +22,12 @@ const createChangelogSection = async () => {
         for (const list of update.description) description.appendChild(createEl("li", {}, "", [list]))
 
         const cont = createEl("div", {}, "updatesCont", [title, description])
-        el("clientUpdatesText").element.append(cont)
+        _text.append(cont)
 
         const _nav = createEl("button", {}, "", [update.version])
         _nav.addEventListener("click", () => cont.scrollIntoView({ behavior: "smooth" }))
 
-        el("clientUpdatesNavigator").element.append(_nav)
+        _section.querySelector("#clientUpdatesNavigator").append(_nav)
     }
 }
 
