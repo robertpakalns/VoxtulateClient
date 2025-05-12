@@ -68,8 +68,14 @@ app.on("ready", () => {
     protocol.registerFileProtocol("file", ({ url }, c) => c({ path: path.normalize(decodeURIComponent(new URL(url).pathname)) }))
     createMain()
 
-    const deepLink = process.argv.find(arg => arg.startsWith("voxtulate://"))
-    if (deepLink) mainWindow.loadURL(`${domain}/${decodeURIComponent(deepLink.slice(12)).replace(/\/$/, "").replace(/\/#/g, "#")}`)
+    // Deeplink
+    const deeplink = process.argv.find(arg => arg.startsWith("voxtulate:"))
+    if (deeplink) {
+        const { searchParams, hash } = new URL(deeplink)
+        const queryPath = searchParams.get("url")
+        const finalURL = `${domain}/${queryPath.replace(/^\/+/, "").replace(/\/+$/, "")}${hash}`
+        if (queryPath) mainWindow.loadURL(finalURL)
+    }
 
     if (config.get("client.firstJoin")) {
         setTimeout(() => message("Welcome", "Welcome to Voxtulate Client! Press F1 to open menu. Have a good game!"), 3000)

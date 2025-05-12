@@ -33,6 +33,7 @@ const { joinButton, notification } = config.get("discord")
 
 class DiscordRPC {
     constructor() {
+        this.protocol = "voxtulate://"
         this.clientId = "1294677913131810916"
         this.client = new Client({ transport: "ipc" })
         this.joinURL = "voxtulate://" // Default join URL
@@ -85,7 +86,7 @@ class DiscordRPC {
         }
 
         this.state = result
-        this.joinURL = "voxtulate:/" + path
+        this.joinURL = path === "/" ? this.protocol : `${this.protocol}?url=${path}`
     }
 }
 
