@@ -63,6 +63,17 @@ const createMain = async () => {
 if (config.get("client.fpsUncap")) app.commandLine.appendSwitch("disable-frame-rate-limit")
 for (const el of ["in-process-gpu", "enable-quic", "enable-gpu-rasterization", "disable-gpu-vsync"]) app.commandLine.appendSwitch(el)
 
+if (!app.requestSingleInstanceLock()) {
+    app.quit()
+    return
+}
+
+app.on("second-instance", () => {
+    if (!mainWindow) return
+    if (mainWindow.isMinimized()) mainWindow.restore()
+    mainWindow.focus()
+})
+
 app.on("ready", () => {
     app.setAsDefaultProtocolClient("voxtulate")
     protocol.registerFileProtocol("file", ({ url }, c) => c({ path: path.normalize(decodeURIComponent(new URL(url).pathname)) }))
@@ -73,7 +84,8 @@ app.on("ready", () => {
     if (deeplink) {
         const { searchParams, hash } = new URL(deeplink)
         const queryPath = searchParams.get("url")
-        const finalURL = `${domain}/${queryPath.replace(/^\/+/, "").replace(/\/+$/, "")}${hash}`
+        const cleanPath = queryPath ? queryPath.replace(/^\/+/, "").replace(/\/+$/, "") : ""
+        const finalURL = `${domain}/${cleanPath}${hash}`
         if (queryPath) mainWindow.loadURL(finalURL)
     }
 
