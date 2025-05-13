@@ -37,7 +37,9 @@ const swapper = webContents => {
         if (adblocker && reject.has(host)) return callback({ cancel: true })
 
         if (host === "voxiom.io" || host === "historynotes.club") {
-            if (pathname.startsWith("/socket.io")) return callback({ cancel: true })
+
+            // Blocks sockets
+            if (adblocker && pathname.startsWith("/socket.io")) return callback({ cancel: true })
 
             // Replaces the resource (script)
             // Gets a reference to the skin render function as window.renderSkin
@@ -46,13 +48,8 @@ const swapper = webContents => {
             if (pathname.endsWith("901e41c927c6d3ee5699.js")) return callback({ redirectURL: path.join(__dirname, "../../assets/script-0.9.2.0.js") })
 
             // Swapper
-            if (swapper === "full") {
-                const swap = swapFile(pathname.split("/").pop())
-                if (swap) return callback({ redirectURL: swap })
-            }
-
-            if (swapper === "list") {
-                const swap = swapFile(swapperList[url])
+            if (swapper === "list" || swapper === "full") {
+                const swap = swapFile(swapper === "full" ? pathname.split("/").pop() : swapperList[pathname])
                 if (swap) return callback({ redirectURL: swap })
             }
         }
