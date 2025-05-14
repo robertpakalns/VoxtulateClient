@@ -1,5 +1,5 @@
 const { creationTime, getAsset, loadAsset, inventoryFilter, inventorySort } = require("../../utils/functions.js")
-const { el, createEl, sessionFetch } = require("../../utils/functions.js")
+const { createEl, sessionFetch } = require("../../utils/functions.js")
 const Modal = require("../modal.js")
 
 const openDB = store => new Promise(res => {
@@ -72,13 +72,11 @@ class InventoryModal extends Modal {
     }
 
     async renderPage() {
+        if (typeof window.renderSkin !== "function") return
+
+        const _count = document.getElementById("count")
         const cont = document.getElementById("inventoryCont")
         cont.innerHTML = ""
-
-        if (typeof window.renderSkin !== "function") {
-            document.getElementById("inventorySelectMenu").innerHTML = "window.renderSkin function not found. If you see this message, please report it to the developer."
-            return
-        }
 
         if (!this.marketData) this.marketData = await sessionFetch(getAsset("voxiom/voxiomMarket.json"))
 
@@ -119,10 +117,10 @@ class InventoryModal extends Modal {
         const slicedData = [...limitedData].slice(start, end)
 
         const totalPages = Math.ceil(limitedData.length / this.itemsPerPage)
-        document.getElementById("count").innerText = `Page: ${this.currentPage + 1}/${totalPages}\n Filtered: ${limitedData.length}\nTotal: ${this.data.data.length}`
+        _count.innerText = `Page: ${this.currentPage + 1}/${totalPages}\n Filtered: ${limitedData.length}\nTotal: ${this.data.data.length}`
 
-        el("left").class("disabled", this.currentPage === 0)
-        el("right").class("disabled", this.currentPage + 1 >= totalPages)
+        document.getElementById("left").classList.toggle("disabled", this.currentPage === 0)
+        document.getElementById("right").classList.toggle("disabled", this.currentPage + 1 >= totalPages)
 
         await renderURL(slicedData)
     }
@@ -133,6 +131,11 @@ class InventoryModal extends Modal {
         }
 
         const inventorySelect = document.getElementById("inventorySelectMenu")
+
+        if (typeof window.renderSkin !== "function") {
+            inventorySelect.innerHTML = "window.renderSkin function not found. If you see this message, please report it to the developer."
+            return
+        }
 
         for (const select of inventorySelect.querySelectorAll(".voxiomSelect")) {
             const menu = select.querySelector(".voxiomSelectMenu")
@@ -157,32 +160,30 @@ class InventoryModal extends Modal {
                 if (!el.parentNode.contains(e.target)) el.classList.remove("active")
         })
 
-        el("name").event("input", async e => {
+        inventorySelect.querySelector("#name").addEventListener("input", async e => {
             this.currentPage = 0
             this.settings.name = e.target.value
             await this.renderPage()
         })
-        el("id").event("input", async e => {
+        inventorySelect.querySelector("#id").addEventListener("input", async e => {
             this.currentPage = 0
             this.settings.id = e.target.value
             await this.renderPage()
         })
-        el("apply").event("click", () => {
+        inventorySelect.querySelector("#apply").addEventListener("click", () => {
             sessionStorage.setItem("skinSettings", JSON.stringify(this.settings))
             window.location.reload()
         })
-        el("clear").event("click", async () => {
+        inventorySelect.querySelector("#clear").addEventListener("click", async () => {
             sessionStorage.removeItem("skinSettings")
             window.location.reload()
         })
-
-        el("left").event("click", async () => {
+        inventorySelect.querySelector("#left").addEventListener("click", async () => {
             if (this.currentPage == 0) return
             this.currentPage--
             await this.renderPage()
         })
-
-        el("right").event("click", async () => {
+        inventorySelect.querySelector("#right").addEventListener("click", async () => {
             if ((this.currentPage + 1) * this.itemsPerPage >= this.data.data.length) return
             this.currentPage++
             await this.renderPage()
@@ -234,7 +235,7 @@ class InventoryModal extends Modal {
             }
         }
 
-        el("export").event("click", () => exportSkins(this.settings))
+        inventorySelect.querySelector("#export").addEventListener("click", () => exportSkins(this.settings))
     }
 }
 

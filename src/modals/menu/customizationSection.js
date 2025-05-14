@@ -9,34 +9,43 @@ const createCustomizationSection = () => {
     const userScriptsConfig = JSON.parse(readFileSync(userScriptsPath, "utf8"))
     const { enable: userScriptsEnabled, scripts, styles } = userScriptsConfig
 
-    const userScriptsRow = (obj, key, id) => {
-        const _checkbox = createEl("input", { type: "checkbox", checked: obj[key] })
-        _checkbox.addEventListener("change", e => {
-            obj[key] = e.target.checked
-            writeFileSync(userScriptsPath, JSON.stringify(userScriptsConfig, null, 2))
-        })
+    const cont = document.getElementById("customization")
 
-        const _text = createEl("span", {}, "", [key])
-        const _cont = createEl("div", {}, "content", [_checkbox, _text])
+    // Userscripts
+    const userScriptsInit = (obj, id) => {
+        const _block = cont.querySelector(`#${id}`)
 
-        el(id).element.appendChild(_cont)
+        if (Object.keys(obj).length === 0) {
+            _block.innerText = "..."
+            return
+        }
+
+        for (const key in obj) {
+            const _checkbox = createEl("input", { type: "checkbox", checked: obj[key] })
+            _checkbox.addEventListener("change", e => {
+                obj[key] = e.target.checked
+                writeFileSync(userScriptsPath, JSON.stringify(userScriptsConfig, null, 2))
+            })
+
+            const _text = createEl("span", {}, "", [key])
+            const _cont = createEl("div", {}, "content", [_checkbox, _text])
+            _block.appendChild(_cont)
+        }
     }
 
-    if (Object.keys(scripts).length === 0) el("userScripts").element.innerText = "..."
-    if (Object.keys(styles).length === 0) el("userStyles").element.innerText = "..."
+    userScriptsInit(scripts, "userScripts")
+    userScriptsInit(styles, "userStyles")
 
-    for (const key in scripts) userScriptsRow(scripts, key, "userScripts")
-    for (const key in styles) userScriptsRow(styles, key, "userStyles")
-
-    el("userScriptsEnabled").checked = userScriptsEnabled
-    el("userScriptsEnabled").event("change", e => {
+    const _userScriptsEnabled = cont.querySelector("#userScriptsEnabled")
+    _userScriptsEnabled.checked = userScriptsEnabled
+    _userScriptsEnabled.addEventListener("change", e => {
         toggleUserScripts()
         userScriptsConfig.enable = e.target.checked
         writeFileSync(userScriptsPath, JSON.stringify(userScriptsConfig, null, 2))
     })
 
     const toggleUserScripts = () => {
-        const checked = el("userScriptsEnabled").checked
+        const checked = _userScriptsEnabled.checked
         el("userScriptsBlock").class("disabled", !checked)
         for (const item of el("userScripts").element.querySelectorAll("input")) item.disabled = !checked
         for (const item of el("userStyles").element.querySelectorAll("input")) item.disabled = !checked
@@ -52,7 +61,7 @@ const createCustomizationSection = () => {
 
     // Custom crosshair
     const fileIconURL = loadAsset("icons/file.svg")
-    document.getElementById("file-icon").src = fileIconURL
+    cont.querySelector("#file-icon").src = fileIconURL
     el("enableCrosshair").checked = config.get("crosshair.enable")
     el("enableCrosshair").event("change", e => {
         toggleCrosshair()
@@ -116,13 +125,13 @@ const createCustomizationSection = () => {
     })
 
     // Swapper
-    const swapperEl = document.querySelector(`input[value="${config.get("client.swapper")}"]`)
+    const swapperEl = cont.querySelector(`input[name="swapper"][value="${config.get("client.swapper")}"]`)
     if (swapperEl) swapperEl.checked = true
     else {
-        document.querySelector('input[name="swapper"][value="disabled"]').checked = true
+        cont.querySelector('input[name="swapper"][value="disabled"]').checked = true
         config.set("client.swapper", "disabled")
     }
-    const swapperRadios = document.querySelectorAll("input[name='swapper']")
+    const swapperRadios = cont.querySelectorAll("input[name='swapper']")
     for (const el of swapperRadios) el.addEventListener("change", e => {
         restartMessage()
         if (e.target.checked) config.set("client.swapper", e.target.value)
