@@ -1,4 +1,4 @@
-const { createEl, el, loadAsset, restartMessage } = require("../../utils/functions.js")
+const { createEl, loadAsset, restartMessage } = require("../../utils/functions.js")
 const { userScriptsPath } = require("../../../src/utils/userScripts.js")
 const { readFileSync, writeFileSync } = require("fs")
 const { Config } = require("../../utils/config.js")
@@ -46,48 +46,55 @@ const createCustomizationSection = () => {
 
     const toggleUserScripts = () => {
         const checked = _userScriptsEnabled.checked
-        el("userScriptsBlock").class("disabled", !checked)
-        for (const item of el("userScripts").element.querySelectorAll("input")) item.disabled = !checked
-        for (const item of el("userStyles").element.querySelectorAll("input")) item.disabled = !checked
+        cont.querySelector("#userScriptsBlock").classList.toggle("disabled", !checked)
+        for (const item of cont.querySelector("#userScripts").querySelectorAll("input")) item.disabled = !checked
+        for (const item of cont.querySelector("#userStyles").querySelectorAll("input")) item.disabled = !checked
     }
 
     toggleUserScripts()
 
     // Import/export data
-    el("importClientSettings").event("click", () => ipcRenderer.send("import-client-settings"))
-    el("exportClientSettings").event("click", () => ipcRenderer.send("export-client-settings"))
-    el("importGameSettings").event("click", () => ipcRenderer.send("import-game-settings"))
-    el("exportGameSettings").event("click", () => ipcRenderer.send("export-game-settings"))
+    const settingsObject = {
+        importClientSettings: "import-client-settings",
+        exportClientSettings: "export-client-settings",
+        importGameSettings: "import-game-settings",
+        exportGameSettings: "export-game-settings",
+    }
+    for (const [id, event] of Object.entries(settingsObject))
+        cont.querySelector(`#${id}`).addEventListener("click", () => ipcRenderer.send(event))
 
     // Custom crosshair
+    const _enableCrosshair = cont.querySelector("#enableCrosshair")
+    const _crosshairURL = cont.querySelector("#crosshairURL")
     const fileIconURL = loadAsset("icons/file.svg")
     cont.querySelector("#file-icon").src = fileIconURL
-    el("enableCrosshair").checked = config.get("crosshair.enable")
-    el("enableCrosshair").event("change", e => {
+    _enableCrosshair.checked = config.get("crosshair.enable")
+    _enableCrosshair.addEventListener("change", e => {
         toggleCrosshair()
         config.set("crosshair.enable", e.target.checked)
-        ipcRenderer.send("change-crosshair", e.target.checked, el("crosshairURL").value)
+        ipcRenderer.send("change-crosshair", e.target.checked, _crosshairURL.value)
     })
 
-    el("crosshairURL").value = config.get("crosshair.url") ?? ""
-    el("crosshairURL").event("input", e => {
+    _crosshairURL.value = config.get("crosshair.url") ?? ""
+    _crosshairURL.addEventListener("input", e => {
         config.set("crosshair.url", e.target.value)
-        ipcRenderer.send("change-crosshair", el("enableCrosshair").checked, el("crosshairURL").value)
+        ipcRenderer.send("change-crosshair", _enableCrosshair.checked, e.target.value)
     })
 
-    el("crosshairFile").event("change", ({ target: { files: [file] } }) => {
+    const _crosshairFile = cont.querySelector("#crosshairFile")
+    _crosshairFile.addEventListener("change", ({ target: { files: [file] } }) => {
         if (!file) return
         const { path } = file
         config.set("crosshair.url", path)
-        el("crosshairURL").element.value = path
-        ipcRenderer.send("change-crosshair", el("enableCrosshair").checked, el("crosshairURL").value)
+        _crosshairURL.value = path
+        ipcRenderer.send("change-crosshair", _enableCrosshair.checked, _crosshairURL.value)
     })
 
     const toggleCrosshair = () => {
-        const checked = el("enableCrosshair").checked
-        el("crosshairURL").element.disabled = !checked
-        el("crosshairFile").element.disabled = !checked
-        el("crosshairContent").class("disabled", !checked)
+        const checked = _enableCrosshair.checked
+        _crosshairURL.disabled = !checked
+        _crosshairFile.disabled = !checked
+        cont.querySelector("#crosshairContent").classList.toggle("disabled", !checked)
     }
 
     toggleCrosshair()
@@ -105,21 +112,24 @@ const createCustomizationSection = () => {
         const _input = createEl("td", {}, "", [_inputChild])
         const tr = createEl("tr", {}, "", [_name, _input])
 
-        el("keybindingBody").element.appendChild(tr)
-    }
-
-    const toggleKeybinding = () => {
-        const checked = el("enableKeybinding").checked
-        el("keybindingTable").class("disabled", !checked)
-        for (const item of el("keybindingTable").element.querySelectorAll("input")) item.disabled = !checked
+        cont.querySelector("#keybindingBody").appendChild(tr)
     }
 
     const { content: c2 } = config.get("keybinding")
     for (const key in c2) keybindingRow(key, c2[key])
 
+    const _enableKeybinding = cont.querySelector("#enableKeybinding")
+    const _keybindingTable = cont.querySelector("#keybindingTable")
+
+    const toggleKeybinding = () => {
+        const checked = _enableKeybinding.checked
+        _keybindingTable.classList.toggle("disabled", !checked)
+        for (const item of _keybindingTable.querySelectorAll("input")) item.disabled = !checked
+    }
+
     toggleKeybinding()
-    el("enableKeybinding").checked = config.get("keybinding.enable")
-    el("enableKeybinding").event("change", () => {
+    _enableKeybinding.checked = config.get("keybinding.enable")
+    _enableKeybinding.addEventListener("change", () => {
         restartMessage()
         toggleKeybinding()
     })
@@ -131,8 +141,7 @@ const createCustomizationSection = () => {
         cont.querySelector('input[name="swapper"][value="disabled"]').checked = true
         config.set("client.swapper", "disabled")
     }
-    const swapperRadios = cont.querySelectorAll("input[name='swapper']")
-    for (const el of swapperRadios) el.addEventListener("change", e => {
+    for (const el of cont.querySelectorAll("input[name='swapper']")) el.addEventListener("change", e => {
         restartMessage()
         if (e.target.checked) config.set("client.swapper", e.target.value)
     })

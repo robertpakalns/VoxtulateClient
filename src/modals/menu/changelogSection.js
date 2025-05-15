@@ -1,4 +1,4 @@
-const { createEl, el, sessionFetch, getAsset } = require("../../utils/functions.js")
+const { createEl, sessionFetch, getAsset } = require("../../utils/functions.js")
 
 let changelogData
 const createChangelogSection = async () => {

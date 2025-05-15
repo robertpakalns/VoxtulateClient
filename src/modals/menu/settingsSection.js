@@ -1,48 +1,61 @@
-const { el, restartMessage } = require("../../utils/functions.js")
+const { restartMessage } = require("../../utils/functions.js")
 const { Config } = require("../../utils/config.js")
 const { ipcRenderer } = require("electron")
 const config = new Config
 
 const createSettingsSection = () => {
-    const checkedObject = {
+    const cont = document.getElementById("settings")
+
+    const restartElementsObject = {
         adblocker: "client.adblocker",
         fpsUncap: "client.fpsUncap",
         fullscreen: "client.fullscreen",
-        hint: "client.hint",
         proxyDomain: "client.proxyDomain",
-
         rpc: "discord.joinButton",
         rpcNotification: "discord.notification",
-
-        inventorySorting: "interface.inventorySorting",
+        inventorySorting: "interface.inventorySorting"
+    }
+    const nonRestartElementsObject = {
+        hint: "client.hint",
         console: "interface.console",
         customStyles: "interface.clientStyles"
     }
-
-    for (const [id, key] of Object.entries(checkedObject)) {
-        el(id).checked = config.get(key)
-        el(id).event("change", e => config.set(key, e.target.checked))
+    for (const [id, key] of Object.entries({ ...restartElementsObject, ...nonRestartElementsObject })) {
+        const el = cont.querySelector(`#${id}`)
+        el.checked = config.get(key)
+        el.addEventListener("change", e => config.set(key, e.target.checked))
     }
+    for (const [id] of Object.entries(restartElementsObject))
+        cont.querySelector(`#${id}`).addEventListener("change", restartMessage)
 
-    ipcRenderer.on("update-url", (_, url) => el("currentURL").element.innerText = url || "Unknown URL")
+    const _currentURL = cont.querySelector("#currentURL")
+    ipcRenderer.on("update-url", (_, url) => _currentURL.innerText = url || "Unknown URL")
     ipcRenderer.send("update-url")
-    el("joinLink").event("click", () => ipcRenderer.send("join-game", el("joinLinkURL").value))
 
-    el("hint").event("change", e => ipcRenderer.send("toggle-hint", e.target.checked))
-    el("console").event("change", e => ipcRenderer.send("set-console", e.target.checked))
-    el("chatOpacity").value = config.get("interface.chatOpacity") ?? "100"
-    el("chatOpacity").event("input", e => {
+    cont.querySelector("#joinLink").addEventListener("click", e => ipcRenderer.send("join-game", cont.querySelector("#joinLinkURL").value))
+
+    const _chatOpacity = cont.querySelector("#chatOpacity")
+    _chatOpacity.value = config.get("interface.chatOpacity") ?? "100"
+    _chatOpacity.addEventListener("change", e => {
         config.set("interface.chatOpacity", e.target.value)
         ipcRenderer.send("change-opacity", e.target.value)
     })
-    el("customStyles").event("click", e => ipcRenderer.send("change-styles", e.target.checked))
 
-    el("defaultSettings").event("click", () => ipcRenderer.send("clear-settings"))
-    el("clearData").event("click", () => ipcRenderer.send("clear-data"))
-    el("restart").event("click", () => ipcRenderer.send("relaunch"))
+    const changeCallbacksObject = {
+        hint: "toggle-hint",
+        console: "set-console",
+        customStyles: "change-styles"
+    }
+    for (const [id, event] of Object.entries(changeCallbacksObject))
+        cont.querySelector(`#${id}`).addEventListener("change", e => ipcRenderer.send(event, e.target.checked))
 
-    for (const e of ["fpsUncap", "proxyDomain", "rpc", "rpcNotification", "adblocker", "inventorySorting", "fullscreen"])
-        el(e).event("click", restartMessage)
+    const clickCallbacksObject = {
+        defaultSettings: "clear-settings",
+        clearData: "clear-data",
+        restart: "relaunch"
+    }
+    for (const [id, event] of Object.entries(clickCallbacksObject))
+        cont.querySelector(`#${id}`).addEventListener("click", () => ipcRenderer.send(event))
 }
 
 module.exports = createSettingsSection

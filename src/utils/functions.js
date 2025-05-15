@@ -20,16 +20,6 @@ const timeLeft = date => {
 const isNum = (a, b) => isNaN(a / b) ? 0 : (a / b).toFixed(2) || "No Data"
 
 // DOM elements
-const el = id => ({
-    get element() { return document.getElementById(id) },
-    get checked() { return this.element.checked },
-    set checked(value) { this.element.checked = value },
-    get value() { return this.element.value },
-    set value(val) { this.element.value = val },
-    event(type, callback) { this.element.addEventListener(type, callback) },
-    class(name, toggle) { this.element.classList.toggle(name, toggle) }
-})
-
 const createEl = (tag, attrs = {}, className = "", append = []) => {
     const element = document.createElement(tag)
     if (className) element.classList.add(className)
@@ -117,7 +107,7 @@ const inventorySort = (a, b, settings) =>
 
 module.exports = {
     output, creationTime, timeLeft, isNum,
-    el, createEl, popup, restartMessage,
+    createEl, popup, restartMessage,
     getIcon, message, confirmAction,
     loadAsset, getAsset, sessionFetch,
     inventorySort, inventoryFilter
