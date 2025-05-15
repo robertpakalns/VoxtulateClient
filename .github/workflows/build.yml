@@ -10,22 +10,21 @@ jobs:
 
     permissions:
       contents: write
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: mkdir -p ~/.npm
-      - uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-node-
-
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
+  
       - id: get_version
-        run: echo "::set-output name=version::$(node -p "require('./package.json').version")"
+        shell: bash
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
-      - run: npm install
+      - run: npm ci
 
       - uses: softprops/action-gh-release@v2.0.6      
         with:
