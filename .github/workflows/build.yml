@@ -13,6 +13,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -24,9 +26,17 @@ jobs:
         shell: bash
         run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
+      - shell: bash
+        run: |
+          tag="v${{ steps.get_version.outputs.version }}"
+          if git show-ref --tags --verify --quiet "refs/tags/${tag}"; then
+            echo "Tag ${tag} already exists."
+            exit 1
+          fi
+
       - run: npm ci
 
-      - uses: softprops/action-gh-release@v2.0.6      
+      - uses: softprops/action-gh-release@v2.0.6
         with:
           tag_name: v${{ steps.get_version.outputs.version }}
           name: Release ${{ steps.get_version.outputs.version }}

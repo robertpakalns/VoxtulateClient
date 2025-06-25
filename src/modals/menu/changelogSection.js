@@ -2,6 +2,7 @@ const { createEl, sessionFetch, getAsset } = require("../../utils/functions.js")
 
 let changelogData
 const createChangelogSection = async () => {
+    if (changelogData) return
 
     const _section = document.getElementById("clientUpdates")
     const _text = _section.querySelector("#clientUpdatesText")

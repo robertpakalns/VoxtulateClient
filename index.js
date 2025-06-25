@@ -1,5 +1,5 @@
 const { app, BrowserWindow, ipcMain, dialog, protocol, session } = require("electron")
-const { setUserScripts, getUserScriptsFiles } = require("./src/utils/userScripts.js")
+const { userscripts } = require("./src/utils/userScripts.js")
 const { message, confirmAction, getIcon } = require("./src/utils/functions.js")
 const { Config, configPath } = require("./src/utils/config.js")
 const keybinding = require("./src/utils/keybinding.js")
@@ -45,12 +45,9 @@ const createMain = async () => {
         const url = webContents.getURL()
         webContents.send("update-url", url)
         rpc.setJoinURL(url.replace(domain, ""))
-
-        setUserScripts(webContents)
     })
 
-    getUserScriptsFiles()
-    webContents.on("did-start-loading", getUserScriptsFiles)
+    userscripts(webContents)
 
     webContents.on("new-window", (e, url) => {
         e.preventDefault()

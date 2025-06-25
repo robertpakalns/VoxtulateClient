@@ -12,7 +12,8 @@ const advancedInventory = async () => {
     window.fetch = (...args) => _fetch(...args).then(r => r.clone().text().then(async data => {
         const [url] = args
         if (url === "/profile/myinv") {
-            marketData = await sessionFetch(getAsset("voxiom/voxiomMarket.json"))
+            try { marketData = await sessionFetch(getAsset("voxiom/voxiomMarket.json")) }
+            catch { return r }
             const parsedData = JSON.parse(data)
             const newData = {
                 ...parsedData,
