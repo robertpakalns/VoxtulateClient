@@ -3,7 +3,7 @@ appId: pro.tricko.voxtulate
 npmRebuild: false
 directories:
   output: "dist"
-artifactName: "${name}-${os}.${ext}"
+artifactName: "${name}-${os}-${arch}.${ext}"
 win:
   target:
     - target: nsis
