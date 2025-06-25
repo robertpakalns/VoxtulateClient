@@ -12,7 +12,7 @@ const createChangelogSection = async () => {
     const _loading = createEl("div", {}, "loader", [_spin])
 
     _text.appendChild(_loading)
-    changelogData = await sessionFetch(getAsset("tricko/voxtulateUpdates.json"))
+    changelogData = await sessionFetch(getAsset("voxtulate/voxtulateUpdates.json"))
     _text.removeChild(_loading)
 
     // Render page
