@@ -19,7 +19,7 @@ const advancedInventory = async () => {
                 ...parsedData,
                 data: parsedData.data
                     .map(el => {
-                        const skin = marketData.data[el.type - 1]
+                        const skin = marketData[el.type - 1]
                         return { ...el, name: skin.name, rotation: skin.rotation, model: skin.type, rarity: skin.rarity }
                     })
                     .filter(el => inventoryFilter(el, inmenu.settings))

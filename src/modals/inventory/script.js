@@ -49,7 +49,7 @@ class InventoryModal extends Modal {
         const result = {}
 
         for (const el of data) {
-            const item = this.marketData.data.find(({ id }) => id === el.type)
+            const item = this.marketData.find(({ id }) => id === el.type)
             const key = `${el.type}_${el.seed}`
             const cached = cache.get(key)
 
