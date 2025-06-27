@@ -4,6 +4,16 @@ npmRebuild: false
 directories:
   output: "dist"
 artifactName: "${name}-${os}-${arch}.${ext}"
+
+electronLanguages:
+  - en-US
+
+files:
+  - "!**/locales/*"
+  - "!**/*.pak"
+  - "!**/ffmpeg.dll"
+  - "!**/d3dcompiler_47.dll"
+
 win:
   target:
     - target: nsis
@@ -11,15 +21,18 @@ win:
         - x64
         - ia32
   icon: "assets/icon.ico"
+
 mac:
   target: dmg
   icon: "assets/icon.icns"
+
 linux:
   target:
     - AppImage
     - tar.gz
   category: Game
   icon: "assets/icon.png"
+
 nsis:
   oneClick: true
   deleteAppDataOnUninstall: true
@@ -27,5 +40,6 @@ nsis:
   uninstallDisplayName: "${productName}"
   shortcutName: "${productName}"
   differentialPackage: false
+
 dmg:
  writeUpdateInfo: false
