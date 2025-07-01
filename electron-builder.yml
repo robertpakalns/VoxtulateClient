@@ -23,25 +23,14 @@ win:
   icon: "assets/icon.ico"
 
 mac:
-  target:
-    - target: dmg
-      arch:
-        - x64
-        - arm64
-  icon: "assets/icons/icon.icns"
+  target: dmg
+  icon: "assets/icon.icns"
 
 linux:
   target:
-    - target: tar.gz
-      arch:
-        - x64
-        - arm64
-    - target: AppImage
-      arch:
-        - x64
-        - arm64
-  category: Game
-  icon: "assets/icons/icon.png"
+    - AppImage
+    - tar.gz
+  icon: "assets/icon.png"
 
 nsis:
   oneClick: true
