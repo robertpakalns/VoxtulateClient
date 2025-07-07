@@ -32,7 +32,7 @@ const createSettingsSection = () => {
     ipcRenderer.on("update-url", (_, url) => _currentURL.innerText = url || "Unknown URL")
     ipcRenderer.send("update-url")
 
-    cont.querySelector("#joinLink").addEventListener("click", e => ipcRenderer.send("join-game", cont.querySelector("#joinLinkURL").value))
+    cont.querySelector("#joinLink").addEventListener("click", () => ipcRenderer.send("join-game", cont.querySelector("#joinLinkURL").value))
 
     const _chatOpacity = cont.querySelector("#chatOpacity")
     _chatOpacity.value = config.get("interface.chatOpacity") ?? "100"
