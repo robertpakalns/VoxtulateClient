@@ -34,7 +34,7 @@
 .modal * {
     -webkit-user-drag: none;
     user-select: none;
-    font-family: "Roboto-Mono", monospace;
+    font-family: "Roboto", monospace;
 }
 
 .modal {
@@ -43,7 +43,11 @@
     height: 600px;
     overflow-y: auto;
     border-radius: 1rem;
-    background: linear-gradient(-30deg, rgba(0, 0, 20, 0.7) 0%, rgba(20, 0, 0, 0.7) 100%);
+    background: linear-gradient(
+        -30deg,
+        rgba(0, 0, 20, 0.7) 0%,
+        rgba(20, 0, 0, 0.7) 100%
+    );
     font-size: 0.8rem;
     color: white;
     user-select: none;
@@ -90,28 +94,25 @@
     appearance: none;
     width: 10px;
     height: 10px;
-    border: 2px solid #4CAF50;
+    border: 2px solid #4caf50;
     border-radius: 2px;
 }
 
 .modal input[type="checkbox"]:hover {
-    box-shadow: 0 0 5px #4CAF50;
+    box-shadow: 0 0 5px #4caf50;
 }
 
 .modal input[type="checkbox"]:checked {
-    background-color: #4CAF50;
+    background-color: #4caf50;
 }
 
 .modal button {
     background: transparent;
-    color: rgb(252, 222, 55);
+    /* color: rgb(252, 222, 55); */
+    color: white;
     outline: none;
     border: none;
     cursor: pointer;
-}
-
-.modal button:hover {
-    text-shadow: 0 0 10px #4CAF50;
 }
 
 .modal footer {
@@ -132,7 +133,7 @@
 }
 
 .modal input[type="range"]:hover {
-    filter: drop-shadow(0 0 2px #4CAF50);
+    filter: drop-shadow(0 0 2px #4caf50);
 }
 
 .disabled,
@@ -177,7 +178,7 @@ label:disabled {
 
 .modal a {
     text-decoration: none;
-    color: #00A1E4;
+    color: #00a1e4;
 }
 
 .modal input[type="file"] {
@@ -295,7 +296,7 @@ label:disabled {
 }
 
 .btn {
-    background: #4CAF50;
+    background: #4caf50;
 }
 
 .btn:hover {
@@ -332,7 +333,7 @@ label:disabled {
 .img {
     width: 100%;
     height: 100%;
-    object-fit: contain
+    object-fit: contain;
 }
 
 .name {
@@ -345,14 +346,14 @@ label:disabled {
     position: absolute;
     bottom: -20px;
     left: 0;
-    font-size: 8px
+    font-size: 8px;
 }
 
 .creation {
     position: absolute;
     bottom: -20px;
     right: 0;
-    font-size: 8px
+    font-size: 8px;
 }
 
 .line {
@@ -388,7 +389,7 @@ label:disabled {
 /* Menu */
 #menuWrapper {
     display: flex;
-    height: 100%
+    height: 100%;
 }
 
 #menuSideBar {
@@ -397,13 +398,18 @@ label:disabled {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    border-right: 1px solid gray;
+    border-right: 1px solid rgb(50, 50, 50);
 }
 
 #menuSideBarList {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    gap: 10px;
+}
+
+#menuSideBarList button.active {
+    background: rgba(200, 200, 200, 0.3);
 }
 
 .sideBarItem {
@@ -432,13 +438,13 @@ label:disabled {
 
 #menuHeader {
     display: flex;
-    gap: 5px;
+    font-size: 1.2rem;
     align-items: center;
     justify-content: center;
 }
 
 #menuHeader img {
-    height: 30px;
+    height: 1.7rem;
 }
 
 #version {
@@ -462,16 +468,16 @@ label:disabled {
     appearance: none;
     width: 10px;
     height: 10px;
-    border: 2px solid #4CAF50;
+    border: 2px solid #4caf50;
     border-radius: 10px;
 }
 
 #swapper input[type="radio"]:hover {
-    box-shadow: 0 0 5px #4CAF50;
+    box-shadow: 0 0 5px #4caf50;
 }
 
 #swapper input[type="radio"]:checked {
-    background-color: #4CAF50;
+    background-color: #4caf50;
 }
 
 #crosshairURL {
@@ -483,7 +489,7 @@ label:disabled {
 }
 
 #file-icon:hover {
-    filter: drop-shadow(0 0 5px #4CAF50);
+    filter: drop-shadow(0 0 5px #4caf50);
 }
 
 #file-upload-label {
@@ -492,7 +498,7 @@ label:disabled {
 }
 
 #file-upload-label:hover {
-    text-shadow: 0 0 10px #4CAF50;
+    text-shadow: 0 0 10px #4caf50;
 }
 
 #userScriptsBlock {
@@ -576,7 +582,7 @@ label:disabled {
     overflow: auto;
 }
 
-#clientUpdatesNavigator>button {
+#clientUpdatesNavigator > button {
     padding: 10px;
 }
 
@@ -595,4 +601,32 @@ label:disabled {
     width: fit-content;
     display: flex;
     gap: 3px;
+}
+
+/* Lists */
+.list-el {
+    height: 30px;
+    padding: 20px 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: 0.3s ease;
+    border-radius: 10px;
+}
+
+.list-el img,
+.list-el svg {
+    width: 20px;
+}
+
+.list-el:hover {
+    margin-left: 5px;
+    background: rgba(128, 128, 128, 0.325);
+    transform: scale(1.05);
+}
+
+ul {
+    margin: 0;
+    padding: 0 15px;
 }

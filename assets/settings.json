@@ -1,0 +1,69 @@
+[
+  {
+    "name": "Adblocker",
+    "description": "Blocks all ads",
+    "type": "checkbox",
+    "config": "client.adblocker",
+    "section": "settings",
+    "requires": "restart"
+  },
+  {
+    "name": "Fullscreen",
+    "description": "Open the client in the fullscreen mode",
+    "type": "checkbox",
+    "config": "client.fullscreen",
+    "section": "settings",
+    "requires": "restart"
+  },
+  {
+    "name": "Unlimited FPS",
+    "description": "Uncaps FPS for better performance. Works only on Windows",
+    "type": "checkbox",
+    "config": "client.fpsUncap",
+    "section": "settings",
+    "requires": "restart"
+  },
+  {
+    "name": "Discord RPC Join Button",
+    "description": "Allows players to join your game from your Discord profile",
+    "type": "checkbox",
+    "config": "discord.joinButton",
+    "section": "settings",
+    "requires": "restart"
+  },
+  {
+    "id": "modalHint",
+    "name": "Toggle Modal Hint",
+    "description": "The hint to open the menu modal will be placed on the main menu",
+    "type": "checkbox",
+    "config": "interface.modalHint",
+    "section": "settings"
+  },
+  {
+    "name": "Proxy Domain",
+    "description": "Choose a proxy domain in case voxiom.io is blocked in your region",
+    "type": "select",
+    "config": "client.domain",
+    "section": "settings",
+    "requires": "restart",
+    "select": ["voxiom.io", "historynotes.club"]
+  },
+  {
+    "id": "enableKeybinding",
+    "name": "Enable Custom Keybinding",
+    "description": "Setting multiple options to the same key might lead to unpredictable behavior",
+    "type": "checkbox",
+    "config": "keybinding.enable",
+    "section": "customization",
+    "requires": "restart"
+  },
+  {
+    "name": "Enable Resource Swapper",
+    "description": "Enables resource swapper which replaces game assets with local ones",
+    "type": "select",
+    "config": "client.swapper",
+    "section": "customization",
+    "requires": "restart",
+    "select": ["Disabled", "Simple", "Extended"]
+  }
+]
