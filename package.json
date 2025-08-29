@@ -20,5 +20,8 @@
   "devDependencies": {
     "electron": "^21.0.0",
     "electron-builder": "^26.0.12"
+  },
+  "optionalDependencies": {
+    "@juice-client/node-enject": "^1.0.4"
   }
 }

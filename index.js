@@ -25,6 +25,7 @@ const domain = config.get("client.proxyDomain")
 
 const createMain = async () => {
   mainWindow = new BrowserWindow({
+    show: false,
     title: "Voxtulate Client",
     icon: getIcon(),
     webPreferences: {
@@ -35,10 +36,29 @@ const createMain = async () => {
   });
 
   mainWindow.maximize();
-  // mainWindow.setMenu(null);
+  mainWindow.setMenu(null);
   mainWindow.loadURL(domain);
   mainWindow.setFullScreen(config.get("client.fullscreen"));
   mainWindow.on("page-title-updated", (e) => e.preventDefault());
+
+  mainWindow.once("ready-to-show", async () => {
+    if (process.platform === "win32") {
+      // @ts-ignore
+      // Windows only
+      const { default: enject } = await import("@juice-client/node-enject");
+
+      const handleBuffer = mainWindow.getNativeWindowHandle();
+      let hwnd;
+
+      if (process.arch === "x64" || process.arch === "arm64")
+        hwnd = Number(handleBuffer.readBigUInt64LE(0));
+      else hwnd = handleBuffer.readUInt32LE(0);
+
+      enject.startHook(hwnd);
+    }
+
+    mainWindow.show();
+  });
 
   keybinding(mainWindow);
 
