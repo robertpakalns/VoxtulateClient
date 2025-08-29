@@ -89,21 +89,31 @@
 }
 
 .modal input[type="checkbox"] {
-    cursor: pointer;
-    outline: none;
     appearance: none;
-    width: 10px;
-    height: 10px;
-    border: 2px solid #4caf50;
-    border-radius: 2px;
+    width: 50px;
+    height: 25px;
+    background: linear-gradient(45deg, #e5e7eb55, #98989855);
+    border-radius: 25px;
+    position: relative;
+    transition: 0.3s ease;
+    cursor: pointer;
 }
 
-.modal input[type="checkbox"]:hover {
-    box-shadow: 0 0 5px #4caf50;
+.modal input[type="checkbox"]::before {
+    content: "";
+    position: absolute;
+    left: 0px;
+    height: 25px;
+    width: 25px;
+    background: linear-gradient(45deg, #c93e34, #800900);
+
+    border-radius: 50%;
+    transition: 0.3s ease;
 }
 
-.modal input[type="checkbox"]:checked {
-    background-color: #4caf50;
+.modal input[type="checkbox"]:checked::before {
+    left: 25px;
+    background: linear-gradient(45deg, #4caf50, #006504);
 }
 
 .modal button {
@@ -629,4 +639,71 @@ label:disabled {
 ul {
     margin: 0;
     padding: 0 15px;
+}
+
+select {
+    padding: 5px;
+    background: transparent;
+    outline: none;
+    border: none;
+    color: white;
+    border-bottom: 1px solid rgb(50, 50, 50);
+}
+
+select option:nth-child(odd) {
+    background: rgb(50, 50, 50);
+}
+
+select option:nth-child(even) {
+    background: rgb(40, 40, 40);
+}
+
+/* Generate Configs */
+.configCont {
+    margin: 15px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.configCont .upCont {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.configCont .downCont {
+    display: flex;
+    gap: 10px;
+    font-size: 0.8rem;
+}
+
+.configCont .leftCont {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.configCont .restart,
+.configCont .refresh,
+.configCont .category {
+    padding: 4px 6px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+}
+
+.configCont .restart {
+    background: #ff000060;
+}
+
+.configCont .refresh {
+    background: #db710060;
+}
+
+.configCont .category {
+    background: #3ab80060;
+}
+
+.configCont .name {
+    font-size: 1.25rem;
 }

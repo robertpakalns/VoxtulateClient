@@ -7,7 +7,12 @@ const {
   session,
 } = require("electron");
 const { userscripts } = require("./src/utils/userScripts.js");
-const { message, confirmAction, getIcon } = require("./src/utils/functions.js");
+const {
+  message,
+  confirmAction,
+  getIcon,
+  getHost,
+} = require("./src/utils/functions.js");
 const { Config, configPath } = require("./src/utils/config.js");
 const keybinding = require("./src/utils/keybinding.js");
 const { readFileSync, writeFileSync } = require("fs");
@@ -19,9 +24,7 @@ const rpc = new DiscordRPC();
 const config = new Config();
 
 let mainWindow;
-const domain = config.get("client.proxyDomain")
-  ? "https://historynotes.club"
-  : "https://voxiom.io";
+const domain = `https://${getHost()}`;
 
 const createMain = async () => {
   mainWindow = new BrowserWindow({
@@ -190,7 +193,7 @@ app.on("ready", () => {
     "change-crosshair",
     "change-opacity",
     "set-console",
-    "toggle-hint",
+    "toggle-menu-modal",
     "change-styles",
     "client-update",
   ])

@@ -1,7 +1,7 @@
 .voxiomCreate {
     margin: 20px;
     position: absolute;
-    font-weight: 900
+    font-weight: 900;
 }
 
 .voxiomConsole {
@@ -17,14 +17,14 @@
     position: absolute;
     bottom: 35%;
     text-align: center;
-    font-size: 10px
+    font-size: 10px;
 }
 
 .voxiomCrosshair {
     top: 50vh;
     left: 50vw;
     position: fixed;
-    transform: translate(-50%, -50%)
+    transform: translate(-50%, -50%);
 }
 
 .voxiomSkinName {
@@ -34,7 +34,7 @@
     left: 0;
     text-align: center;
     font-size: 0.8rem;
-    color: gray
+    color: gray;
 }
 
 .voxiomSkinsButton {
@@ -43,25 +43,24 @@
     align-items: center;
     padding: 10px;
     margin-right: 20px;
-    cursor: pointer
+    cursor: pointer;
 }
 
 .gem {
     margin-left: 3px;
-    height: 9px
+    height: 9px;
 }
 
 .skinModal {
     width: 100%;
     height: 100%;
     z-index: 9999;
-    display: none
+    display: none;
 }
 
 .hint {
     position: absolute;
     bottom: -25px;
-    left: 15px
 }
 
 #popup {
@@ -76,7 +75,9 @@
     border-radius: 10px;
     cursor: pointer;
     user-select: none;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
 }
 
 #popup img {

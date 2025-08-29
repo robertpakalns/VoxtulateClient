@@ -1,6 +1,7 @@
 const { createEl, popup, loadAsset } = require("../../utils/functions.js");
 const { version } = require("../../../package.json");
 const { ipcRenderer, shell } = require("electron");
+const { generateConfigs } = require("./generateConfigs.js");
 const Modal = require("../modal.js");
 
 const createCustomizationSection = require("./customizationSection.js");
@@ -20,6 +21,8 @@ class MenuModal extends Modal {
   }
 
   work() {
+    generateConfigs();
+
     const _version = this.modal.querySelector("#version");
     _version.textContent = `v${version}`;
 

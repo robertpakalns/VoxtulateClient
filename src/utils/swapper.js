@@ -73,9 +73,9 @@ const swapper = (webContents) => {
       }
 
       // Swapper
-      if (swapper === "list" || swapper === "full") {
+      if (swapper === "Simple" || swapper === "Extended") {
         const fileName =
-          swapper === "full"
+          swapper === "Extended"
             ? pathname.split("/").pop()
             : swapperList[pathname];
         if (swapFile(fileName))

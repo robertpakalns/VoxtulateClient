@@ -1,6 +1,15 @@
-const { pathToFileURL } = require("url");
 const { dialog, nativeImage } = require("electron");
+const { pathToFileURL } = require("url");
+const { Config } = require("./config.js");
 const path = require("path");
+
+const config = new Config();
+
+// Voxiom.io Domains
+const domains = new Set(["voxiom.io", "historynotes.club"]);
+
+const host = config.get("client.domain");
+const getHost = () => (domains.has(host) ? host : "voxiom.io");
 
 // Display values
 const output = (v, e) => `${v} ${v != 1 ? e + "s" : e}`;
@@ -138,6 +147,7 @@ const inventorySort = (a, b, settings) =>
       : a.creation_time - b.creation_time;
 
 module.exports = {
+  getHost,
   output,
   creationTime,
   timeLeft,
