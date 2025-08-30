@@ -7,7 +7,6 @@ const Modal = require("../modal.js");
 const createCustomizationSection = require("./customizationSection.js");
 const createChangelogSection = require("./changelogSection.js");
 const createSettingsSection = require("./settingsSection.js");
-const createInfoSection = require("./infoSection.js");
 
 class MenuModal extends Modal {
   constructor() {
@@ -70,7 +69,11 @@ class MenuModal extends Modal {
     ipcRenderer.on("client-update", (_, data) => {
       if (data === null) popup("rgb(45, 206, 72)", "Update available!");
       else if (data === true) {
-        const _updateButton = createEl("button", { textContent: "Update!" });
+        const _updateButton = createEl(
+          "button",
+          { textContent: "Update!" },
+          "updateBtn",
+        );
         _updateButton.addEventListener("click", () => {
           ipcRenderer.send("client-update", "update");
           _version.innerText = "Updating...";
@@ -82,7 +85,6 @@ class MenuModal extends Modal {
 
     createSettingsSection();
     createCustomizationSection();
-    createInfoSection();
   }
 }
 

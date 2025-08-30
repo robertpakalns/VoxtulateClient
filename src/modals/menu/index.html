@@ -37,6 +37,21 @@
                 </div>
 
                 <div class="block">
+                    <h1>Import/Export Settings</h1>
+                    <div class="content">
+                        <button id="importClientSettings" class="btn">Import</button> |
+                        <button id="exportClientSettings" class="btn">Export</button>
+                        <div>Client Settings</div>
+                    </div>
+
+                    <div class="content">
+                        <button id="importGameSettings" class="btn">Import</button> |
+                        <button id="exportGameSettings" class="btn">Export</button>
+                        <div>Game Settings</div>
+                    </div>
+                </div>
+
+                <div class="block">
                     <h1>Fast Join</h1>
                     <div class="content">
                         <button id="joinLink">Join</button>
@@ -62,12 +77,8 @@
                 <div class="settingsCont"></div>
 
                 <div class="block">
-                    <h1>Crosshair</h1>
-                    <div class="content">
-                        <input type="checkbox" id="enableCrosshair">
-                        <div>Enable Crosshair</div>
-                    </div>
                     <div id="crosshairContent">
+                    Crosshair URL
                         <input type="url" id="crosshairURL">
                         <input type="file" id="crosshairFile">
                         <label for="crosshairFile" id="file-upload-label">
@@ -76,8 +87,8 @@
                     </div>
                 </div>
 
+                <header>Userscripts</header>
                 <div class="block">
-                    <h1>Userscripts</h1>
                     <div class="content">
                         <input type="checkbox" id="userScriptsEnabled">
                         <div>Enable Userscripts</div>
@@ -94,29 +105,8 @@
                     </div>
                 </div>
 
+                <header>Keybinding</header>
                 <div class="block">
-                    <h1>Import/Export Settings</h1>
-                    <div class="content">
-                        <button id="importClientSettings">Import</button> |
-                        <button id="exportClientSettings">Export</button>
-                        <div>Client Settings</div>
-                    </div>
-
-                    <div class="content">
-                        <button id="importGameSettings">Import</button> |
-                        <button id="exportGameSettings">Export</button>
-                        <div>Game Settings</div>
-                    </div>
-                </div>
-
-                <div class="block">
-                    <h1>Keybinding</h1>
-                    <div class="content">
-                        <input type="checkbox" id="enableKeybinding">
-                        <div>Enable Custom Keybinding</div>
-                    </div>
-                    <div class="subText">
-                        Setting multiple options to the same key might lead to unpredictable behavior</div>
                     <table id="keybindingTable">
                         <thead>
                             <tr>
@@ -126,7 +116,6 @@
                         </thead>
                         <tbody id="keybindingBody"></tbody>
                     </table>
-
                 </div>
 
             </div>
@@ -141,11 +130,42 @@
 
             <div class="mainContentBlock" name="infoSection">
 
+    <header>Redline Client</header>
                 <div class="block">
-                    <header>Directories</header>
-                    <table>
-                        <tbody id="dirBody"></tbody>
-                    </table>
+                    <p>Voxtulate Client is an unofficial Voxiom.io client.</p>
+                    <h4>Features</h4>
+                    <ul>
+                        <li>Advanced Inventory Sorting</li>
+                        <ul>
+                            <li>Apply, Clear, and Export buttons</li>
+                            <li>Filter by Type, Rarity, Name, ID, and Rotation</li>
+                            <li>Skins Listing Price and Time Left</li>
+                            <li>Sort by Creation Date</li>
+                        </ul>
+                        <li>Changelog</li>
+                        <li>Client</li>
+                        <ul>
+                            <li>Adblocker</li>
+                            <li>Deeplinks (voxtulate: Protocol)</li>
+                            <li>Discord Rich Presence</li>
+                            <li>FPS Uncap</li>
+                            <li>Import/Export Client and In-Game Settings</li>
+                            <li>Proxy Domain Support</li>
+                        </ul>
+                        <li>Customizations</li>
+                        <ul>
+                            <li>Custom Keybinding</li>
+                            <li>Userscripts</li>
+                            <li>Userstyles</li>
+                            <li>Resource Swapper</li>
+                        </ul>
+                        <li>User Inteface</li>
+                        <ul>
+                            <li>Client-Side Styles</li>
+                            <li>Custom Crosshair</li>
+                            <li>Minimized Console</li>
+                        </ul>
+                    </ul>
                 </div>
 
                 <div class="block">
@@ -164,11 +184,12 @@
                 <div class="block">
                     <header>Credits</header>
                     <ul>
-                        <li>ThriveR</li>
+                        <li>ThriveR for Voxiom.io</li>
                         <li>Vanced Voxiom Client (NamekujiLSDs) for core features</li>
                         <li>Juice Client (irrvlo) for additional features</li>
                         <li>Redline Client (robertpakalns) for UI design</li>
                         <li>EDEX for assets</li>
+                        <li>slavcp for enject</li>
                     </ul>
                 </div>
 

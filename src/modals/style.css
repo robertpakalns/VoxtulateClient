@@ -133,16 +133,16 @@
 
 .modal footer button {
     font-size: 1rem;
+    transition: 0.3s ease;
+}
+
+.modal footer button:hover {
+    transform: scale(1.1);
 }
 
 .modal input[type="range"] {
     width: 70px;
     height: 5px;
-    /* transition: 0.3s ease; */
-}
-
-.modal input[type="range"]:hover {
-    /* transform: scale(1.1); */
 }
 
 .disabled,
@@ -196,6 +196,20 @@ label:disabled {
 
 .modal thead {
     font-weight: 900;
+}
+
+.modal .btn {
+    color: goldenrod;
+    transition: 0.3s ease;
+}
+
+.modal .btn:hover {
+    color: gold;
+    transform: scale(1.05);
+}
+
+.modal h4 {
+    margin: 10px 0;
 }
 
 /* Inventory */
@@ -304,11 +318,11 @@ label:disabled {
     color: lightgray;
 }
 
-.btn {
+#inventoryModal .btn {
     background: #4caf50;
 }
 
-.btn:hover {
+#inventoryModal .btn:hover {
     background: #59ce5d;
 }
 
@@ -460,6 +474,14 @@ label:disabled {
     padding: 10px;
 }
 
+.updateBtn {
+    color: gold !important;
+    transition: 0.3s ease;
+}
+.updateBtn:hover {
+    transform: scale(1.1);
+}
+
 #joinLinkURL {
     width: 300px;
 }
@@ -535,7 +557,7 @@ label:disabled {
     padding: 2px 5px;
     color: #ffe4e1;
     background: rgba(255, 255, 255, 0.1);
-    transition: background-color 0.1s ease;
+    transition: 0.3s ease;
 }
 
 .copy:hover {
@@ -689,18 +711,19 @@ select option:nth-child(even) {
     padding: 4px 6px;
     border-radius: 6px;
     font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .configCont .restart {
-    background: #ff000060;
+    background: #ff000040;
 }
 
 .configCont .refresh {
-    background: #db710060;
+    background: #db710040;
 }
 
 .configCont .category {
-    background: #3ab80060;
+    background: #3ab80040;
 }
 
 .configCont .name {

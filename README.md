@@ -35,9 +35,9 @@ Unofficial Electron client for Voxiom.io, for real Voxtulators
 3. Run the installer
 
 ## ⚙️ Engine
-Voxtulate Client is based on `Electron.js` framework (`Node.js`) with version `10.4.7`. More information in [`package.json`](https://github.com/robertpakalns/VoxtulateClient/blob/main/package.json).
+Voxtulate Client is based on `Electron.js` framework (`Node.js`) with version `21.0.0`. The client also uses the [`@juice-client/node-enject`](https://www.npmjs.com/package/@juice-client/node-enject) workaround on Windows to prevent the bug that freezes any active WebSocket connection when run with the `--disable-frame-rate-limit` flag. More information in [`package.json`](https://github.com/robertpakalns/VoxtulateClient/blob/main/package.json).
 
-## 🛡️ Client Safety 
+## 🛡️ Client Safety
 This project is open-source. All Voxtulate Client source code is publicly available in the [GitHub repository](https://github.com/robertpakalns/VoxtulateClient). All builds are executed via GitHub Actions. If you have concerns about the safety of your private information while using Voxtulate Client, feel free to inspect the source code. Trust in the client is based on trust in the developer.
 
 ## 🔗 Deeplink
@@ -53,23 +53,28 @@ Voxtulate Client uses `voxtulate:` protocol to open the client. For example, `vo
 | `F12`      | Toggle Developer Tools |
 
 ## 🚀 Features
-- Adblocker
-- Advanced Inventory Sorting
-  * Filter by type, rarity, name, ID, rotation
-  * Sort by creation date
+* Advanced Inventory Sorting
   * Apply, Clear, and Export buttons
-  * Skins listing price and time left
-- Client-Side Styles
-- CSS/JS Customization
-- Custom Crosshair
-- Developer Tools (`F12`)
-- Deeplinks (`voxtulate:` protocol)
-- Discord RPC Support
-- Keybinding Option for Client Features
-- Menu Modal
-- Minimized Console (FPS, coordinates, and latency)
-- Resource Swapper (Simple and Extended)
-- Unlimited FPS
+  * Filter by Type, Rarity, Name, ID, and Rotation
+  * Skins Listing Price and Time Left
+  * Sort by Creation Date
+* Changelog
+* Client
+  * Adblocker
+  * Deeplinks (`voxtulate:` Protocol)
+  * Discord Rich Presence
+  * FPS Uncap
+  * Import/Export Client and In-Game Settings
+  * Proxy Domain Support
+* Customizations
+   * Custom Keybinding
+   * Userscripts
+   * Userstyles
+   * Resource Swapper
+* User Inteface
+  * Client-Side Styles
+  * Custom Crosshair
+  * Minimized Console
 
 ## 🖼️ Menu Modal
 To open the menu modal, press `F1`. You can change the key in the Menu Modal.
@@ -78,8 +83,11 @@ To open the menu modal, press `F1`. You can change the key in the Menu Modal.
 Resource Swapper allows users to replace game resources such as images, models, sounds, and more. [More information](https://github.com/robertpakalns/VoxtulateClient/wiki/Resource-Swapper).
 
 ## 🧑‍💻 Credits
-- VVC (NamekujiLSDs) - [Website](https://namekujilsds.github.io/VVC) | [Discord](https://discord.com/invite/EcZytWAJkn)
-- Voxiom.io (ThriveR) - [Website](https://voxiom.io) | [Discord](https://discord.com/invite/GBFtRcY)
-- Juice Client (irrvlo) - [Website](https://juice.irrvlo.xyz) | [Discord](https://discord.gg/FjzAAdSjng)
+  * ThriveR for Voxiom.io
+  * Vanced Voxiom Client (NamekujiLSDs) for core features
+  * Juice Client (irrvlo) for additional features
+  * Redline Client (robertpakalns) for UI design
+  * EDEX for the client assets
+  * slavcp for enject
 
 by robertpakalns

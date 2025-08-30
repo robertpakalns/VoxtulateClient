@@ -17,7 +17,7 @@
   },
   {
     "name": "Unlimited FPS",
-    "description": "Uncaps FPS for better performance. Works only on Windows",
+    "description": "Uncaps FPS for better performance",
     "type": "checkbox",
     "config": "client.fpsUncap",
     "section": "settings",
@@ -89,5 +89,13 @@
     "section": "customization",
     "requires": "restart",
     "select": ["Disabled", "Simple", "Extended"]
+  },
+  {
+    "id": "enableCrosshair",
+    "name": "Enable Crosshair",
+    "description": "The crosshair will be displayed over the in-game built-in crosshair",
+    "type": "checkbox",
+    "config": "crosshair.enable",
+    "section": "customization"
   }
 ]

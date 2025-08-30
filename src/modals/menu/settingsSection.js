@@ -35,6 +35,18 @@ const createSettingsSection = () => {
     cont
       .querySelector(`#${id}`)
       .addEventListener("click", () => ipcRenderer.send(event));
+
+  // Import/export data
+  const settingsObject = {
+    importClientSettings: "import-client-settings",
+    exportClientSettings: "export-client-settings",
+    importGameSettings: "import-game-settings",
+    exportGameSettings: "export-game-settings",
+  };
+  for (const [id, event] of Object.entries(settingsObject))
+    cont
+      .querySelector(`#${id}`)
+      .addEventListener("click", () => ipcRenderer.send(event));
 };
 
 module.exports = createSettingsSection;

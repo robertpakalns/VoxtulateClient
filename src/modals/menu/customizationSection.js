@@ -71,18 +71,6 @@ const createCustomizationSection = () => {
 
   toggleUserScripts();
 
-  // Import/export data
-  const settingsObject = {
-    importClientSettings: "import-client-settings",
-    exportClientSettings: "export-client-settings",
-    importGameSettings: "import-game-settings",
-    exportGameSettings: "export-game-settings",
-  };
-  for (const [id, event] of Object.entries(settingsObject))
-    cont
-      .querySelector(`#${id}`)
-      .addEventListener("click", () => ipcRenderer.send(event));
-
   // Custom crosshair
   const _enableCrosshair = cont.querySelector("#enableCrosshair");
   const _crosshairURL = cont.querySelector("#crosshairURL");
