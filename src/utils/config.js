@@ -13,7 +13,6 @@ const defaultConfig = {
   },
   discord: {
     joinButton: true,
-    notification: true,
   },
   interface: {
     inventorySorting: true,

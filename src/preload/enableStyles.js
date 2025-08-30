@@ -20,20 +20,18 @@ const enableStyles = () => {
   const customCSS =
     readFileSync(path.join(__dirname, "./clientStylesCustom.css"), "utf8") +
     `
-    @font-face { font-family: "Roboto"; src: url(${fontURL}) format("truetype") }
     * { font-family: "Roboto", sans-serif }
     .bNczYf { background: url(${bgURL}) }
     img[src="/./package/ea55824826de52b7ccc3.png"] { content: url(${textURL}) }`;
 
   // Styles for the client features
-  const monoFontURL = loadAsset("fonts/RobotoMono.ttf").replace(/\\/g, "/");
   const clientCSS =
     readFileSync(path.join(__dirname, "./clientStylesMain.css"), "utf8") +
     `
-    @font-face { font-family: "Roboto-Mono"; src: url(${monoFontURL}) format("truetype") }
+    @font-face { font-family: "Roboto"; src: url(${fontURL}) format("truetype") }
     body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"] { opacity: ${enableConsole ? "0%" : "100%"} }
     .lpfJAq, .lpdfTz { opacity: ${chatOpacity}% }
-    .voxiomConsole { font-family: "Consolas", monospace; top: 0; left: 0; font-size: 10px; opacity: ${enableConsole ? "100%" : "0%"} }
+    .voxiomConsole { opacity: ${enableConsole ? "100%" : "0%"} }
     .hint { display: ${config.get("interface.modalHint") ? "block" : "none"} }
     .hYnMmT { display: ${inventorySorting ? "none" : "block"} }"`;
 
@@ -57,7 +55,7 @@ const enableStyles = () => {
   };
 
   ipcRenderer.on(
-    "change-styles",
+    "toggle-client-styles",
     (_, enable) => (enableStyles.textContent = enable ? customCSS : ""),
   );
   ipcRenderer.on("toggle-menu-modal", (_, enable) =>
@@ -66,7 +64,7 @@ const enableStyles = () => {
   ipcRenderer.on("change-opacity", (_, opacity) =>
     updateStyle(".lpfJAq, .lpdfTz", "opacity", `${opacity}%`),
   );
-  ipcRenderer.on("set-console", (_, enable) => {
+  ipcRenderer.on("toggle-mini-console", (_, enable) => {
     updateStyle(
       'body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"]',
       "opacity",

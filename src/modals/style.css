@@ -32,9 +32,7 @@
 }
 
 .modal * {
-    -webkit-user-drag: none;
-    user-select: none;
-    font-family: "Roboto", monospace;
+    font-family: "Roboto", sans-serif;
 }
 
 .modal {
@@ -140,10 +138,11 @@
 .modal input[type="range"] {
     width: 70px;
     height: 5px;
+    /* transition: 0.3s ease; */
 }
 
 .modal input[type="range"]:hover {
-    filter: drop-shadow(0 0 2px #4caf50);
+    /* transform: scale(1.1); */
 }
 
 .disabled,

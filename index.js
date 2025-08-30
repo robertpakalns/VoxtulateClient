@@ -192,9 +192,9 @@ app.on("ready", () => {
   for (const e of [
     "change-crosshair",
     "change-opacity",
-    "set-console",
+    "toggle-mini-console",
     "toggle-menu-modal",
-    "change-styles",
+    "toggle-client-styles",
     "client-update",
   ])
     ipcMain.on(e, (_, ...a) => webContents.send(e, ...a));

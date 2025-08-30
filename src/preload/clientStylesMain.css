@@ -5,10 +5,10 @@
 }
 
 .voxiomConsole {
-    font-family: "Consolas", monospace;
     top: 0;
     left: 0;
-    font-size: 10px;
+    font-size: 0.75rem;
+    font-family: monospace;
 }
 
 .voxiomBlocks {
@@ -75,9 +75,7 @@
     border-radius: 10px;
     cursor: pointer;
     user-select: none;
-    transition:
-        opacity 0.2s ease,
-        transform 0.2s ease;
+    transition: 0.2s ease;
 }
 
 #popup img {

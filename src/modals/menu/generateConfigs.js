@@ -87,6 +87,8 @@ const generateConfigs = () => {
   // Toggle
   const toggleObject = {
     modalHint: "toggle-menu-modal",
+    miniConsole: "toggle-mini-console",
+    clientStyles: "toggle-client-styles",
   };
   for (const [id, event] of Object.entries(toggleObject)) {
     document.querySelector(`#${id}`)?.addEventListener("change", (e) => {

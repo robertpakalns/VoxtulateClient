@@ -49,6 +49,30 @@
     "select": ["voxiom.io", "historynotes.club"]
   },
   {
+    "id": "miniConsole",
+    "name": "Toggle Mini Console",
+    "description": "Replaces the in-game console with FPS, coordinates, and latency",
+    "type": "checkbox",
+    "config": "interface.console",
+    "section": "settings"
+  },
+  {
+    "name": "Advanced Inventory Sorting",
+    "description": "Provides advanced tools to manage your inventory",
+    "type": "checkbox",
+    "config": "interface.inventorySorting",
+    "section": "settings",
+    "requires": "restart"
+  },
+  {
+    "id": "clientStyles",
+    "name": "Toggle Client Styles",
+    "description": "Provides better UI for Voxiom",
+    "type": "checkbox",
+    "config": "interface.clientStyles",
+    "section": "settings"
+  },
+  {
     "id": "enableKeybinding",
     "name": "Enable Custom Keybinding",
     "description": "Setting multiple options to the same key might lead to unpredictable behavior",
