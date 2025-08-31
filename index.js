@@ -35,6 +35,7 @@ const createMain = async () => {
       preload: path.join(__dirname, "src/preload/preload.js"),
       webSecurity: false,
       nodeIntegration: true,
+      contextIsolation: false,
     },
   });
 

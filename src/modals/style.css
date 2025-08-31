@@ -10,6 +10,11 @@
     right: 0;
     font-size: 1.4rem;
     margin: 5px 10px;
+    transition: 0.3s ease;
+}
+
+.close:hover {
+    transform: scale(1.1);
 }
 
 .overlay {
@@ -116,7 +121,6 @@
 
 .modal button {
     background: transparent;
-    /* color: rgb(252, 222, 55); */
     color: white;
     outline: none;
     border: none;
@@ -234,6 +238,12 @@ label:disabled {
     justify-content: center;
     font-size: 1.25rem;
     cursor: pointer;
+    transition: 0.3s ease;
+}
+
+#left:hover,
+#right:hover {
+    transform: scale(1.05);
 }
 
 #inventoryCont {
@@ -243,6 +253,7 @@ label:disabled {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     grid-template-rows: repeat(3, 1fr);
+    gap: 10px;
 }
 
 #voxiomInventory {
@@ -261,6 +272,11 @@ label:disabled {
     padding: 0 10px;
     border-radius: 10px;
     line-height: 30px;
+    transition: 0.3s ease;
+}
+
+.voxiomSelect:hover {
+    background: #707070;
 }
 
 .voxiomSelectMenu {
@@ -320,6 +336,7 @@ label:disabled {
 
 #inventoryModal .btn {
     background: #4caf50;
+    color: white;
 }
 
 #inventoryModal .btn:hover {
@@ -342,15 +359,14 @@ label:disabled {
 
 .imgBlock {
     position: relative;
+    display: flex;
+    justify-content: center;
 }
 
 .imgCont {
     width: 70%;
     height: 70%;
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
 }
 
 .img {
@@ -363,6 +379,7 @@ label:disabled {
     margin-top: 5px;
     font-size: 8px;
     text-align: center;
+    white-space: nowrap;
 }
 
 .id {
@@ -392,6 +409,15 @@ label:disabled {
     width: 7px;
     height: 7px;
     border-radius: 10px;
+}
+
+.skin-exclusive {
+    background: linear-gradient(
+        rgba(255, 255, 255, 0.3),
+        rgba(255, 255, 255, 0.2)
+    );
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .disabled {
