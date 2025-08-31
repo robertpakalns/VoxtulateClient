@@ -1,4 +1,4 @@
-const {
+import {
   createEl,
   timeLeft,
   sessionFetch,
@@ -6,11 +6,12 @@ const {
   inventoryFilter,
   inventorySort,
   loadAsset,
-} = require("../utils/functions.js");
-const InventoryModal = require("../modals/inventory/script.js");
+  IInventorySettings,
+} from "../utils/functions.js";
+import InventoryModal from "../modals/inventory/script.js";
 
 const advancedInventory = async () => {
-  let inventoryData, listedData, marketData;
+  let inventoryData: any, listedData: any, marketData: any;
 
   const gemPath = loadAsset("icons/gem.webp");
 
@@ -36,7 +37,7 @@ const advancedInventory = async () => {
             const newData = {
               ...parsedData,
               data: parsedData.data
-                .map((el) => {
+                .map((el: any) => {
                   const skin = marketData[el.type - 1];
                   return {
                     ...el,
@@ -46,8 +47,12 @@ const advancedInventory = async () => {
                     rarity: skin.rarity,
                   };
                 })
-                .filter((el) => inventoryFilter(el, inmenu.settings))
-                .sort((a, b) => inventorySort(a, b, inmenu.settings)),
+                .filter((el: any) =>
+                  inventoryFilter(el, inmenu.settings as IInventorySettings),
+                )
+                .sort((a: any, b: any) =>
+                  inventorySort(a, b, inmenu.settings as IInventorySettings),
+                ),
             };
             inmenu.setData(newData);
             return new Response(JSON.stringify(newData), r);
@@ -67,7 +72,7 @@ const advancedInventory = async () => {
     "Advanced Sorting",
   ]);
   _inventoryButton.addEventListener("click", () => {
-    document.getElementById("inventoryModal").classList.toggle("open");
+    document.getElementById("inventoryModal")!.classList.toggle("open");
     inmenu.currentPage = 0;
     inmenu.renderPage();
   });
@@ -91,7 +96,10 @@ const advancedInventory = async () => {
     if (!isMarket && !isSales) return;
 
     if (document.querySelector(".voxiomSkinName")) return;
-    for (const [i, el] of document.querySelectorAll(".cJoQGw").entries()) {
+
+    for (const [i, el] of Array.from(
+      document.querySelectorAll(".cJoQGw"),
+    ).entries()) {
       const skin = isMarket
         ? inventoryData.data.market_items[i]
         : listedData.data.player_market_items[i];
@@ -107,10 +115,10 @@ const advancedInventory = async () => {
       el.appendChild(_name);
     }
   });
-  observer.observe(document.getElementById("app"), {
+  observer.observe(document.getElementById("app")!, {
     childList: true,
     subtree: true,
   });
 };
 
-module.exports = advancedInventory;
+export default advancedInventory;

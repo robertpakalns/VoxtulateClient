@@ -5,8 +5,8 @@
   "author": "robertpakalns",
   "main": "index.js",
   "scripts": {
-    "dev": "electron .",
-    "build": "electron-builder"
+    "dev": "tsc && electron .",
+    "build": "tsc && electron-builder"
   },
   "license": "ISC",
   "dependencies": {

@@ -33,8 +33,8 @@ export const timeLeft = (date: number) => {
   );
 };
 
-export const isNum = (a: number, b: number) =>
-  isNaN(a / b) ? 0 : (a / b).toFixed(2) || "No Data";
+export const isNum = (a: number, b: number): string =>
+  isNaN(a / b) ? "" : (a / b).toFixed(2) || "No Data";
 
 // DOM elements
 export const createEl = (
@@ -120,17 +120,20 @@ export const sessionFetch = async (url: string): Promise<any> => {
 };
 
 // Inventory
-interface IInventoryElement {
+export interface IInventoryElement {
   name: string;
+  id: string;
   type: string;
   rotation: string | boolean;
   model: string;
   rarity: string;
   equipped: string;
+  seed: number;
+  creation_time: number;
   slot: string | null;
 }
 
-interface IInventorySettings {
+export interface IInventorySettings {
   name: string;
   id: string;
   rotation: string | boolean;

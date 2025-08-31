@@ -1,18 +1,20 @@
-const { createEl, isNum, creationTime } = require("../utils/functions.js");
-const advancedInventory = require("./advancedInventory.js");
-const MenuModal = require("../modals/menu/script.js");
-const { readFileSync, writeFileSync } = require("fs");
-const { ipcRenderer, shell } = require("electron");
-const enableStyles = require("./enableStyles.js");
-const { Config } = require("../utils/config.js");
-const path = require("path");
+import { createEl, isNum, creationTime } from "../utils/functions.js";
+import advancedInventory from "./advancedInventory.js";
+import MenuModal from "../modals/menu/script.js";
+import { readFileSync, writeFileSync } from "fs";
+import { ipcRenderer, shell } from "electron";
+import enableStyles from "./enableStyles.js";
+import { Config } from "../utils/config.js";
+import path from "path";
 
 const config = new Config();
 
-let accountData, playerData;
-const { inventorySorting } = config.get("interface");
+let accountData: any, playerData: any;
+const { inventorySorting } = config.get("interface") as {
+  inventorySorting: boolean;
+};
 
-const createModals = () => {
+const createModals = (): void => {
   const modalCSS = readFileSync(
     path.join(__dirname, "../modals/style.css"),
     "utf8",
@@ -27,13 +29,15 @@ const createModals = () => {
   if (inventorySorting) advancedInventory();
 };
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", (): void => {
   // Disable code execution if wrong domain
   if (!["voxiom.io", "historynotes.club"].includes(location.hostname)) return;
 
   enableStyles();
 
-  const { MenuModal } = config.get("keybinding.content");
+  const { MenuModal } = config.get("keybinding.content") as {
+    MenuModal: string;
+  };
   const consoleCont = createEl("div", {
     className: "voxiomConsole voxiomCreate",
   });
@@ -54,36 +58,37 @@ document.addEventListener("DOMContentLoaded", () => {
         .then((data) => {
           const [url] = args;
 
-          if (url === "/profile/me") accountData = JSON.parse(data);
-          if (url.startsWith("/profile/player")) playerData = JSON.parse(data);
+          if ((url as string) === "/profile/me") accountData = JSON.parse(data);
+          if ((url as string).startsWith("/profile/player"))
+            playerData = JSON.parse(data);
 
           return r;
         }),
     );
 
-  const copyNode = (label, value, id) => {
-    const nodeId = `node_${id}`;
+  const copyNode = (label: string, value: string, id: string): void => {
+    const nodeId: string = `node_${id}`;
 
     if (document.getElementById(nodeId)) {
-      document.getElementById(nodeId).children[1].textContent = value;
+      document.getElementById(nodeId)!.children[1].textContent = value;
       return;
     }
 
-    const node = document.querySelector(".bejTKB");
+    const node = document.querySelector(".bejTKB") as HTMLElement;
     if (!node) return;
 
-    const copy = node.cloneNode(true);
+    const copy = node.cloneNode(true) as HTMLElement;
     copy.id = nodeId;
-    node.parentElement.appendChild(copy);
+    node!.parentElement!.appendChild(copy);
 
     copy.children[0].textContent = label;
     copy.children[1].textContent = value;
   };
 
-  const cloneData = (name, data, path) => {
+  const cloneData = (name: string, data: any, path: string): void => {
     if (!data) return;
 
-    const validPaths = new Set([
+    const validPaths = new Set<string>([
       "/account",
       "/account/br",
       "/account/ctg",
@@ -115,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (pathname.startsWith("/player/"))
       cloneData(pathname.split("/")[2], playerData?.data, pathname);
   });
-  observer.observe(document.getElementById("app"), {
+  observer.observe(document.getElementById("app")!, {
     childList: true,
     subtree: true,
   });
@@ -127,21 +132,24 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     if (t && t.textContent !== "") {
       const c = t.innerHTML;
-      const [_, x, y, z] = c.match(
+      const match = c.match(
         /Player Block Position:<br>\s*x: ([^<]+) y: ([^<]+) z: ([^<]+)/,
       );
-      consoleCont.innerHTML = `${parseInt(c.match(/FPS: ([\d]+)/)[1])} FPS<br>${x} ${y} ${z}<br>${c.match(/Latency: ([\d]+ms)/)[1]}`;
+      if (!match) return;
+
+      const [_, x, y, z] = match;
+      consoleCont.innerHTML = `${parseInt(c.match(/FPS: ([\d]+)/)![1])} FPS<br>${x} ${y} ${z}<br>${c.match(/Latency: ([\d]+ms)/)![1]}`;
     } else consoleCont.textContent = "";
 
     // Blocks
     blocksCont.textContent =
       document
         .querySelector(".biWqsQ")
-        ?.textContent.match(/Current mode: (\w+)/)[1] || "";
+        ?.textContent.match(/Current mode: (\w+)/)![1] || "";
   }, 50);
 
   document.addEventListener("click", (e) => {
-    const el = e.target.closest(".dELrkI");
+    const el = (e.target as HTMLElement)?.closest<HTMLAnchorElement>(".dELrkI");
     if (!el) return;
     e.preventDefault();
     shell.openPath(el.href);
@@ -154,7 +162,7 @@ ipcRenderer.on("set-game-settings", (_, data) =>
   localStorage.setItem("persist:root", JSON.parse(data)),
 );
 ipcRenderer.on("get-game-settings", (_, file) =>
-  writeFileSync(file, localStorage.getItem("persist:root")),
+  writeFileSync(file, localStorage.getItem("persist:root")!),
 );
 ipcRenderer.on("toggle-window", (_, modal) => {
   // Toggles modals on keybinds
@@ -169,15 +177,15 @@ ipcRenderer.on("toggle-window", (_, modal) => {
 
   if (modal === "null")
     document.querySelector(".enmYtp")
-      ? document.querySelector("canvas").requestPointerLock()
+      ? document.querySelector("canvas")!.requestPointerLock()
       : document.exitPointerLock();
   if (openedModal) {
     openedModal.classList.toggle("open");
     if (modal === "null" || openedModal.id === modal)
-      document.querySelector("canvas").requestPointerLock();
-    else document.getElementById(modal).classList.toggle("open");
+      document.querySelector("canvas")!.requestPointerLock();
+    else document.getElementById(modal)!.classList.toggle("open");
   } else if (modal !== "null") {
-    document.getElementById(modal).classList.toggle("open");
+    document.getElementById(modal)!.classList.toggle("open");
     document.exitPointerLock();
   }
 });

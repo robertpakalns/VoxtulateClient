@@ -1,78 +1,109 @@
-const {
+import {
   creationTime,
   getAsset,
   loadAsset,
   inventoryFilter,
   inventorySort,
-} = require("../../utils/functions.js");
-const { createEl, sessionFetch } = require("../../utils/functions.js");
-const Modal = require("../modal.js");
+  IInventoryElement,
+  IInventorySettings,
+} from "../../utils/functions.js";
+import { createEl, sessionFetch } from "../../utils/functions.js";
+import Modal from "../modal.js";
 
-const openDB = (store) =>
-  new Promise((res) => {
+declare global {
+  interface Window {
+    renderSkin: Function;
+  }
+}
+
+const openDB = (store: string): Promise<IDBDatabase> =>
+  new Promise((res, rej) => {
     const req = indexedDB.open("SkinCacheDB", 1);
+
     req.onupgradeneeded = (e) => {
-      const db = e.target.result;
-      if (!db.objectStoreNames.contains(store))
+      const db = (e.target as IDBOpenDBRequest).result;
+      if (!db.objectStoreNames.contains(store)) {
         db.createObjectStore(store, { keyPath: "key" }).createIndex(
           "by_type",
           "type",
         );
+      }
     };
-    req.onsuccess = (e) => res(e.target.result);
+    req.onsuccess = (e) => res((e.target as IDBOpenDBRequest).result);
+    req.onerror = (e) => rej((e.target as IDBOpenDBRequest).error);
   });
 
-const getDBData = (db, store) =>
-  new Promise(
-    (res) =>
-      (db.transaction(store, "readonly").objectStore(store).getAll().onsuccess =
-        (e) => res(e.target.result)),
-  );
+const getDBData = <T>(db: IDBDatabase, store: string): Promise<T[]> =>
+  new Promise((res, rej) => {
+    const request = db
+      .transaction(store, "readonly")
+      .objectStore(store)
+      .getAll();
+    request.onsuccess = (e) => {
+      res((e.target as IDBRequest).result as T[]);
+    };
+    request.onerror = (e) => {
+      rej((e.target as IDBRequest).error);
+    };
+  });
 
-const setDBData = (db, array, store) =>
-  new Promise((res) => {
+const setDBData = <T>(
+  db: IDBDatabase,
+  array: T[],
+  store: string,
+): Promise<void> =>
+  new Promise((res, rej) => {
     const tx = db.transaction(store, "readwrite");
-    for (const el of array) tx.objectStore(store).put(el);
-    tx.oncomplete = res;
+    const objectStore = tx.objectStore(store);
+
+    for (const el of array) {
+      const request = objectStore.put(el);
+      request.onerror = (e) => rej((e.target as IDBRequest).error);
+    }
+
+    tx.oncomplete = () => res();
+    tx.onerror = (e) => rej(tx.error);
   });
 
 class InventoryModal extends Modal {
+  modalHTMLPath = "./inventory/index.html";
+  settings: IInventorySettings | null = null;
+  data: any = null;
+  marketData: IInventoryElement[] | null = null;
+  currentPage = 0;
+  itemsPerPage = 18;
+
   constructor() {
     super();
-    this.modalHTMLPath = "./inventory/index.html";
-    this.settings = null;
-    this.data = null;
-    this.marketData = null;
-    this.currentPage = 0;
-    this.itemsPerPage = 18;
   }
 
-  async init() {
+  async init(): Promise<any> {
     super.init();
-    this.modal.id = "inventoryModal";
+    this.modal!.id = "inventoryModal";
   }
 
-  setData(data) {
+  setData<T>(data: T): void {
     this.data = data;
   }
 
-  async getURL(data) {
+  async getURL(data: any) {
     const store = "skins";
     const db = await openDB(store);
     const items = await getDBData(db, store);
 
-    const cache = new Map(items.map((el) => [el.key, el.value]));
-    const newEntries = [];
-    const result = {};
+    const cache = new Map(items.map((el: any) => [el.key, el.value]));
+    const newEntries: Record<string, string>[] = [];
+    const result: Record<string, string> = {};
 
-    for (const el of data) {
-      const item = this.marketData.find(({ id }) => id === el.type);
+    for (const element of Array.from(data)) {
+      const el = element as any;
+      const item = this.marketData!.find(({ id }) => id === el.type);
       const key = `${el.type}_${el.seed}`;
       const cached = cache.get(key);
 
       if (cached) result[key] = cached;
       else {
-        let url;
+        let url: string;
         if (item?.type === "SPRAY")
           url = getAsset(`voxiom/preview/${el.type}.webp`);
         else {
@@ -81,7 +112,7 @@ class InventoryModal extends Modal {
             {},
           );
           const img = await generator.next(await generator.next().value).value;
-          url = Object.values(img)[0];
+          url = Object.values(img)[0] as string;
         }
         newEntries.push({ key, value: url });
         result[key] = url;
@@ -95,8 +126,8 @@ class InventoryModal extends Modal {
   async renderPage() {
     if (typeof window.renderSkin !== "function") return;
 
-    const _count = document.getElementById("count");
-    const cont = document.getElementById("inventoryCont");
+    const _count = document.getElementById("count") as HTMLElement;
+    const cont = document.getElementById("inventoryCont") as HTMLElement;
     cont.innerHTML = "";
 
     if (!this.marketData)
@@ -104,7 +135,7 @@ class InventoryModal extends Modal {
         getAsset("voxiom/voxiomMarket.json"),
       );
 
-    const rarities = {
+    const rarities: Record<string, string> = {
       Common: "255, 255, 255",
       Noteworthy: "128, 156, 255",
       Precious: "180, 99, 255",
@@ -114,7 +145,7 @@ class InventoryModal extends Modal {
       Artifact: "255, 224, 99",
     };
 
-    const setImage = (el, src) => {
+    const setImage = (el: IInventoryElement, src: string): void => {
       const r = rarities[el.rarity];
       const _img = createEl("img", { src }, "img");
       const _line = createEl(
@@ -153,7 +184,7 @@ class InventoryModal extends Modal {
       cont.appendChild(_imgBlock);
     };
 
-    const renderURL = async (data) => {
+    const renderURL = async (data: IInventoryElement[]): Promise<void> => {
       const urls = await this.getURL(data);
       for (const el of data) setImage(el, urls[`${el.type}_${el.seed}`]);
     };
@@ -161,8 +192,8 @@ class InventoryModal extends Modal {
     const start = this.currentPage * this.itemsPerPage;
     const end = start + this.itemsPerPage;
     const limitedData = [...this.data.data]
-      .filter((el) => inventoryFilter(el, this.settings))
-      .sort((a, b) => inventorySort(a, b, this.settings));
+      .filter((el) => inventoryFilter(el, this.settings as IInventorySettings))
+      .sort((a, b) => inventorySort(a, b, this.settings as IInventorySettings));
 
     const slicedData = [...limitedData].slice(start, end);
 
@@ -170,17 +201,19 @@ class InventoryModal extends Modal {
     _count.innerText = `Page: ${this.currentPage + 1}/${totalPages}\n Filtered: ${limitedData.length}\nTotal: ${this.data.data.length}`;
 
     document
-      .getElementById("left")
+      .getElementById("left")!
       .classList.toggle("disabled", this.currentPage === 0);
     document
-      .getElementById("right")
+      .getElementById("right")!
       .classList.toggle("disabled", this.currentPage + 1 >= totalPages);
 
     await renderURL(slicedData);
   }
 
   work() {
-    this.settings = JSON.parse(sessionStorage.getItem("skinSettings")) || {
+    this.settings = JSON.parse(
+      sessionStorage.getItem("skinSettings") as string,
+    ) || {
       name: "",
       id: "",
       rotation: "",
@@ -191,7 +224,9 @@ class InventoryModal extends Modal {
       equipped_date: "",
     };
 
-    const inventorySelect = document.getElementById("inventorySelectMenu");
+    const inventorySelect = document.getElementById(
+      "inventorySelectMenu",
+    ) as HTMLElement;
 
     if (typeof window.renderSkin !== "function") {
       inventorySelect.innerHTML =
@@ -199,21 +234,27 @@ class InventoryModal extends Modal {
       return;
     }
 
-    for (const select of inventorySelect.querySelectorAll(".voxiomSelect")) {
-      const menu = select.querySelector(".voxiomSelectMenu");
-      const selected = select.querySelector(".selected");
-      const options = select.querySelectorAll(".option");
+    for (const select of Array.from(
+      inventorySelect.querySelectorAll(".voxiomSelect"),
+    )) {
+      const menu = select.querySelector(".voxiomSelectMenu") as HTMLElement;
+      const selected = select.querySelector(".selected") as HTMLSelectElement;
+      const options = select.querySelectorAll<HTMLOptionElement>(".option");
 
       selected?.addEventListener("click", () =>
         menu.classList.toggle("active"),
       );
-      for (const option of options) {
-        if (option.dataset.value === this.settings[select.id])
+      for (const option of Array.from(options)) {
+        if (
+          option.dataset.value ===
+          this.settings![select.id as keyof IInventorySettings]
+        )
           selected.textContent = option.textContent;
         option.addEventListener("click", async () => {
           this.currentPage = 0;
           selected.textContent = option.textContent;
-          this.settings[select.id] = option.dataset.value;
+          this.settings![select.id as keyof IInventorySettings] =
+            option.dataset.value!;
           menu.classList.remove("active");
           await this.renderPage();
         });
@@ -221,45 +262,46 @@ class InventoryModal extends Modal {
     }
 
     document.addEventListener("click", (e) => {
-      for (const el of inventorySelect.querySelectorAll(
-        ".voxiomSelectMenu.active",
+      for (const el of Array.from(
+        inventorySelect.querySelectorAll(".voxiomSelectMenu.active"),
       ))
-        if (!el.parentNode.contains(e.target)) el.classList.remove("active");
+        if (!el.parentNode!.contains(e.target as HTMLElement))
+          el.classList.remove("active");
     });
 
     inventorySelect
-      .querySelector("#name")
+      .querySelector("#name")!
       .addEventListener("input", async (e) => {
         this.currentPage = 0;
-        this.settings.name = e.target.value;
+        this.settings!.name = (e.target as HTMLInputElement).value;
         await this.renderPage();
       });
     inventorySelect
-      .querySelector("#id")
+      .querySelector("#id")!
       .addEventListener("input", async (e) => {
         this.currentPage = 0;
-        this.settings.id = e.target.value;
+        this.settings!.id = (e.target as HTMLInputElement).value;
         await this.renderPage();
       });
-    inventorySelect.querySelector("#apply").addEventListener("click", () => {
+    inventorySelect.querySelector("#apply")!.addEventListener("click", () => {
       sessionStorage.setItem("skinSettings", JSON.stringify(this.settings));
       window.location.reload();
     });
     inventorySelect
-      .querySelector("#clear")
+      .querySelector("#clear")!
       .addEventListener("click", async () => {
         sessionStorage.removeItem("skinSettings");
         window.location.reload();
       });
     inventorySelect
-      .querySelector("#left")
+      .querySelector("#left")!
       .addEventListener("click", async () => {
         if (this.currentPage == 0) return;
         this.currentPage--;
         await this.renderPage();
       });
     inventorySelect
-      .querySelector("#right")
+      .querySelector("#right")!
       .addEventListener("click", async () => {
         if ((this.currentPage + 1) * this.itemsPerPage >= this.data.data.length)
           return;
@@ -267,22 +309,23 @@ class InventoryModal extends Modal {
         await this.renderPage();
       });
 
-    const exportSkins = async (settings) => {
+    const exportSkins = async (settings: IInventorySettings) => {
       const data = await this.getURL(this.data.data);
 
       const exportedData = [...this.data.data]
         .filter((el) => inventoryFilter(el, settings))
         .sort((a, b) => inventorySort(a, b, settings));
 
-      const size = 256;
+      const size: number = 256;
       const columns = Math.ceil(Math.sqrt(exportedData.length));
       const rows = Math.ceil(exportedData.length / columns);
 
       const canvas = createEl("canvas", {
-        width: size * columns,
-        height: size * rows,
-      });
+        width: (size * columns).toString(),
+        height: (size * rows).toString(),
+      }) as HTMLCanvasElement;
       const ctx = canvas.getContext("2d");
+      if (!ctx) return;
 
       await Promise.all(
         exportedData.map(async (el, i) => {
@@ -335,9 +378,11 @@ class InventoryModal extends Modal {
     };
 
     inventorySelect
-      .querySelector("#export")
-      .addEventListener("click", () => exportSkins(this.settings));
+      .querySelector("#export")!
+      .addEventListener("click", () =>
+        exportSkins(this.settings as IInventorySettings),
+      );
   }
 }
 
-module.exports = InventoryModal;
+export default InventoryModal;

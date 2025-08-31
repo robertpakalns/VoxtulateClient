@@ -1,8 +1,9 @@
-const { createEl, loadAsset } = require("../utils/functions.js");
-const { Config } = require("../utils/config.js");
-const { ipcRenderer } = require("electron");
-const { readFileSync } = require("fs");
-const path = require("path");
+import { createEl, loadAsset } from "../utils/functions.js";
+import { Config } from "../utils/config.js";
+import { ipcRenderer } from "electron";
+import { readFileSync } from "fs";
+import path from "path";
+
 const config = new Config();
 
 const {
@@ -10,9 +11,14 @@ const {
   chatOpacity,
   inventorySorting,
   clientStyles: styles,
-} = config.get("interface");
+} = config.get("interface") as {
+  console: boolean;
+  chatOpacity: number;
+  inventorySorting: boolean;
+  clientStyles: boolean;
+};
 
-const enableStyles = () => {
+const enableStyles = (): void => {
   // Custom client styles
   const fontURL = loadAsset("fonts/Roboto.ttf").replace(/\\/g, "/");
   const textURL = loadAsset("text.webp").replace(/\\/g, "/");
@@ -41,17 +47,24 @@ const enableStyles = () => {
   const clientStyles = createEl("style", { textContent: clientCSS });
   document.head.append(enableStyles, clientStyles);
 
-  const { enable: crosshairEnable, url } = config.get("crosshair");
+  const { enable: crosshairEnable, url } = config.get("crosshair") as {
+    enable: boolean;
+    url: string;
+  };
   const crosshair = createEl(
     "img",
     { src: crosshairEnable ? url : "" },
     "voxiomCrosshair",
-  );
+  ) as HTMLImageElement;
   document.body.prepend(crosshair);
 
-  const updateStyle = (selector, property, value) => {
-    const el = document.querySelector(selector);
-    if (el) el.style[property] = value;
+  const updateStyle = (
+    selector: string,
+    property: keyof CSSStyleDeclaration,
+    value: string,
+  ): void => {
+    const el = document.querySelector(selector) as HTMLElement;
+    if (el) (el.style[property] as string) = value;
   };
 
   ipcRenderer.on(
@@ -78,4 +91,4 @@ const enableStyles = () => {
   });
 };
 
-module.exports = enableStyles;
+export default enableStyles;
