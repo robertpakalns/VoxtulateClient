@@ -1,11 +1,12 @@
-const { existsSync, mkdirSync, readdirSync, readFileSync } = require("fs");
-const { Config, configDir } = require("./config.js");
-const { protocol } = require("electron");
-const path = require("path");
+import { existsSync, mkdirSync, readdirSync, readFileSync } from "fs";
+import { protocol, WebContents } from "electron";
+import { Config, configDir } from "./config.js";
+import { join } from "path";
+
 const config = new Config();
 
-const swapper = (webContents) => {
-  const reject = new Set([
+const swapper = (webContents: WebContents) => {
+  const reject = new Set<string>([
     "api.adinplay.com",
     "www.google-analytics.com",
     "www.googletagmanager.com",
@@ -13,16 +14,19 @@ const swapper = (webContents) => {
     "api.gameanalytics.com",
   ]);
   const swapperList = JSON.parse(
-    readFileSync(path.join(__dirname, "../../assets/swapperList.json")),
+    readFileSync(join(__dirname, "../../assets/swapperList.json"), "utf8"),
   );
 
-  const { adblocker, swapper } = config.get("client");
+  const { adblocker, swapper } = config.get("client") as {
+    adblocker: string;
+    swapper: string;
+  };
 
-  const swapperFolder = path.join(configDir, "swapper");
+  const swapperFolder = join(configDir, "swapper");
   if (!existsSync(swapperFolder)) mkdirSync(swapperFolder, { recursive: true });
-  const swapperFiles = new Set(readdirSync(swapperFolder));
+  const swapperFiles = new Set<string>(readdirSync(swapperFolder));
 
-  protocol.registerFileProtocol("voxtulate", (request, callback) => {
+  protocol.registerFileProtocol("voxtulate", (request, callback): void => {
     const u = new URL(request.url);
 
     const assetName = u.searchParams.get("asset");
@@ -30,9 +34,9 @@ const swapper = (webContents) => {
 
     let localPath;
     if (relPath) {
-      localPath = path.join(__dirname, "../../", relPath);
+      localPath = join(__dirname, "../../", relPath);
     } else if (assetName) {
-      localPath = path.join(configDir, "swapper", assetName);
+      localPath = join(configDir, "swapper", assetName);
     }
 
     if (localPath) {
@@ -42,10 +46,10 @@ const swapper = (webContents) => {
     }
   });
 
-  const swapFile = (name) => {
+  const swapFile = (name: string): string | null => {
     // Resource detection based on the file name and extension
     if (!swapperFiles.has(name)) return null;
-    const localFilePath = path.join(swapperFolder, name);
+    const localFilePath = join(swapperFolder, name);
     return existsSync(localFilePath) ? `file://${localFilePath}` : null;
   };
 
@@ -89,4 +93,4 @@ const swapper = (webContents) => {
   });
 };
 
-module.exports = swapper;
+export default swapper;

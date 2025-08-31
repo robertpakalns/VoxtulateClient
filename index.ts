@@ -1,38 +1,36 @@
-const {
+import {
   app,
   BrowserWindow,
+  ClearStorageDataOptions,
   ipcMain,
   dialog,
   protocol,
   session,
-} = require("electron");
-const { userscripts } = require("./src/utils/userScripts.js");
-const {
-  message,
-  confirmAction,
-  getIcon,
-  getHost,
-} = require("./src/utils/functions.js");
-const { Config, configPath } = require("./src/utils/config.js");
-const keybinding = require("./src/utils/keybinding.js");
-const { readFileSync, writeFileSync } = require("fs");
-const DiscordRPC = require("./src/utils/discord.js");
-const { autoUpdater } = require("electron-updater");
-const swapper = require("./src/utils/swapper.js");
-const path = require("path");
+} from "electron";
+import { userscripts } from "./src/utils/userScripts.js";
+import { getIcon, getHost } from "./src/utils/functions.js";
+import { message, confirmAction } from "./src/utils/dialogs.js";
+import { Config, configPath } from "./src/utils/config.js";
+import keybinding from "./src/utils/keybinding.js";
+import { readFileSync, writeFileSync } from "fs";
+import DiscordRPC from "./src/utils/discord.js";
+import { autoUpdater } from "electron-updater";
+import swapper from "./src/utils/swapper.js";
+import { join, normalize } from "path";
+
 const rpc = new DiscordRPC();
 const config = new Config();
 
-let mainWindow;
-const domain = `https://${getHost()}`;
+let mainWindow: BrowserWindow | null = null;
+const domain: string = `https://${getHost()}`;
 
-const createMain = async () => {
+const createMain = (): void => {
   mainWindow = new BrowserWindow({
     show: false,
     title: "Voxtulate Client",
     icon: getIcon(),
     webPreferences: {
-      preload: path.join(__dirname, "src/preload/preload.js"),
+      preload: join(__dirname, "src/preload/preload.js"),
       webSecurity: false,
       nodeIntegration: true,
       contextIsolation: false,
@@ -42,7 +40,7 @@ const createMain = async () => {
   mainWindow.maximize();
   mainWindow.setMenu(null);
   mainWindow.loadURL(domain);
-  mainWindow.setFullScreen(config.get("client.fullscreen"));
+  mainWindow.setFullScreen(config.get("client.fullscreen") as boolean);
   mainWindow.on("page-title-updated", (e) => e.preventDefault());
 
   mainWindow.once("ready-to-show", async () => {
@@ -51,7 +49,7 @@ const createMain = async () => {
       // Windows only
       const { default: enject } = await import("@juice-client/node-enject");
 
-      const handleBuffer = mainWindow.getNativeWindowHandle();
+      const handleBuffer = mainWindow!.getNativeWindowHandle();
       let hwnd;
 
       if (process.arch === "x64" || process.arch === "arm64")
@@ -61,7 +59,7 @@ const createMain = async () => {
       enject.startHook(hwnd);
     }
 
-    mainWindow.show();
+    mainWindow!.show();
   });
 
   keybinding(mainWindow);
@@ -85,7 +83,7 @@ const createMain = async () => {
 
   webContents.on("new-window", (e, url) => {
     e.preventDefault();
-    mainWindow.loadURL(url);
+    mainWindow!.loadURL(url);
   });
 
   swapper(webContents);
@@ -101,10 +99,7 @@ for (const el of [
 ])
   app.commandLine.appendSwitch(el);
 
-if (!app.requestSingleInstanceLock()) {
-  app.quit();
-  return;
-}
+if (!app.requestSingleInstanceLock()) app.quit();
 
 app.on("second-instance", () => {
   if (!mainWindow) return;
@@ -115,7 +110,7 @@ app.on("second-instance", () => {
 app.on("ready", () => {
   app.setAsDefaultProtocolClient("voxtulate");
   protocol.registerFileProtocol("file", ({ url }, c) =>
-    c({ path: path.normalize(decodeURIComponent(new URL(url).pathname)) }),
+    c({ path: normalize(decodeURIComponent(new URL(url).pathname)) }),
   );
   createMain();
 
@@ -128,7 +123,7 @@ app.on("ready", () => {
       ? queryPath.replace(/^\/+/, "").replace(/\/+$/, "")
       : "";
     const finalURL = `${domain}/${cleanPath}${hash}`;
-    if (queryPath) mainWindow.loadURL(finalURL);
+    if (queryPath) mainWindow!.loadURL(finalURL);
   }
 
   if (config.get("client.firstJoin")) {
@@ -143,9 +138,9 @@ app.on("ready", () => {
     config.set("client.firstJoin", false);
   }
 
-  ipcMain.on("join-game", (_, url) => mainWindow.loadURL(url));
+  ipcMain.on("join-game", (_, url) => mainWindow!.loadURL(url));
 
-  const { webContents } = mainWindow;
+  const webContents = mainWindow!.webContents;
 
   autoUpdater.checkForUpdates();
   autoUpdater.on("update-available", () =>
@@ -165,7 +160,7 @@ app.on("ready", () => {
   ipcMain.on("import-client-settings", () =>
     dialog.showOpenDialog(f).then(({ canceled, filePaths }) => {
       if (!canceled && filePaths.length > 0)
-        writeFileSync(config.file, readFileSync(filePaths[0], "utf8"));
+        writeFileSync(Config.file, readFileSync(filePaths[0], "utf8"));
     }),
   );
   ipcMain.on("export-client-settings", () =>
@@ -209,7 +204,7 @@ app.on("ready", () => {
   );
   ipcMain.on("clear-data", () =>
     confirmAction("Are you sure you want to clear all stored data?", () => {
-      session.defaultSession.clearStorageData([]);
+      session.defaultSession.clearStorageData([] as ClearStorageDataOptions);
       app.relaunch();
       app.exit();
     }),

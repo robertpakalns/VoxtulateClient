@@ -1,8 +1,8 @@
-const { Client } = require("discord-rpc");
-const { Config } = require("./config.js");
+import { Client } from "discord-rpc";
+import { Config } from "./config.js";
 const config = new Config();
 
-const staticLinks = {
+const staticLinks: Record<string, string> = {
   "/": "Viewing main lobby",
   "/experimental": "Viewing main lobby",
   "/loadouts": "Viewing their inventory",
@@ -20,25 +20,30 @@ const staticLinks = {
   "/clans/search": "Viewing clans",
 };
 
-const dynamicLinks = {
+const dynamicLinks: Record<string, Function> = {
   "/account": () => "Viewing their account",
-  "/player": (name) => `Viewing player: ${name}`,
-  "/leaderboard": (type) => `Viewing leaderboard: ${type}`,
+  "/player": (name: string) => `Viewing player: ${name}`,
+  "/leaderboard": (type: string) => `Viewing leaderboard: ${type}`,
   "/shop": () => "Viewing shop",
-  "/clans/view": (name) => `Viewing clan: ${name}`,
+  "/clans/view": (name: string) => `Viewing clan: ${name}`,
 };
 
-const { joinButton } = config.get("discord");
+const { joinButton } = config.get("discord") as {
+  joinButton: string;
+};
 
 class DiscordRPC {
+  private protocol = "voxtulate://";
+  private clientId = "1294677913131810916";
+  private client: Client | null = null;
+  private joinURL = "voxtulate://"; // Default join URL
+  private state = "Playing Voxiom.io";
+  private time: number | null = null;
+  private connected = false;
+
   constructor() {
-    this.protocol = "voxtulate://";
-    this.clientId = "1294677913131810916";
     this.client = new Client({ transport: "ipc" });
-    this.joinURL = "voxtulate://"; // Default join URL
-    this.state = "Playing Voxiom.io";
     this.time = Date.now();
-    this.connected = false;
 
     this.client.on("ready", () => {
       this.connected = true;
@@ -51,7 +56,7 @@ class DiscordRPC {
     });
   }
 
-  setActivity() {
+  private setActivity(): void {
     if (!this.connected) return;
 
     const buttons = [
@@ -62,15 +67,15 @@ class DiscordRPC {
     ];
     if (joinButton) buttons.unshift({ label: "Join Game", url: this.joinURL });
 
-    this.client.setActivity({
+    this.client!.setActivity({
       state: this.state,
-      startTimestamp: this.time,
+      startTimestamp: this.time as number,
       largeImageKey: "voxtulate",
       buttons: buttons,
     });
   }
 
-  setJoinURL(path) {
+  setJoinURL(path: string) {
     if (!this.connected) return;
 
     let result = "Playing Voxiom.io";
@@ -93,4 +98,4 @@ class DiscordRPC {
   }
 }
 
-module.exports = DiscordRPC;
+export default DiscordRPC;
