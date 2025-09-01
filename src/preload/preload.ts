@@ -1,11 +1,10 @@
-import { createEl, isNum, creationTime } from "../utils/functions.js";
+import { createEl, isNum, creationTime, fromRoot } from "../utils/functions.js";
 import advancedInventory from "./advancedInventory.js";
 import MenuModal from "../modals/menu/script.js";
 import { readFileSync, writeFileSync } from "fs";
 import { ipcRenderer, shell } from "electron";
 import enableStyles from "./enableStyles.js";
 import { Config } from "../utils/config.js";
-import path from "path";
 
 const config = new Config();
 
@@ -15,10 +14,7 @@ const { inventorySorting } = config.get("interface") as {
 };
 
 const createModals = (): void => {
-  const modalCSS = readFileSync(
-    path.join(__dirname, "../modals/style.css"),
-    "utf8",
-  );
+  const modalCSS = readFileSync(fromRoot("assets/css/modalStyles.css"), "utf8");
   const modalStyles = createEl("style", { textContent: modalCSS });
   document.head.appendChild(modalStyles);
 

@@ -6,6 +6,7 @@ import {
   inventorySort,
   IInventoryElement,
   IInventorySettings,
+  fromRoot,
 } from "../../utils/functions.js";
 import { createEl, sessionFetch } from "../../utils/functions.js";
 import Modal from "../modal.js";
@@ -66,7 +67,7 @@ const setDBData = <T>(
   });
 
 class InventoryModal extends Modal {
-  modalHTMLPath = "./inventory/index.html";
+  modalHTMLPath = fromRoot("assets/html/inventory.html");
   settings: IInventorySettings | null = null;
   data: any = null;
   marketData: IInventoryElement[] | null = null;

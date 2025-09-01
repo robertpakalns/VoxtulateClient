@@ -1,4 +1,4 @@
-import { createEl, popup, loadAsset } from "../../utils/functions.js";
+import { createEl, popup, loadAsset, fromRoot } from "../../utils/functions.js";
 import { version } from "../../../package.json";
 import { ipcRenderer, shell } from "electron";
 import { generateConfigs } from "./generateConfigs.js";
@@ -11,7 +11,7 @@ import createSettingsSection from "./settingsSection.js";
 class MenuModal extends Modal {
   constructor() {
     super();
-    this.modalHTMLPath = "./menu/index.html";
+    this.modalHTMLPath = fromRoot("assets/html/menu.html");
   }
 
   init() {

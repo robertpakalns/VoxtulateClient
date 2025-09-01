@@ -1,4 +1,4 @@
-import { createEl, loadAsset } from "../utils/functions.js";
+import { createEl, loadAsset, fromRoot } from "../utils/functions.js";
 import { Config } from "../utils/config.js";
 import { ipcRenderer } from "electron";
 import { readFileSync } from "fs";
@@ -24,7 +24,7 @@ const enableStyles = (): void => {
   const textURL = loadAsset("text.webp").replace(/\\/g, "/");
   const bgURL = loadAsset("bg.webp").replace(/\\/g, "/");
   const customCSS =
-    readFileSync(path.join(__dirname, "./clientStylesCustom.css"), "utf8") +
+    readFileSync(fromRoot("assets/css/clientStylesCustom.css"), "utf8") +
     `
     * { font-family: "Roboto", sans-serif }
     .bNczYf { background: url(${bgURL}) }
@@ -32,7 +32,7 @@ const enableStyles = (): void => {
 
   // Styles for the client features
   const clientCSS =
-    readFileSync(path.join(__dirname, "./clientStylesMain.css"), "utf8") +
+    readFileSync(fromRoot("assets/css/clientStylesMain.css"), "utf8") +
     `
     @font-face { font-family: "Roboto"; src: url(${fontURL}) format("truetype") }
     body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"] { opacity: ${enableConsole ? "0%" : "100%"} }

@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync } from "fs";
 import { protocol, WebContents } from "electron";
 import { Config, configDir } from "./config.js";
+import { fromRoot } from "./functions.js";
 import { join } from "path";
 
 const config = new Config();
@@ -14,7 +15,7 @@ const swapper = (webContents: WebContents) => {
     "api.gameanalytics.com",
   ]);
   const swapperList = JSON.parse(
-    readFileSync(join(__dirname, "../../assets/swapperList.json"), "utf8"),
+    readFileSync(fromRoot("assets/swapperList.json"), "utf8"),
   );
 
   const { adblocker, swapper } = config.get("client") as {
@@ -34,7 +35,7 @@ const swapper = (webContents: WebContents) => {
 
     let localPath;
     if (relPath) {
-      localPath = join(__dirname, "../../", relPath);
+      localPath = fromRoot(relPath);
     } else if (assetName) {
       localPath = join(configDir, "swapper", assetName);
     }

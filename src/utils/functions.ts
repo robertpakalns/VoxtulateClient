@@ -1,7 +1,7 @@
 import { nativeImage, NativeImage } from "electron";
 import { Config } from "./config.js";
+import { join, resolve } from "path";
 import { pathToFileURL } from "url";
-import path from "path";
 
 const config = new Config();
 
@@ -10,6 +10,10 @@ export const domains = new Set<string>(["voxiom.io", "historynotes.club"]);
 
 const host = config.get("client.domain") as string;
 export const getHost = () => (domains.has(host) ? host : "voxiom.io");
+
+// Project root path
+const __root = join(__dirname, "../../../");
+export const fromRoot = (path: string): string => join(__root, path);
 
 // Display values
 export const output = (v: number, e: string) => `${v} ${v != 1 ? e + "s" : e}`;
@@ -95,16 +99,16 @@ export const getIcon = (): NativeImage | undefined => {
   if (!ext) return undefined;
 
   cachedIcon = nativeImage.createFromPath(
-    path.join(__dirname, `../../assets/icon.${ext}`),
+    join(__dirname, `../../assets/icon.${ext}`),
   );
 
   return cachedIcon;
 };
 
 // Assets
-const assetsPath = path.resolve(__dirname, "../../assets");
+const assetsPath = fromRoot("assets");
 export const loadAsset = (relativePath: string): string =>
-  pathToFileURL(path.join(assetsPath, relativePath)).href;
+  pathToFileURL(join(assetsPath, relativePath)).href;
 
 export const getAsset = (path: string): string =>
   `https://raw.githubusercontent.com/robertpakalns/tricko-assets/main/${path}`;
