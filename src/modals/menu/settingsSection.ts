@@ -1,12 +1,12 @@
-const { restartMessage } = require("../../utils/functions.js");
-const { Config } = require("../../utils/config.js");
-const { ipcRenderer } = require("electron");
+import { Config } from "../../utils/config.js";
+import { ipcRenderer } from "electron";
+
 const config = new Config();
 
 const createSettingsSection = () => {
-  const cont = document.getElementById("settings");
+  const cont = document.getElementById("settings") as HTMLElement;
 
-  const _currentURL = cont.querySelector("#currentURL");
+  const _currentURL = cont.querySelector("#currentURL") as HTMLElement;
   ipcRenderer.on(
     "update-url",
     (_, url) => (_currentURL.innerText = url || "Unknown URL"),
@@ -14,16 +14,19 @@ const createSettingsSection = () => {
   ipcRenderer.send("update-url");
 
   cont
-    .querySelector("#joinLink")
+    .querySelector("#joinLink")!
     .addEventListener("click", () =>
-      ipcRenderer.send("join-game", cont.querySelector("#joinLinkURL").value),
+      ipcRenderer.send(
+        "join-game",
+        (cont.querySelector("#joinLinkURL") as HTMLInputElement).value,
+      ),
     );
 
-  const _chatOpacity = cont.querySelector("#chatOpacity");
-  _chatOpacity.value = config.get("interface.chatOpacity") ?? "100";
+  const _chatOpacity = cont.querySelector("#chatOpacity") as HTMLInputElement;
+  _chatOpacity.value = (config.get("interface.chatOpacity") as string) ?? "100";
   _chatOpacity.addEventListener("change", (e) => {
-    config.set("interface.chatOpacity", e.target.value);
-    ipcRenderer.send("change-opacity", e.target.value);
+    config.set("interface.chatOpacity", (e.target as HTMLInputElement).value);
+    ipcRenderer.send("change-opacity", (e.target as HTMLInputElement).value);
   });
 
   const clickCallbacksObject = {
@@ -33,7 +36,7 @@ const createSettingsSection = () => {
   };
   for (const [id, event] of Object.entries(clickCallbacksObject))
     cont
-      .querySelector(`#${id}`)
+      .querySelector(`#${id}`)!
       .addEventListener("click", () => ipcRenderer.send(event));
 
   // Import/export data
@@ -45,8 +48,8 @@ const createSettingsSection = () => {
   };
   for (const [id, event] of Object.entries(settingsObject))
     cont
-      .querySelector(`#${id}`)
+      .querySelector(`#${id}`)!
       .addEventListener("click", () => ipcRenderer.send(event));
 };
 
-module.exports = createSettingsSection;
+export default createSettingsSection;

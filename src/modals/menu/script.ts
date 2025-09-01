@@ -1,12 +1,12 @@
-const { createEl, popup, loadAsset } = require("../../utils/functions.js");
-const { version } = require("../../../package.json");
-const { ipcRenderer, shell } = require("electron");
-const { generateConfigs } = require("./generateConfigs.js");
-const Modal = require("../modal.js");
+import { createEl, popup, loadAsset } from "../../utils/functions.js";
+import { version } from "../../../package.json";
+import { ipcRenderer, shell } from "electron";
+import { generateConfigs } from "./generateConfigs.js";
+import Modal from "../modal.js";
 
-const createCustomizationSection = require("./customizationSection.js");
-const createChangelogSection = require("./changelogSection.js");
-const createSettingsSection = require("./settingsSection.js");
+import createCustomizationSection from "./customizationSection.js";
+import createChangelogSection from "./changelogSection.js";
+import createSettingsSection from "./settingsSection.js";
 
 class MenuModal extends Modal {
   constructor() {
@@ -16,52 +16,57 @@ class MenuModal extends Modal {
 
   init() {
     super.init();
-    this.modal.id = "menuModal";
+    this.modal!.id = "menuModal";
   }
 
   work() {
     generateConfigs();
 
-    const _version = this.modal.querySelector("#version");
+    const _version = this.modal!.querySelector("#version") as HTMLElement;
     _version.textContent = `v${version}`;
 
-    this.modal.querySelector("#voxtulateIcon").src = loadAsset("icon.png");
+    const clientIcon = this.modal!.querySelector(
+      "#voxtulateIcon",
+    ) as HTMLImageElement;
+    clientIcon.src = loadAsset("icon.png");
 
     // Open by default
-    this.modal
-      .querySelector(".mainContentBlock:first-child")
-      .classList.add("active");
-    this.modal
-      .querySelector(".sideBarItem:first-child")
-      .classList.add("active");
+    this.modal!.querySelector(".mainContentBlock:first-child")!.classList.add(
+      "active",
+    );
+    this.modal!.querySelector(".sideBarItem:first-child")!.classList.add(
+      "active",
+    );
 
-    for (const item of this.modal.querySelectorAll(".sideBarItem"))
+    for (const item of Array.from(
+      this.modal!.querySelectorAll(".sideBarItem")!,
+    ))
       item.addEventListener("click", (e) => {
-        const activeDiv = this.modal.querySelector(".mainContentBlock.active");
+        const activeDiv = this.modal!.querySelector(".mainContentBlock.active");
         if (activeDiv) activeDiv.classList.remove("active");
 
         const activeBar = this.modal?.querySelector(".sideBarItem.active");
         if (activeBar) activeBar.classList.remove("active");
         item.classList.add("active");
 
-        const targetDiv = this.modal.querySelector(
-          `#menuMainContent > div[name="${e.target.id}"]`,
-        );
+        const targetDiv = this.modal!.querySelector(
+          `#menuMainContent > div[name="${(e.target! as HTMLElement).id}"]`,
+        ) as HTMLElement;
         if (targetDiv) targetDiv.classList.add("active");
 
         if (targetDiv.getAttribute("name") === "changelogSection")
           createChangelogSection();
       });
 
-    for (const el of this.modal.querySelectorAll(".url"))
+    for (const el of Array.from(this.modal!.querySelectorAll(".url")))
       el.addEventListener("click", (e) => {
         e.preventDefault();
-        shell.openPath(el.href);
+        shell.openPath((el as HTMLLinkElement).href);
       });
 
-    for (const el of this.modal.querySelectorAll(".copy"))
+    for (const el of Array.from(this.modal!.querySelectorAll(".copy")))
       el.addEventListener("click", (e) => {
-        navigator.clipboard.writeText(e.target.innerText);
+        navigator.clipboard.writeText((e.target! as HTMLElement).innerText);
         popup("rgb(206, 185, 45)", "Copied!");
       });
 
@@ -88,4 +93,4 @@ class MenuModal extends Modal {
   }
 }
 
-module.exports = MenuModal;
+export default MenuModal;

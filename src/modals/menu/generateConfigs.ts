@@ -1,20 +1,33 @@
-const { createEl, popup } = require("../../utils/functions.js");
-const settingsJson = require("../../../assets/settings.json");
-const { Config } = require("../../utils/config.js");
-const { ipcRenderer } = require("electron");
+import settingsJson from "../../../assets/settings.json";
+import { createEl, popup } from "../../utils/functions.js";
+import { Config } from "../../utils/config.js";
+import { ipcRenderer } from "electron";
 
 const config = new Config();
 
-const data = settingsJson;
+type RequiresType = "restart" | "refresh" | null;
 
-const sendNotification = (requires) => {
+export interface Setting {
+  id?: string;
+  name: string;
+  description: string;
+  type: "checkbox" | "select";
+  config: string;
+  section: "settings";
+  requires?: RequiresType;
+  select?: string[];
+}
+
+const data = settingsJson as Setting[];
+
+export const sendNotification = (requires: RequiresType): void => {
   if (requires === "restart")
     popup("#e74c3c", "Restart the client to apply this setting.");
   else if (requires === "refresh")
     popup("#e89b0bff", "Refresh the page to apply this setting.");
 };
 
-const appendConfig = (data, configCont) => {
+export const appendConfig = (data: Setting, configCont: HTMLElement): void => {
   const parentCont = document.querySelector(
     `div[name=${data.section}Section] > div.settingsCont`,
   );
@@ -47,7 +60,7 @@ const appendConfig = (data, configCont) => {
   parentCont?.appendChild(cont);
 };
 
-const generateConfigs = () => {
+export const generateConfigs = (): void => {
   for (const el of data) {
     let configCont;
     if (el.type === "checkbox") {
@@ -56,17 +69,17 @@ const generateConfigs = () => {
         { type: "checkbox", ...(el.id ? { id: el.id } : {}) },
         "",
         [],
-      );
-      configCont.checked = config.get(el.config);
+      ) as HTMLInputElement;
+      configCont.checked = config.get(el.config) as boolean;
       configCont.addEventListener("change", (e) => {
-        config.set(el.config, e.target.checked);
-        sendNotification(el.requires);
+        config.set(el.config, (e.target as HTMLInputElement).checked);
+        sendNotification(el.requires as RequiresType);
       });
     } else if (el.type === "select") {
-      configCont = createEl("select", {}, "", []);
+      configCont = createEl("select", {}, "", []) as HTMLSelectElement;
       configCont.addEventListener("change", (e) => {
-        config.set(el.config, e.target.value);
-        sendNotification(el.requires);
+        config.set(el.config, (e.target as HTMLOptionElement).value);
+        sendNotification(el.requires as RequiresType);
       });
 
       if (el.select) {
@@ -75,7 +88,7 @@ const generateConfigs = () => {
           configCont.appendChild(option);
         }
 
-        configCont.value = config.get(el.config);
+        configCont!.value = config.get(el.config) as string;
       }
     } else {
       configCont = createEl("div", {}, "", []);
@@ -87,14 +100,11 @@ const generateConfigs = () => {
   // Toggle
   const toggleObject = {
     modalHint: "toggle-menu-modal",
-    miniConsole: "toggle-mini-console",
-    clientStyles: "toggle-client-styles",
+    toggleKDRatio: "toggle-kd-ratio",
   };
   for (const [id, event] of Object.entries(toggleObject)) {
     document.querySelector(`#${id}`)?.addEventListener("change", (e) => {
-      ipcRenderer.send(event, e.target.checked);
+      ipcRenderer.send(event, (e.target as HTMLInputElement).checked);
     });
   }
 };
-
-module.exports = { sendNotification, appendConfig, generateConfigs };

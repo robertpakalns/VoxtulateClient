@@ -1,15 +1,12 @@
-const {
-  createEl,
-  sessionFetch,
-  getAsset,
-} = require("../../utils/functions.js");
+import { createEl, sessionFetch, getAsset } from "../../utils/functions.js";
 
-let changelogData;
+let changelogData: { date: string; version: string; description: string }[] =
+  [];
 const createChangelogSection = async () => {
   if (changelogData) return;
 
-  const _section = document.getElementById("clientUpdates");
-  const _text = _section.querySelector("#clientUpdatesText");
+  const _section = document.getElementById("clientUpdates") as HTMLElement;
+  const _text = _section.querySelector("#clientUpdatesText") as HTMLElement;
 
   // Load data
   const _spin = createEl("div", {}, "spin");
@@ -22,7 +19,7 @@ const createChangelogSection = async () => {
   _text.removeChild(_loading);
 
   // Render page
-  for (const update of changelogData) {
+  for (const update of Array.from(changelogData)) {
     const title = createEl("h3", {}, "updatesTitle", [
       `${update.version} — ${update.date}`,
     ]);
@@ -39,8 +36,8 @@ const createChangelogSection = async () => {
       cont.scrollIntoView({ behavior: "smooth" }),
     );
 
-    _section.querySelector("#clientUpdatesNavigator").append(_nav);
+    _section.querySelector("#clientUpdatesNavigator")!.append(_nav);
   }
 };
 
-module.exports = createChangelogSection;
+export default createChangelogSection;
