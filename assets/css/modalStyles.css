@@ -1,5 +1,5 @@
 /* Modals */
-.wrapper {
+.modalWrapper {
     display: none;
 }
 
@@ -413,11 +413,12 @@ label:disabled {
 
 .skin-exclusive {
     background: linear-gradient(
-        rgba(255, 255, 255, 0.3),
-        rgba(255, 255, 255, 0.2)
+        60deg,
+        rgba(255, 255, 255, 0.2),
+        rgba(255, 255, 255, 0.1)
     );
     border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .disabled {
