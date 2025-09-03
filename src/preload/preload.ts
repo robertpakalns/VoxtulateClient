@@ -162,7 +162,7 @@ ipcRenderer.on("get-game-settings", (_, file) =>
 );
 ipcRenderer.on("toggle-window", (_, modal) => {
   // Toggles modals on keybinds
-  const openedModal = document.querySelector(".wrapper.open");
+  const openedModal = document.querySelector(".modalWrapper.open");
 
   if (document.querySelector(".bNczYf")) {
     openedModal?.classList.toggle("open");

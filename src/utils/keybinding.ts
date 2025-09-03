@@ -40,13 +40,7 @@ const keybinding = (mainWindow: BrowserWindow): void => {
         mainWindow.setFullScreen(!mainWindow.isFullScreen());
         break;
       case DevTools:
-        // The webContents.toggleDevTools() method is buggy on electron@21.0.0
-        // The panel will be opened in a separate window to avoid client freeze
-        if (webContents.isDevToolsOpened()) {
-          webContents.closeDevTools();
-        } else {
-          webContents.openDevTools({ mode: "detach" });
-        }
+        webContents.toggleDevTools();
         break;
       default:
         break;
