@@ -254,8 +254,8 @@ class InventoryModal extends Modal {
         option.addEventListener("click", async () => {
           this.currentPage = 0;
           selected.textContent = option.textContent;
-          this.settings![select.id as keyof IInventorySettings] =
-            option.dataset.value!;
+          this.settings![select.id as keyof IInventorySettings] = option.dataset
+            .value! as IInventorySettings["sort"];
           menu.classList.remove("active");
           await this.renderPage();
         });

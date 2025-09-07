@@ -98,7 +98,7 @@ const advancedInventory = async () => {
     if (document.querySelector(".voxiomSkinName")) return;
 
     for (const [i, el] of Array.from(
-      document.querySelectorAll(".cJoQGw"),
+      document.querySelectorAll<HTMLElement>(".cJoQGw"),
     ).entries()) {
       const skin = isMarket
         ? inventoryData.data.market_items[i]
@@ -115,6 +115,7 @@ const advancedInventory = async () => {
       el.appendChild(_name);
     }
   });
+
   observer.observe(document.getElementById("app")!, {
     childList: true,
     subtree: true,

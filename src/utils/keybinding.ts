@@ -23,8 +23,8 @@ const keybinding = (mainWindow: BrowserWindow): void => {
     if (keySet.has(code)) e.preventDefault();
 
     // Fix of the in-game pause button due to older Electron version
-    // if (code !== CloseModal && code === "Escape" && type === "keyUp")
-    //   return webContents.send("toggle-window", "null");
+    if (code !== CloseModal && code === "Escape" && type === "keyUp")
+      return webContents.send("toggle-window", "null");
 
     switch (code) {
       case CloseModal:

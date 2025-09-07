@@ -132,7 +132,9 @@ export interface IInventoryElement {
   equipped: string;
   seed: number;
   creation_time: number;
-  slot: string | null;
+  obtained_time: number;
+  equipped_time: number;
+  slot: number | null;
 }
 
 export interface IInventorySettings {
@@ -143,7 +145,14 @@ export interface IInventorySettings {
   rarity: string;
   equipped: string;
   slot: string | null;
-  creation: string | null;
+  sort:
+    | "default"
+    | "creation_a"
+    | "creation_d"
+    | "obtained_a"
+    | "obtained_d"
+    | "equipped_a"
+    | "equipped_d";
 }
 
 export const inventoryFilter = (
@@ -161,12 +170,27 @@ export const inventoryFilter = (
     (element.slot !== null) === (settings.equipped === "true"));
 
 export const inventorySort = (
-  a: { creation_time: number },
-  b: { creation_time: number },
+  a: IInventoryElement,
+  b: IInventoryElement,
   settings: IInventorySettings,
-): number =>
-  !settings.creation
-    ? 0
-    : settings.creation === "true"
-      ? b.creation_time - a.creation_time
-      : a.creation_time - b.creation_time;
+): number => {
+  switch (settings.sort) {
+    case "creation_a":
+      return a.creation_time - b.creation_time;
+    case "creation_d":
+      return b.creation_time - a.creation_time;
+
+    case "obtained_a":
+      return a.obtained_time - b.obtained_time;
+    case "obtained_d":
+      return b.obtained_time - a.obtained_time;
+
+    case "equipped_a":
+      return a.equipped_time - b.equipped_time;
+    case "equipped_d":
+      return b.equipped_time - a.equipped_time;
+
+    default:
+      return 0;
+  }
+};
