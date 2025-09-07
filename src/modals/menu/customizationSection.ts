@@ -1,4 +1,4 @@
-import { createEl, loadAsset, restartMessage } from "../../utils/functions.js";
+import { createEl, restartMessage } from "../../utils/functions.js";
 import { userScriptsPath } from "../../../src/utils/userScripts.js";
 import { readFileSync, writeFileSync } from "fs";
 import { Config } from "../../utils/config.js";
@@ -75,7 +75,7 @@ const createCustomizationSection = () => {
     "#enableCrosshair",
   ) as HTMLInputElement;
   const _crosshairURL = cont.querySelector("#crosshairURL") as HTMLInputElement;
-  const fileIconURL = loadAsset("icons/file.svg");
+  const fileIconURL = "voxtulate://?path=assets/icons/file.svg";
   (cont.querySelector("#file-icon") as HTMLImageElement).src = fileIconURL;
   _enableCrosshair.checked = config.get("crosshair.enable") as boolean;
   _enableCrosshair.addEventListener("change", (e) => {

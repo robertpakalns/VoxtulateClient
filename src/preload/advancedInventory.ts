@@ -5,7 +5,6 @@ import {
   getAsset,
   inventoryFilter,
   inventorySort,
-  loadAsset,
   IInventorySettings,
 } from "../utils/functions.js";
 import InventoryModal from "../modals/inventory/script.js";
@@ -13,7 +12,7 @@ import InventoryModal from "../modals/inventory/script.js";
 const advancedInventory = async () => {
   let inventoryData: any, listedData: any, marketData: any;
 
-  const gemPath = loadAsset("icons/gem.webp");
+  const gemPath = "voxtulate://?path=assets/icons/gem.webp";
 
   const inmenu = new InventoryModal();
 

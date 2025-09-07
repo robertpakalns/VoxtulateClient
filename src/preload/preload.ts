@@ -1,7 +1,14 @@
-import { createEl, isNum, creationTime, fromRoot } from "../utils/functions.js";
+import {
+  createEl,
+  isNum,
+  creationTime,
+  fromRoot,
+  domains,
+} from "../utils/functions.js";
 import advancedInventory from "./advancedInventory.js";
 import MenuModal from "../modals/menu/script.js";
 import { readFileSync, writeFileSync } from "fs";
+import { backToVoxiom } from "./preloadUtils.js";
 import { ipcRenderer, shell } from "electron";
 import enableStyles from "./enableStyles.js";
 import { Config } from "../utils/config.js";
@@ -26,10 +33,14 @@ const createModals = (): void => {
 };
 
 document.addEventListener("DOMContentLoaded", (): void => {
-  // Disable code execution if wrong domain
-  if (!["voxiom.io", "historynotes.club"].includes(location.hostname)) return;
+  // (window as any).trustedTypes.createPolicy("default", {
+  //   createHTML: (html: string) => html,
+  // });
 
+  backToVoxiom();
   enableStyles();
+
+  if (!domains.has(window.location.host)) return;
 
   const { MenuModal } = config.get("keybinding.content") as {
     MenuModal: string;

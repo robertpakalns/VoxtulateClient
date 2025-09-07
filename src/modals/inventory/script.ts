@@ -1,7 +1,6 @@
 import {
   creationTime,
   getAsset,
-  loadAsset,
   inventoryFilter,
   inventorySort,
   IInventoryElement,
@@ -347,7 +346,7 @@ class InventoryModal extends Modal {
       const iconSize = 15;
       const padding = 3;
       const icon = new Image();
-      icon.src = loadAsset("icons/tricko-32.png");
+      icon.src = "voxtulate://?path=assets/icons/tricko-32.png";
 
       icon.onload = () => {
         ctx.globalAlpha = 0.2;

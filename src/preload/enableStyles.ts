@@ -1,8 +1,7 @@
-import { createEl, loadAsset, fromRoot } from "../utils/functions.js";
+import { createEl, fromRoot } from "../utils/functions.js";
 import { Config } from "../utils/config.js";
 import { ipcRenderer } from "electron";
 import { readFileSync } from "fs";
-import path from "path";
 
 const config = new Config();
 
@@ -20,9 +19,9 @@ const {
 
 const enableStyles = (): void => {
   // Custom client styles
-  const fontURL = loadAsset("fonts/Roboto.ttf").replace(/\\/g, "/");
-  const textURL = loadAsset("text.webp").replace(/\\/g, "/");
-  const bgURL = loadAsset("bg.webp").replace(/\\/g, "/");
+  const fontURL = "voxtulate://?path=assets/fonts/Roboto.ttf";
+  const textURL = "voxtulate://?path=assets/text.webp";
+  const bgURL = "voxtulate://?path=assets/bg.webp";
   const customCSS =
     readFileSync(fromRoot("assets/css/clientStylesCustom.css"), "utf8") +
     `

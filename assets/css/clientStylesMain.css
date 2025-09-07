@@ -80,3 +80,41 @@
 #clientPopup:hover {
     transform: scale(1.05);
 }
+
+.backToVoxiom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin: 20px;
+    cursor: pointer;
+    font-size: 2rem;
+    transition: 0.3s ease;
+    animation: colored 3s infinite alternate;
+    z-index: 100000;
+}
+
+.backToVoxiom:hover {
+    transform: scale(1.1);
+}
+
+@keyframes colored {
+    0% {
+        color: red;
+    }
+
+    25% {
+        color: orange;
+    }
+
+    50% {
+        color: green;
+    }
+
+    75% {
+        color: blue;
+    }
+
+    100% {
+        color: purple;
+    }
+}

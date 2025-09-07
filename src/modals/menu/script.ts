@@ -1,7 +1,7 @@
-import { createEl, popup, loadAsset, fromRoot } from "../../utils/functions.js";
+import { createEl, popup, fromRoot } from "../../utils/functions.js";
+import { generateConfigs } from "./generateConfigs.js";
 import { version } from "../../../package.json";
 import { ipcRenderer, shell } from "electron";
-import { generateConfigs } from "./generateConfigs.js";
 import Modal from "../modal.js";
 
 import createCustomizationSection from "./customizationSection.js";
@@ -28,7 +28,7 @@ class MenuModal extends Modal {
     const clientIcon = this.modal!.querySelector(
       "#voxtulateIcon",
     ) as HTMLImageElement;
-    clientIcon.src = loadAsset("icons/icon.png");
+    clientIcon.src = "voxtulate://?path=assets/icons/icon.png";
 
     // Open by default
     this.modal!.querySelector(".mainContentBlock:first-child")!.classList.add(

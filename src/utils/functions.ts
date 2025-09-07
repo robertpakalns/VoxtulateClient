@@ -104,10 +104,6 @@ export const getIcon = (): NativeImage | undefined => {
 };
 
 // Assets
-const assetsPath = fromRoot("assets");
-export const loadAsset = (relativePath: string): string =>
-  pathToFileURL(join(assetsPath, relativePath)).href;
-
 export const getAsset = (path: string): string =>
   `https://raw.githubusercontent.com/robertpakalns/tricko-assets/main/${path}`;
 

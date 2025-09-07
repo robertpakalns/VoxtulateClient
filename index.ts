@@ -26,13 +26,12 @@ const domain: string = `https://${getHost()}`;
 
 const createMain = (): void => {
   mainWindow = new BrowserWindow({
-    show: false,
     title: "Voxtulate Client",
     icon: getIcon(),
+    show: false,
     webPreferences: {
       preload: join(__dirname, "src/preload/preload.js"),
       webSecurity: false,
-      nodeIntegration: true,
       contextIsolation: false,
     },
   });
