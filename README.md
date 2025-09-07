@@ -6,7 +6,7 @@
 ![Languages](https://img.shields.io/github/languages/top/robertpakalns/VoxtulateClient)
 
 <h1 style="font-size: 2em; display: flex; align-items: center">
-    <img src="https://raw.githubusercontent.com/robertpakalns/VoxtulateClient/main/assets/icon.png" style="height: 1em; margin-right: 5px">
+    <img src="https://raw.githubusercontent.com/robertpakalns/VoxtulateClient/main/assets/icons/icon.png" style="height: 1em; margin-right: 5px">
     <span>Voxtulate Client</span>
 </h1>
 Unofficial Electron client for Voxiom.io, for real Voxtulators

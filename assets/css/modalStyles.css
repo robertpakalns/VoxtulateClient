@@ -1,9 +1,9 @@
-/* Modals */
+/* Wrapper */
 .modalWrapper {
     display: none;
 }
 
-.close {
+.modalWrapper .close {
     cursor: pointer;
     position: absolute;
     top: 0;
@@ -13,11 +13,11 @@
     transition: 0.3s ease;
 }
 
-.close:hover {
+.modalWrapper .close:hover {
     transform: scale(1.1);
 }
 
-.overlay {
+.modalWrapper .overlay {
     width: 100%;
     height: 100%;
     position: fixed;
@@ -32,10 +32,6 @@
 }
 
 /* Styles */
-::-webkit-scrollbar {
-    display: none;
-}
-
 .modal * {
     font-family: "Roboto", sans-serif;
 }
@@ -63,24 +59,28 @@
     animation: hop ease 0.3s;
 }
 
-.modal input {
-    color: white;
-}
-
 .modal h1 {
     font-size: 0.6rem;
     color: gray;
 }
 
-.block {
+.modal .block {
     margin: 20px 10px;
 }
 
-.content {
+.modal .content {
     margin: 5px 0;
     display: flex;
     align-items: center;
     gap: 8px;
+}
+
+.modal input {
+    color: white;
+}
+
+.modal input::placeholder {
+    color: lightgray;
 }
 
 .modal input[type="text"],
@@ -119,6 +119,15 @@
     background: linear-gradient(45deg, #4caf50, #006504);
 }
 
+.modal input[type="range"] {
+    width: 70px;
+    height: 5px;
+}
+
+.modal input[type="file"] {
+    display: none;
+}
+
 .modal button {
     background: transparent;
     color: white;
@@ -142,11 +151,6 @@
 
 .modal footer button:hover {
     transform: scale(1.1);
-}
-
-.modal input[type="range"] {
-    width: 70px;
-    height: 5px;
 }
 
 .disabled,
@@ -194,10 +198,6 @@ label:disabled {
     color: #00a1e4;
 }
 
-.modal input[type="file"] {
-    display: none;
-}
-
 .modal thead {
     font-weight: 900;
 }
@@ -217,10 +217,6 @@ label:disabled {
 }
 
 /* Inventory */
-#inventoryModal * {
-    font-family: "Roboto", sans-serif;
-}
-
 #inventorySelectMenu {
     margin: 10px auto;
     display: flex;
@@ -328,18 +324,19 @@ label:disabled {
     outline: none;
     border: none;
     color: white;
+    transition: 0.3s ease;
 }
 
-#inventoryModal .input::placeholder {
-    color: lightgray;
+#inventoryModal .input:hover {
+    background: #707070;
 }
 
-#inventoryModal .btn {
+.green {
     background: #4caf50;
     color: white;
 }
 
-#inventoryModal .btn:hover {
+.green:hover {
     background: #59ce5d;
 }
 
@@ -514,40 +511,23 @@ label:disabled {
 }
 
 /* Customization */
-#swapper {
+#crosshairContent {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-#swapper input[type="radio"] {
-    cursor: pointer;
-    outline: none;
-    appearance: none;
-    width: 10px;
-    height: 10px;
-    border: 2px solid #4caf50;
-    border-radius: 10px;
-}
-
-#swapper input[type="radio"]:hover {
-    box-shadow: 0 0 5px #4caf50;
-}
-
-#swapper input[type="radio"]:checked {
-    background-color: #4caf50;
+    align-items: center;
 }
 
 #crosshairURL {
+    margin: 0 5px;
     width: 300px;
 }
 
 #file-icon {
-    height: 10px;
+    height: 15px;
+    transition: 0.3s ease;
 }
 
 #file-icon:hover {
-    filter: drop-shadow(0 0 5px #4caf50);
+    transform: scale(1.3);
 }
 
 #file-upload-label {

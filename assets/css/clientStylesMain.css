@@ -51,19 +51,13 @@
     height: 9px;
 }
 
-.skinModal {
-    width: 100%;
-    height: 100%;
-    z-index: 9999;
-    display: none;
-}
-
 .hint {
     position: absolute;
     bottom: -25px;
 }
 
-#popup {
+/* Popup */
+#clientPopup {
     padding: 10px;
     display: flex;
     justify-content: center;
@@ -78,11 +72,11 @@
     transition: 0.2s ease;
 }
 
-#popup img {
+#clientPopup img {
     height: 15px;
     margin-right: 7px;
 }
 
-#popup:hover {
+#clientPopup:hover {
     transform: scale(1.05);
 }

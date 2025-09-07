@@ -88,7 +88,13 @@ export const generateConfigs = (): void => {
           configCont.appendChild(option);
         }
 
-        configCont!.value = config.get(el.config) as string;
+        const saved = config.get(el.config) as string;
+        if (saved && el.select.includes(saved)) {
+          configCont.value = saved;
+        } else {
+          configCont.value = el.select[0];
+          config.set(el.config, el.select[0]);
+        }
       }
     } else {
       configCont = createEl("div", {}, "", []);

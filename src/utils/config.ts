@@ -8,8 +8,8 @@ export interface IConfig {
     adblocker: boolean;
     fpsUncap: boolean;
     fullscreen: boolean;
-    swapper: string;
-    domain: string;
+    swapper: "Disabled" | "Simple" | "Extended";
+    domain: "voxiom.io" | "historynotes.club";
   };
   interface: {
     inventorySorting: boolean;

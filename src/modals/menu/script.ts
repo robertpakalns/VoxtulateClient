@@ -28,7 +28,7 @@ class MenuModal extends Modal {
     const clientIcon = this.modal!.querySelector(
       "#voxtulateIcon",
     ) as HTMLImageElement;
-    clientIcon.src = loadAsset("icon.png");
+    clientIcon.src = loadAsset("icons/icon.png");
 
     // Open by default
     this.modal!.querySelector(".mainContentBlock:first-child")!.classList.add(
@@ -54,6 +54,7 @@ class MenuModal extends Modal {
         ) as HTMLElement;
         if (targetDiv) targetDiv.classList.add("active");
 
+        console.log(targetDiv.getAttribute("name"));
         if (targetDiv.getAttribute("name") === "changelogSection")
           createChangelogSection();
       });

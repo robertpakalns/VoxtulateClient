@@ -1,9 +1,15 @@
 import { createEl, sessionFetch, getAsset } from "../../utils/functions.js";
 
-let changelogData: { date: string; version: string; description: string }[] =
-  [];
+interface UpdateEntry {
+  version: string;
+  date: string;
+  description: string[];
+}
+
+let data: UpdateEntry[] | null = null;
+
 const createChangelogSection = async () => {
-  if (changelogData) return;
+  if (data) return;
 
   const _section = document.getElementById("clientUpdates") as HTMLElement;
   const _text = _section.querySelector("#clientUpdatesText") as HTMLElement;
@@ -13,13 +19,14 @@ const createChangelogSection = async () => {
   const _loading = createEl("div", {}, "loader", [_spin]);
 
   _text.appendChild(_loading);
-  changelogData = await sessionFetch(
-    getAsset("voxtulate/voxtulateUpdates.json"),
-  );
+  data = await sessionFetch(getAsset("voxtulate/voxtulateUpdates.json"));
   _text.removeChild(_loading);
 
   // Render page
-  for (const update of Array.from(changelogData)) {
+  if (!data) return;
+
+  // Render page
+  for (const update of Array.from(data)) {
     const title = createEl("h3", {}, "updatesTitle", [
       `${update.version} — ${update.date}`,
     ]);

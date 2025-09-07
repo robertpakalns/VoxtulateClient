@@ -20,17 +20,17 @@ win:
       arch:
         - x64
         - ia32
-  icon: "assets/icon.ico"
+  icon: "assets/icons/icon.ico"
 
 mac:
   target: dmg
-  icon: "assets/icon.icns"
+  icon: "assets/icons/icon.icns"
 
 linux:
   target:
     - AppImage
     - tar.gz
-  icon: "assets/icon.png"
+  icon: "assets/icons/icon.png"
 
 nsis:
   oneClick: true
@@ -41,4 +41,4 @@ nsis:
   differentialPackage: false
 
 dmg:
- writeUpdateInfo: false
+  writeUpdateInfo: false
