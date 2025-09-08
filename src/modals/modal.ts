@@ -1,17 +1,13 @@
 import { createEl } from "../utils/functions.js";
-import { readFileSync } from "fs";
 
 class Modal {
   modal: HTMLElement | null = null;
   modalHTMLPath: string | null = null;
+  modalHTMLString: string | null = null;
 
-  constructor() {
-    this.modal = null;
-    this.modalHTMLPath = null;
-  }
+  async init(): Promise<void> {
+    const modalHTML = this.modalHTMLString as string;
 
-  init(): void {
-    const modalHTML = readFileSync(this.modalHTMLPath as string, "utf8");
     this.modal = createEl("div", { innerHTML: modalHTML }, "modalWrapper");
     document.body.appendChild(this.modal);
 

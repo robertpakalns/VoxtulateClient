@@ -1,7 +1,8 @@
-import { createEl, fromRoot } from "../utils/functions.js";
+import clientStylesCustom from "../../assets/css/clientStylesCustom.css?raw";
+import clientStylesMain from "../../assets/css/clientStylesMain.css?raw";
+import { createEl } from "../utils/functions.js";
 import { Config } from "../utils/config.js";
 import { ipcRenderer } from "electron";
-import { readFileSync } from "fs";
 
 const config = new Config();
 
@@ -23,7 +24,7 @@ const enableStyles = (): void => {
   const textURL = "voxtulate://?path=assets/text.webp";
   const bgURL = "voxtulate://?path=assets/bg.webp";
   const customCSS =
-    readFileSync(fromRoot("assets/css/clientStylesCustom.css"), "utf8") +
+    clientStylesCustom +
     `
     * { font-family: "Roboto", sans-serif }
     .bNczYf { background: url(${bgURL}) }
@@ -31,7 +32,7 @@ const enableStyles = (): void => {
 
   // Styles for the client features
   const clientCSS =
-    readFileSync(fromRoot("assets/css/clientStylesMain.css"), "utf8") +
+    clientStylesMain +
     `
     @font-face { font-family: "Roboto"; src: url(${fontURL}) format("truetype") }
     body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"] { opacity: ${enableConsole ? "0%" : "100%"} }

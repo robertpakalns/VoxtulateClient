@@ -13,6 +13,6 @@
     "skipLibCheck": true,
     "allowJs": true
   },
-  "include": ["index.ts", "src/preload/preload.ts"],
+  "include": ["index.ts", "src/preload/preload.ts", "vite-env.d.ts"],
   "exclude": ["node_modules"]
 }

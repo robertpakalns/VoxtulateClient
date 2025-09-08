@@ -1,4 +1,5 @@
-import { createEl, popup, fromRoot } from "../../utils/functions.js";
+import menuModalString from "../../../assets/html/menu.html?raw";
+import { createEl, popup } from "../../utils/functions.js";
 import { generateConfigs } from "./generateConfigs.js";
 import { version } from "../../../package.json";
 import { ipcRenderer, shell } from "electron";
@@ -11,11 +12,11 @@ import createSettingsSection from "./settingsSection.js";
 class MenuModal extends Modal {
   constructor() {
     super();
-    this.modalHTMLPath = fromRoot("assets/html/menu.html");
+    this.modalHTMLString = menuModalString;
   }
 
-  init() {
-    super.init();
+  async init() {
+    await super.init();
     this.modal!.id = "menuModal";
   }
 
@@ -54,7 +55,6 @@ class MenuModal extends Modal {
         ) as HTMLElement;
         if (targetDiv) targetDiv.classList.add("active");
 
-        console.log(targetDiv.getAttribute("name"));
         if (targetDiv.getAttribute("name") === "changelogSection")
           createChangelogSection();
       });

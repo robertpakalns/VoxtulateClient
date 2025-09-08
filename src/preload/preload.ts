@@ -1,48 +1,59 @@
-import {
-  createEl,
-  isNum,
-  creationTime,
-  fromRoot,
-  domains,
-} from "../utils/functions.js";
+import { createEl, isNum, creationTime, domains } from "../utils/functions.js";
+import { ipcRenderer, shell, contextBridge } from "electron";
 import advancedInventory from "./advancedInventory.js";
 import MenuModal from "../modals/menu/script.js";
-import { readFileSync, writeFileSync } from "fs";
 import { backToVoxiom } from "./preloadUtils.js";
-import { ipcRenderer, shell } from "electron";
 import enableStyles from "./enableStyles.js";
-import { Config } from "../utils/config.js";
-
-const config = new Config();
+import { writeFileSync } from "fs";
 
 let accountData: any, playerData: any;
-const { inventorySorting } = config.get("interface") as {
-  inventorySorting: boolean;
-};
 
-const createModals = (): void => {
-  const modalCSS = readFileSync(fromRoot("assets/css/modalStyles.css"), "utf8");
-  const modalStyles = createEl("style", { textContent: modalCSS });
+interface ConfigBridge {
+  get: (key: string) => Promise<string | boolean | object | undefined>;
+  set: (key: string, value: string | boolean) => Promise<boolean>;
+}
+
+declare global {
+  interface Window {
+    renderSkin: Function;
+    config: ConfigBridge;
+  }
+}
+
+contextBridge.exposeInMainWorld("config", {
+  get: (key: string) => ipcRenderer.invoke("config-get", key),
+  set: (key: string, value: string | boolean) =>
+    ipcRenderer.invoke("config-set", key, value),
+});
+
+console.log(window.config);
+
+const createModals = async (): Promise<void> => {
+  const modalStyles = createEl("link", {
+    rel: "stylesheet",
+    href: "voxtulate://?path=assets/css/modalStyles.css",
+  });
   document.head.appendChild(modalStyles);
 
   const menuModal = new MenuModal();
   menuModal.init();
   menuModal.work();
 
+  const { inventorySorting } = (await window.config.get("interface")) as {
+    inventorySorting: boolean;
+  };
   if (inventorySorting) advancedInventory();
 };
 
-document.addEventListener("DOMContentLoaded", (): void => {
-  // (window as any).trustedTypes.createPolicy("default", {
-  //   createHTML: (html: string) => html,
-  // });
-
+document.addEventListener("DOMContentLoaded", async (): Promise<void> => {
   backToVoxiom();
   enableStyles();
 
+  console.log(await window.config.get("client.fullscreen"));
+
   if (!domains.has(window.location.host)) return;
 
-  const { MenuModal } = config.get("keybinding.content") as {
+  const { MenuModal } = (await window.config.get("keybinding.content")) as {
     MenuModal: string;
   };
   const consoleCont = createEl("div", {

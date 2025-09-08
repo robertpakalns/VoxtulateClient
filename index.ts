@@ -24,15 +24,23 @@ const config = new Config();
 let mainWindow: BrowserWindow | null = null;
 const domain: string = `https://${getHost()}`;
 
+ipcMain.handle("config-get", (_, key: string) => config.get(key));
+ipcMain.handle("config-set", (_, key: string, value: string | boolean) => {
+  config.set(key, value);
+  return true;
+});
+
 const createMain = (): void => {
   mainWindow = new BrowserWindow({
     title: "Voxtulate Client",
     icon: getIcon(),
     show: false,
     webPreferences: {
-      preload: join(__dirname, "src/preload/preload.js"),
+      // preload: join(__dirname, "src/preload/preload.js"),
+      preload: join(__dirname, "../preload-dist/voxtulate-client.js"),
       webSecurity: false,
-      contextIsolation: false,
+      contextIsolation: true,
+      // nodeIntegration: false,
     },
   });
 

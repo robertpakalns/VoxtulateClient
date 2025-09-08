@@ -5,16 +5,10 @@ import {
   inventorySort,
   IInventoryElement,
   IInventorySettings,
-  fromRoot,
 } from "../../utils/functions.js";
+import inventoryModalString from "../../../assets/html/inventory.html?raw";
 import { createEl, sessionFetch } from "../../utils/functions.js";
 import Modal from "../modal.js";
-
-declare global {
-  interface Window {
-    renderSkin: Function;
-  }
-}
 
 const openDB = (store: string): Promise<IDBDatabase> =>
   new Promise((res, rej) => {
@@ -66,7 +60,7 @@ const setDBData = <T>(
   });
 
 class InventoryModal extends Modal {
-  modalHTMLPath = fromRoot("assets/html/inventory.html");
+  modalHTMLString = inventoryModalString;
   settings: IInventorySettings | null = null;
   data: any = null;
   marketData: IInventoryElement[] | null = null;

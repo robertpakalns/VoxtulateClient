@@ -1,9 +1,6 @@
-import settingsJson from "../../../assets/settings.json";
 import { createEl, popup } from "../../utils/functions.js";
-import { Config } from "../../utils/config.js";
+import settingsJson from "../../../assets/settings.json";
 import { ipcRenderer } from "electron";
-
-const config = new Config();
 
 type RequiresType = "restart" | "refresh" | null;
 
@@ -60,7 +57,7 @@ export const appendConfig = (data: Setting, configCont: HTMLElement): void => {
   parentCont?.appendChild(cont);
 };
 
-export const generateConfigs = (): void => {
+export const generateConfigs = async (): Promise<void> => {
   for (const el of data) {
     let configCont;
     if (el.type === "checkbox") {
@@ -70,15 +67,21 @@ export const generateConfigs = (): void => {
         "",
         [],
       ) as HTMLInputElement;
-      configCont.checked = config.get(el.config) as boolean;
-      configCont.addEventListener("change", (e) => {
-        config.set(el.config, (e.target as HTMLInputElement).checked);
+      configCont.checked = (await window.config.get(el.config)) as boolean;
+      configCont.addEventListener("change", async (e) => {
+        await window.config.set(
+          el.config,
+          (e.target as HTMLInputElement).checked,
+        );
         sendNotification(el.requires as RequiresType);
       });
     } else if (el.type === "select") {
       configCont = createEl("select", {}, "", []) as HTMLSelectElement;
-      configCont.addEventListener("change", (e) => {
-        config.set(el.config, (e.target as HTMLOptionElement).value);
+      configCont.addEventListener("change", async (e) => {
+        await window.config.set(
+          el.config,
+          (e.target as HTMLOptionElement).value,
+        );
         sendNotification(el.requires as RequiresType);
       });
 
@@ -88,12 +91,12 @@ export const generateConfigs = (): void => {
           configCont.appendChild(option);
         }
 
-        const saved = config.get(el.config) as string;
+        const saved = (await window.config.get(el.config)) as string;
         if (saved && el.select.includes(saved)) {
           configCont.value = saved;
         } else {
           configCont.value = el.select[0];
-          config.set(el.config, el.select[0]);
+          await window.config.set(el.config, el.select[0]);
         }
       }
     } else {
