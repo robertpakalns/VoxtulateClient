@@ -100,6 +100,8 @@
     position: relative;
     transition: 0.3s ease;
     cursor: pointer;
+    border: none;
+    outline: none;
 }
 
 .modal input[type="checkbox"]::before {
