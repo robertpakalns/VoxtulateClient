@@ -7,10 +7,10 @@ import {
   protocol,
   session,
 } from "electron";
-import { userscripts } from "./src/utils/userScripts.js";
-import { getIcon, getHost } from "./src/utils/functions.js";
+import { Config, configPath, configDir } from "./src/utils/config.js";
 import { message, confirmAction } from "./src/utils/dialogs.js";
-import { Config, configPath } from "./src/utils/config.js";
+import { getIcon, getHost } from "./src/utils/functions.js";
+import { userscripts } from "./src/utils/userScripts.js";
 import keybinding from "./src/utils/keybinding.js";
 import { readFileSync, writeFileSync } from "fs";
 import DiscordRPC from "./src/utils/discord.js";
@@ -29,6 +29,9 @@ ipcMain.handle("config-set", (_, key: string, value: string | boolean) => {
   config.set(key, value);
   return true;
 });
+ipcMain.handle("get-userscripts-path", () =>
+  join(configDir, "userscripts.json"),
+);
 
 const createMain = (): void => {
   mainWindow = new BrowserWindow({

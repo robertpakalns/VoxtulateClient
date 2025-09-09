@@ -1,5 +1,6 @@
 import { createEl, popup } from "../../utils/functions.js";
 import settingsJson from "../../../assets/settings.json";
+import { config } from "../../preload/preloadUtils.js";
 import { ipcRenderer } from "electron";
 
 type RequiresType = "restart" | "refresh" | null;
@@ -67,21 +68,15 @@ export const generateConfigs = async (): Promise<void> => {
         "",
         [],
       ) as HTMLInputElement;
-      configCont.checked = (await window.config.get(el.config)) as boolean;
+      configCont.checked = (await config.get(el.config)) as boolean;
       configCont.addEventListener("change", async (e) => {
-        await window.config.set(
-          el.config,
-          (e.target as HTMLInputElement).checked,
-        );
+        await config.set(el.config, (e.target as HTMLInputElement).checked);
         sendNotification(el.requires as RequiresType);
       });
     } else if (el.type === "select") {
       configCont = createEl("select", {}, "", []) as HTMLSelectElement;
       configCont.addEventListener("change", async (e) => {
-        await window.config.set(
-          el.config,
-          (e.target as HTMLOptionElement).value,
-        );
+        await config.set(el.config, (e.target as HTMLOptionElement).value);
         sendNotification(el.requires as RequiresType);
       });
 
@@ -91,12 +86,12 @@ export const generateConfigs = async (): Promise<void> => {
           configCont.appendChild(option);
         }
 
-        const saved = (await window.config.get(el.config)) as string;
+        const saved = (await config.get(el.config)) as string;
         if (saved && el.select.includes(saved)) {
           configCont.value = saved;
         } else {
           configCont.value = el.select[0];
-          await window.config.set(el.config, el.select[0]);
+          await config.set(el.config, el.select[0]);
         }
       }
     } else {

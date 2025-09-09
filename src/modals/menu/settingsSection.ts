@@ -1,9 +1,7 @@
-import { Config } from "../../utils/config.js";
+import { config } from "../../preload/preloadUtils.js";
 import { ipcRenderer } from "electron";
 
-const config = new Config();
-
-const createSettingsSection = () => {
+const createSettingsSection = async (): Promise<void> => {
   const cont = document.getElementById("settings") as HTMLElement;
 
   const _currentURL = cont.querySelector("#currentURL") as HTMLElement;
@@ -23,7 +21,8 @@ const createSettingsSection = () => {
     );
 
   const _chatOpacity = cont.querySelector("#chatOpacity") as HTMLInputElement;
-  _chatOpacity.value = (config.get("interface.chatOpacity") as string) ?? "100";
+  _chatOpacity.value =
+    ((await config.get("interface.chatOpacity")) as string) ?? "100";
   _chatOpacity.addEventListener("change", (e) => {
     config.set("interface.chatOpacity", (e.target as HTMLInputElement).value);
     ipcRenderer.send("change-opacity", (e.target as HTMLInputElement).value);

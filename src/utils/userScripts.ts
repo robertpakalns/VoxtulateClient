@@ -24,7 +24,7 @@ const handleObject = (obj: Record<string, boolean>, array: string[]) => {
   for (const key in obj) if (!keySet.has(key)) delete obj[key];
 };
 
-export const userScriptsPath = path.join(configDir, "userscripts.json");
+const userScriptsPath = path.join(configDir, "userscripts.json");
 if (!existsSync(userScriptsPath))
   writeFileSync(userScriptsPath, JSON.stringify(defaultConfig, null, 2));
 const userScriptsDir = path.join(configDir, "scripts");

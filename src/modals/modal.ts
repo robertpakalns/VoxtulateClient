@@ -5,7 +5,7 @@ class Modal {
   modalHTMLPath: string | null = null;
   modalHTMLString: string | null = null;
 
-  async init(): Promise<void> {
+  init(): void {
     const modalHTML = this.modalHTMLString as string;
 
     this.modal = createEl("div", { innerHTML: modalHTML }, "modalWrapper");

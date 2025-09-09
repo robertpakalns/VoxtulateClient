@@ -1,9 +1,11 @@
 import { createEl, restartMessage } from "../../utils/functions.js";
-import { userScriptsPath } from "../../../src/utils/userScripts.js";
+import { config, getUserscriptsPath } from "../../preload/preloadUtils.js";
 import { readFileSync, writeFileSync } from "fs";
 import { ipcRenderer } from "electron";
 
 const createCustomizationSection = async (): Promise<void> => {
+  const userScriptsPath = await getUserscriptsPath();
+
   const userScriptsConfig = JSON.parse(readFileSync(userScriptsPath, "utf8"));
   const { enable: userScriptsEnabled, scripts, styles } = userScriptsConfig;
 
@@ -74,12 +76,10 @@ const createCustomizationSection = async (): Promise<void> => {
   const _crosshairURL = cont.querySelector("#crosshairURL") as HTMLInputElement;
   const fileIconURL = "voxtulate://?path=assets/icons/file.svg";
   (cont.querySelector("#file-icon") as HTMLImageElement).src = fileIconURL;
-  _enableCrosshair.checked = (await window.config.get(
-    "crosshair.enable",
-  )) as boolean;
+  // _enableCrosshair.checked = (await config.get("crosshair.enable")) as boolean;
   _enableCrosshair.addEventListener("change", async (e) => {
     toggleCrosshair();
-    await window.config.set(
+    await config.set(
       "crosshair.enable",
       (e.target as HTMLInputElement).checked,
     );
@@ -90,13 +90,9 @@ const createCustomizationSection = async (): Promise<void> => {
     );
   });
 
-  _crosshairURL.value =
-    ((await window.config.get("crosshair.url")) as string) ?? "";
+  _crosshairURL.value = ((await config.get("crosshair.url")) as string) ?? "";
   _crosshairURL.addEventListener("input", async (e) => {
-    await window.config.set(
-      "crosshair.url",
-      (e.target as HTMLInputElement).value,
-    );
+    await config.set("crosshair.url", (e.target as HTMLInputElement).value);
     ipcRenderer.send(
       "change-crosshair",
       _enableCrosshair.checked,
@@ -112,7 +108,7 @@ const createCustomizationSection = async (): Promise<void> => {
     if (!file) return;
 
     const { path } = file;
-    await window.config.set("crosshair.url", path);
+    await config.set("crosshair.url", path);
     _crosshairURL.value = path;
 
     ipcRenderer.send(
@@ -142,7 +138,7 @@ const createCustomizationSection = async (): Promise<void> => {
     _inputChild.addEventListener("keydown", async (e) => {
       e.preventDefault();
       _inputChild.value = e.code;
-      await window.config.set(`keybinding.content.${name}`, e.code);
+      await config.set(`keybinding.content.${name}`, e.code);
     });
 
     const _name = createEl("td", { textContent: name });
@@ -152,7 +148,7 @@ const createCustomizationSection = async (): Promise<void> => {
     cont.querySelector("#keybindingBody")!.appendChild(tr);
   };
 
-  const { content: c2 } = (await window.config.get("keybinding")) as {
+  const { content: c2 } = (await config.get("keybinding")) as {
     content: Record<string, string>;
   };
   for (const key in c2) keybindingRow(key, c2[key]);
@@ -172,7 +168,7 @@ const createCustomizationSection = async (): Promise<void> => {
   };
 
   toggleKeybinding();
-  _enableKeybinding.checked = (await window.config.get(
+  _enableKeybinding.checked = (await config.get(
     "keybinding.enable",
   )) as boolean;
   _enableKeybinding.addEventListener("change", () => {

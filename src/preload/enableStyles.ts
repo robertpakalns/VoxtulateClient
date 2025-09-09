@@ -1,24 +1,22 @@
 import clientStylesCustom from "../../assets/css/clientStylesCustom.css?raw";
 import clientStylesMain from "../../assets/css/clientStylesMain.css?raw";
+import { config } from "../preload/preloadUtils.js";
 import { createEl } from "../utils/functions.js";
-import { Config } from "../utils/config.js";
 import { ipcRenderer } from "electron";
 
-const config = new Config();
+const enableStyles = async (): Promise<void> => {
+  const {
+    console: enableConsole,
+    chatOpacity,
+    inventorySorting,
+    clientStyles: styles,
+  } = (await config.get("interface")) as {
+    console: boolean;
+    chatOpacity: number;
+    inventorySorting: boolean;
+    clientStyles: boolean;
+  };
 
-const {
-  console: enableConsole,
-  chatOpacity,
-  inventorySorting,
-  clientStyles: styles,
-} = config.get("interface") as {
-  console: boolean;
-  chatOpacity: number;
-  inventorySorting: boolean;
-  clientStyles: boolean;
-};
-
-const enableStyles = (): void => {
   // Custom client styles
   const fontURL = "voxtulate://?path=assets/fonts/Roboto.ttf";
   const textURL = "voxtulate://?path=assets/text.webp";
@@ -38,7 +36,7 @@ const enableStyles = (): void => {
     body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"] { opacity: ${enableConsole ? "0%" : "100%"} }
     .lpfJAq, .lpdfTz { opacity: ${chatOpacity}% }
     .voxiomConsole { opacity: ${enableConsole ? "100%" : "0%"} }
-    .hint { display: ${config.get("interface.modalHint") ? "block" : "none"} }
+    .hint { display: ${(await config.get("interface.modalHint")) ? "block" : "none"} }
     .hYnMmT { display: ${inventorySorting ? "none" : "block"} }"`;
 
   const enableStyles = createEl("style", {
@@ -47,7 +45,7 @@ const enableStyles = (): void => {
   const clientStyles = createEl("style", { textContent: clientCSS });
   document.head.append(enableStyles, clientStyles);
 
-  const { enable: crosshairEnable, url } = config.get("crosshair") as {
+  const { enable: crosshairEnable, url } = (await config.get("crosshair")) as {
     enable: boolean;
     url: string;
   };

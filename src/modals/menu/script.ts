@@ -15,13 +15,13 @@ class MenuModal extends Modal {
     this.modalHTMLString = menuModalString;
   }
 
-  async init() {
-    await super.init();
+  init() {
+    super.init();
     this.modal!.id = "menuModal";
   }
 
-  work() {
-    generateConfigs();
+  async work() {
+    await generateConfigs();
 
     const _version = this.modal!.querySelector("#version") as HTMLElement;
     _version.textContent = `v${version}`;
@@ -90,7 +90,7 @@ class MenuModal extends Modal {
     });
 
     createSettingsSection();
-    createCustomizationSection();
+    await createCustomizationSection();
   }
 }
 
