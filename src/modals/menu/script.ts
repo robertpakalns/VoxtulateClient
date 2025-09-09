@@ -1,5 +1,5 @@
 import menuModalString from "../../../assets/html/menu.html?raw";
-import { createEl, popup } from "../../utils/functions.js";
+import { createEl, popup } from "../../preload/preloadFunctions.js";
 import { generateConfigs } from "./generateConfigs.js";
 import { version } from "../../../package.json";
 import { ipcRenderer, shell } from "electron";

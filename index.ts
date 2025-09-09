@@ -25,13 +25,27 @@ let mainWindow: BrowserWindow | null = null;
 const domain: string = `https://${getHost()}`;
 
 ipcMain.handle("config-get", (_, key: string) => config.get(key));
-ipcMain.handle("config-set", (_, key: string, value: string | boolean) => {
+ipcMain.handle("config-set", (_, key: string, value: boolean) => {
   config.set(key, value);
   return true;
 });
 ipcMain.handle("get-userscripts-path", () =>
   join(configDir, "userscripts.json"),
 );
+ipcMain.handle(
+  "write-game-settings",
+  (_, file: string, content: string): boolean => {
+    writeFileSync(file, content);
+    return true;
+  },
+);
+ipcMain.handle("read-userscripts-config", (_): string =>
+  readFileSync(join(configDir, "userscripts.json"), "utf8"),
+);
+ipcMain.handle("write-userscripts-config", (_, content: string): boolean => {
+  writeFileSync(join(configDir, "userscripts.json"), content);
+  return true;
+});
 
 const createMain = (): void => {
   mainWindow = new BrowserWindow({
@@ -39,11 +53,11 @@ const createMain = (): void => {
     icon: getIcon(),
     show: false,
     webPreferences: {
-      // preload: join(__dirname, "src/preload/preload.js"),
       preload: join(__dirname, "../preload-dist/voxtulate-client.js"),
-      webSecurity: false,
+      webSecurity: true,
       contextIsolation: true,
-      // nodeIntegration: false,
+      nodeIntegration: false,
+      enableRemoteModule: false,
     },
   });
 

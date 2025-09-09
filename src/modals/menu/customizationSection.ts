@@ -1,12 +1,17 @@
-import { createEl, restartMessage } from "../../utils/functions.js";
-import { config, getUserscriptsPath } from "../../preload/preloadUtils.js";
-import { readFileSync, writeFileSync } from "fs";
+import { createEl, restartMessage } from "../../preload/preloadFunctions.js";
+import { config } from "../../preload/preloadUtils.js";
 import { ipcRenderer } from "electron";
 
 const createCustomizationSection = async (): Promise<void> => {
-  const userScriptsPath = await getUserscriptsPath();
+  const writeConfig = async (): Promise<void> =>
+    ipcRenderer.invoke(
+      "write-userscripts-config",
+      JSON.stringify(userScriptsConfig, null, 2),
+    );
 
-  const userScriptsConfig = JSON.parse(readFileSync(userScriptsPath, "utf8"));
+  const userScriptsConfig = JSON.parse(
+    await ipcRenderer.invoke("read-userscripts-config"),
+  );
   const { enable: userScriptsEnabled, scripts, styles } = userScriptsConfig;
 
   const cont = document.getElementById("customization") as HTMLElement;
@@ -27,10 +32,7 @@ const createCustomizationSection = async (): Promise<void> => {
       });
       _checkbox.addEventListener("change", (e) => {
         obj[key] = (e.target as HTMLInputElement).checked;
-        writeFileSync(
-          userScriptsPath,
-          JSON.stringify(userScriptsConfig, null, 2),
-        );
+        writeConfig();
       });
 
       const _text = createEl("span", {}, "", [key]);
@@ -49,7 +51,7 @@ const createCustomizationSection = async (): Promise<void> => {
   _userScriptsEnabled.addEventListener("change", (e) => {
     toggleUserScripts();
     userScriptsConfig.enable = (e.target as HTMLInputElement).checked;
-    writeFileSync(userScriptsPath, JSON.stringify(userScriptsConfig, null, 2));
+    writeConfig();
   });
 
   const toggleUserScripts = () => {

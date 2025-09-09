@@ -1,4 +1,4 @@
-import { createEl, domains } from "../utils/functions.js";
+import { createEl, domains } from "../preload/preloadFunctions.js";
 import { ipcRenderer } from "electron";
 
 export const config = {

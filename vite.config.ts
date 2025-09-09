@@ -11,7 +11,7 @@ export default defineConfig({
       formats: ["cjs"],
     },
     rollupOptions: {
-      external: ["electron", "discord-rpc", "fs", "path", "os"],
+      external: ["electron"],
     },
   },
 });

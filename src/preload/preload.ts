@@ -1,11 +1,15 @@
-import { createEl, isNum, creationTime, domains } from "../utils/functions.js";
+import {
+  createEl,
+  isNum,
+  creationTime,
+  domains,
+} from "../preload/preloadFunctions.js";
 import advancedInventory from "./advancedInventory.js";
 import MenuModal from "../modals/menu/script.js";
 import { backToVoxiom } from "./preloadUtils.js";
 import { ipcRenderer, shell } from "electron";
 import enableStyles from "./enableStyles.js";
 import { config } from "./preloadUtils.js";
-import { writeFileSync } from "fs";
 
 let accountData: any, playerData: any;
 
@@ -165,7 +169,12 @@ ipcRenderer.on("set-game-settings", (_, data) =>
   localStorage.setItem("persist:root", JSON.parse(data)),
 );
 ipcRenderer.on("get-game-settings", (_, file) =>
-  writeFileSync(file, localStorage.getItem("persist:root")!),
+  // writeFileSync(file, localStorage.getItem("persist:root")!),
+  ipcRenderer.invoke(
+    "write-game-settings",
+    file,
+    localStorage.getItem("persist:root")!,
+  ),
 );
 ipcRenderer.on("toggle-window", (_, modal) => {
   // Toggles modals on keybinds

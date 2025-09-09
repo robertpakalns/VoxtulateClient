@@ -5,9 +5,10 @@ import {
   inventorySort,
   IInventoryElement,
   IInventorySettings,
-} from "../../utils/functions.js";
+  createEl,
+  sessionFetch,
+} from "../../preload/preloadFunctions.js";
 import inventoryModalString from "../../../assets/html/inventory.html?raw";
-import { createEl, sessionFetch } from "../../utils/functions.js";
 import Modal from "../modal.js";
 
 const openDB = (store: string): Promise<IDBDatabase> =>

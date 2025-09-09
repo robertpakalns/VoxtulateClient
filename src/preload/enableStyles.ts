@@ -1,7 +1,7 @@
 import clientStylesCustom from "../../assets/css/clientStylesCustom.css?raw";
 import clientStylesMain from "../../assets/css/clientStylesMain.css?raw";
 import { config } from "../preload/preloadUtils.js";
-import { createEl } from "../utils/functions.js";
+import { createEl } from "../preload/preloadFunctions.js";
 import { ipcRenderer } from "electron";
 
 const enableStyles = async (): Promise<void> => {

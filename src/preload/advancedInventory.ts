@@ -6,7 +6,7 @@ import {
   inventoryFilter,
   inventorySort,
   IInventorySettings,
-} from "../utils/functions.js";
+} from "../preload/preloadFunctions.js";
 import InventoryModal from "../modals/inventory/script.js";
 
 const advancedInventory = async () => {

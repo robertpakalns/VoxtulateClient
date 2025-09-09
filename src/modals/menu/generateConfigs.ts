@@ -1,4 +1,4 @@
-import { createEl, popup } from "../../utils/functions.js";
+import { createEl, popup } from "../../preload/preloadFunctions.js";
 import settingsJson from "../../../assets/settings.json";
 import { config } from "../../preload/preloadUtils.js";
 import { ipcRenderer } from "electron";
