@@ -1,12 +1,6 @@
-import {
-  readFileSync,
-  mkdirSync,
-  existsSync,
-  readdirSync,
-  writeFileSync,
-} from "fs";
 import { configDir } from "./config.js";
 import { WebContents } from "electron";
+import { promises as fs } from "fs";
 import path from "path";
 
 const defaultConfig = {
@@ -25,23 +19,33 @@ const handleObject = (obj: Record<string, boolean>, array: string[]) => {
 };
 
 const userScriptsPath = path.join(configDir, "userscripts.json");
-if (!existsSync(userScriptsPath))
-  writeFileSync(userScriptsPath, JSON.stringify(defaultConfig, null, 2));
 const userScriptsDir = path.join(configDir, "scripts");
-if (!existsSync(userScriptsDir)) mkdirSync(userScriptsDir, { recursive: true });
 const userStylesDir = path.join(configDir, "styles");
-if (!existsSync(userStylesDir)) mkdirSync(userStylesDir, { recursive: true });
 
 let userScripts: string[] = [];
 let userStyles: string[] = [];
 
-const getUserScriptsFiles = () => {
+const prepareAssets = async () => {
+  await fs.mkdir(configDir, { recursive: true });
+  await fs.mkdir(userScriptsDir, { recursive: true });
+  await fs.mkdir(userStylesDir, { recursive: true });
+
+  try {
+    await fs.access(userScriptsPath);
+  } catch {
+    await fs.writeFile(userScriptsPath, JSON.stringify(defaultConfig, null, 2));
+  }
+};
+
+const getUserScriptsFiles = async (): Promise<void> => {
+  await prepareAssets();
+
   let data;
   try {
-    data = JSON.parse(readFileSync(userScriptsPath, "utf8"));
+    data = JSON.parse(await fs.readFile(userScriptsPath, "utf8"));
   } catch {
-    data = JSON.parse(JSON.stringify(defaultConfig));
-    writeFileSync(userScriptsPath, JSON.stringify(defaultConfig, null, 2));
+    data = { ...defaultConfig };
+    await fs.writeFile(userScriptsPath, JSON.stringify(defaultConfig, null, 2));
   }
 
   const { enable, scripts, styles } = data;
@@ -49,12 +53,11 @@ const getUserScriptsFiles = () => {
   const originalScripts = JSON.stringify(scripts);
   const originalStyles = JSON.stringify(styles);
 
-  userScripts = readdirSync(userScriptsDir).filter((script) =>
-    script.endsWith(".js"),
-  );
-  userStyles = readdirSync(userStylesDir).filter((style) =>
-    style.endsWith(".css"),
-  );
+  const scriptsFiles = await fs.readdir(userScriptsDir);
+  const stylesFiles = await fs.readdir(userStylesDir);
+
+  userScripts = scriptsFiles.filter((f) => f.endsWith(".js"));
+  userStyles = stylesFiles.filter((f) => f.endsWith(".css"));
 
   handleObject(scripts, userScripts);
   handleObject(styles, userStyles);
@@ -64,20 +67,20 @@ const getUserScriptsFiles = () => {
     originalScripts !== JSON.stringify(scripts) ||
     originalStyles !== JSON.stringify(styles)
   ) {
-    writeFileSync(
+    await fs.writeFile(
       userScriptsPath,
       JSON.stringify({ enable, scripts, styles }, null, 2),
     );
   }
 };
 
-const setUserScripts = (webContents: WebContents): void => {
+const setUserScripts = async (webContents: WebContents): Promise<void> => {
   let data;
   try {
-    data = JSON.parse(readFileSync(userScriptsPath, "utf8"));
+    data = JSON.parse(await fs.readFile(userScriptsPath, "utf8"));
   } catch {
-    data = JSON.parse(JSON.stringify(defaultConfig));
-    writeFileSync(userScriptsPath, JSON.stringify(defaultConfig, null, 2));
+    data = { ...defaultConfig };
+    await fs.writeFile(userScriptsPath, JSON.stringify(defaultConfig, null, 2));
   }
 
   const { enable, scripts } = data;
@@ -86,44 +89,55 @@ const setUserScripts = (webContents: WebContents): void => {
     if (scripts[el] === false) continue;
 
     const scriptPath = path.join(userScriptsDir, el);
-    if (enable && existsSync(scriptPath)) {
-      const scriptContent = readFileSync(scriptPath, "utf8");
-      webContents.executeJavaScript(scriptContent);
-    }
+    try {
+      if (enable) {
+        const scriptContent = await fs.readFile(scriptPath, "utf8");
+        await webContents.executeJavaScript(scriptContent);
+      }
+    } catch {}
   }
 };
 
-const injectUserStyles = (webContents: WebContents): void => {
+const injectUserStyles = async (webContents: WebContents): Promise<void> => {
   let data;
   try {
-    data = JSON.parse(readFileSync(userScriptsPath, "utf8"));
+    const raw = await fs.readFile(userScriptsPath, "utf8");
+    data = JSON.parse(raw);
   } catch {
-    data = JSON.parse(JSON.stringify(defaultConfig));
-    writeFileSync(userScriptsPath, JSON.stringify(defaultConfig, null, 2));
+    data = { ...defaultConfig };
+    await fs.writeFile(userScriptsPath, JSON.stringify(defaultConfig, null, 2));
   }
 
   const { enable, styles } = data;
 
   for (const el of userStyles) {
     if (styles[el] === false) continue;
+
     const stylePath = path.join(userStylesDir, el);
-    if (enable && existsSync(stylePath)) {
-      const styleContent = readFileSync(stylePath, "utf8");
-      webContents.insertCSS(styleContent);
-    }
+    try {
+      if (enable) {
+        const styleContent = await fs.readFile(stylePath, "utf8");
+        await webContents.insertCSS(styleContent);
+      }
+    } catch {}
   }
 };
 
-export const userscripts = (webContents: WebContents): void => {
-  getUserScriptsFiles();
-  setUserScripts(webContents);
+export const userscripts = async (webContents: WebContents): Promise<void> => {
+  await getUserScriptsFiles();
+  await setUserScripts(webContents);
 
-  webContents.on("did-start-navigation", (_, __, isInPlace, isMainFrame) => {
-    if (isMainFrame && !isInPlace) {
-      getUserScriptsFiles();
-      setUserScripts(webContents);
-    }
+  webContents.on(
+    "did-start-navigation",
+    async (_, __, isInPlace, isMainFrame) => {
+      if (isMainFrame && !isInPlace) {
+        await getUserScriptsFiles();
+        await setUserScripts(webContents);
+      }
+    },
+  );
+
+  webContents.on("did-finish-load", async () => {
+    await injectUserStyles(webContents);
   });
-
-  webContents.on("did-finish-load", () => injectUserStyles(webContents));
 };

@@ -169,7 +169,6 @@ ipcRenderer.on("set-game-settings", (_, data) =>
   localStorage.setItem("persist:root", JSON.parse(data)),
 );
 ipcRenderer.on("get-game-settings", (_, file) =>
-  // writeFileSync(file, localStorage.getItem("persist:root")!),
   ipcRenderer.invoke(
     "write-game-settings",
     file,

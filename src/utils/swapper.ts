@@ -1,12 +1,12 @@
-import { existsSync, mkdirSync, readdirSync, readFileSync } from "fs";
 import { protocol, WebContents } from "electron";
 import { Config, configDir } from "./config.js";
 import { fromRoot } from "./functions.js";
+import { promises as fs } from "fs";
 import { join } from "path";
 
 const config = new Config();
 
-const swapper = (webContents: WebContents) => {
+const swapper = async (webContents: WebContents): Promise<void> => {
   const reject = new Set<string>([
     "api.adinplay.com",
     "www.google-analytics.com",
@@ -15,7 +15,7 @@ const swapper = (webContents: WebContents) => {
     "api.gameanalytics.com",
   ]);
   const swapperList = JSON.parse(
-    readFileSync(fromRoot("assets/swapperList.json"), "utf8"),
+    await fs.readFile(fromRoot("assets/swapperList.json"), "utf8"),
   );
 
   const { adblocker, swapper } = config.get("client") as {
@@ -24,8 +24,9 @@ const swapper = (webContents: WebContents) => {
   };
 
   const swapperFolder = join(configDir, "swapper");
-  if (!existsSync(swapperFolder)) mkdirSync(swapperFolder, { recursive: true });
-  const swapperFiles = new Set<string>(readdirSync(swapperFolder));
+
+  await fs.mkdir(swapperFolder, { recursive: true });
+  const swapperFiles = new Set<string>(await fs.readdir(swapperFolder));
 
   protocol.registerFileProtocol("voxtulate", (request, callback): void => {
     const u = new URL(request.url);
@@ -47,17 +48,23 @@ const swapper = (webContents: WebContents) => {
     }
   });
 
-  const swapFile = (name: string): string | null => {
+  const swapFile = async (name: string): Promise<string | null> => {
     // Resource detection based on the file name and extension
     if (!swapperFiles.has(name)) return null;
     const localFilePath = join(swapperFolder, name);
-    return existsSync(localFilePath) ? `file://${localFilePath}` : null;
+
+    try {
+      await fs.access(localFilePath);
+      return `file://${localFilePath}`;
+    } catch {
+      return null;
+    }
   };
 
-  webContents.session.webRequest.onBeforeRequest(({ url }, callback) => {
-    const { protocol, host, pathname } = new URL(url);
+  webContents.session.webRequest.onBeforeRequest(async ({ url }, callback) => {
+    const { protocol: reqp, host, pathname } = new URL(url);
 
-    if (protocol === "file:") return callback({});
+    if (reqp === "file:") return callback({});
 
     // Block ads and other scripts which are not voxiom related
     if (adblocker && reject.has(host)) return callback({ cancel: true });
@@ -83,7 +90,7 @@ const swapper = (webContents: WebContents) => {
           swapper === "Extended"
             ? pathname.split("/").pop()
             : swapperList[pathname];
-        if (swapFile(fileName))
+        if (await swapFile(fileName))
           return callback({
             redirectURL: `voxtulate://local?asset=${encodeURIComponent(fileName)}`,
           });

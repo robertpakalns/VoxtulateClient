@@ -11,8 +11,11 @@ export const message = (
     message,
   });
 
-export const confirmAction = (message: string, callback: () => void): void => {
-  const result = dialog.showMessageBoxSync({
+export const confirmAction = async (
+  message: string,
+  callback: () => void,
+): Promise<void> => {
+  const result = await dialog.showMessageBox({
     type: "question",
     buttons: ["Yes", "No"],
     defaultId: 1,
@@ -20,5 +23,5 @@ export const confirmAction = (message: string, callback: () => void): void => {
     title: "Voxtulate Client | Confirm",
     message,
   });
-  if (result === 0) callback();
+  if (result.response === 0) callback();
 };

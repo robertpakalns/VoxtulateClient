@@ -12,11 +12,11 @@ import { message, confirmAction } from "./src/utils/dialogs.js";
 import { getIcon, getHost } from "./src/utils/functions.js";
 import { userscripts } from "./src/utils/userScripts.js";
 import keybinding from "./src/utils/keybinding.js";
-import { readFileSync, writeFileSync } from "fs";
 import DiscordRPC from "./src/utils/discord.js";
 import { autoUpdater } from "electron-updater";
 import swapper from "./src/utils/swapper.js";
 import { join, normalize } from "path";
+import { promises as fs } from "fs";
 
 const rpc = new DiscordRPC();
 const config = new Config();
@@ -34,18 +34,23 @@ ipcMain.handle("get-userscripts-path", () =>
 );
 ipcMain.handle(
   "write-game-settings",
-  (_, file: string, content: string): boolean => {
-    writeFileSync(file, content);
+  async (_, file: string, content: string): Promise<boolean> => {
+    await fs.writeFile(file, content);
     return true;
   },
 );
-ipcMain.handle("read-userscripts-config", (_): string =>
-  readFileSync(join(configDir, "userscripts.json"), "utf8"),
+ipcMain.handle(
+  "read-userscripts-config",
+  async (_): Promise<string> =>
+    await fs.readFile(join(configDir, "userscripts.json"), "utf8"),
 );
-ipcMain.handle("write-userscripts-config", (_, content: string): boolean => {
-  writeFileSync(join(configDir, "userscripts.json"), content);
-  return true;
-});
+ipcMain.handle(
+  "write-userscripts-config",
+  async (_, content: string): Promise<boolean> => {
+    await fs.writeFile(join(configDir, "userscripts.json"), content);
+    return true;
+  },
+);
 
 const createMain = (): void => {
   mainWindow = new BrowserWindow({
@@ -182,23 +187,26 @@ app.on("ready", () => {
 
   const f = { filters: [{ name: "JSON Files", extensions: ["json"] }] };
   ipcMain.on("import-client-settings", () =>
-    dialog.showOpenDialog(f).then(({ canceled, filePaths }) => {
+    dialog.showOpenDialog(f).then(async ({ canceled, filePaths }) => {
       if (!canceled && filePaths.length > 0)
-        writeFileSync(Config.file, readFileSync(filePaths[0], "utf8"));
+        await fs.writeFile(
+          Config.file,
+          await fs.readFile(filePaths[0], "utf8"),
+        );
     }),
   );
   ipcMain.on("export-client-settings", () =>
-    dialog.showSaveDialog(f).then(({ canceled, filePath }) => {
+    dialog.showSaveDialog(f).then(async ({ canceled, filePath }) => {
       if (!canceled && filePath)
-        writeFileSync(filePath, readFileSync(configPath));
+        await fs.writeFile(filePath, await fs.readFile(configPath));
     }),
   );
   ipcMain.on("import-game-settings", () =>
-    dialog.showOpenDialog(f).then(({ canceled, filePaths }) => {
+    dialog.showOpenDialog(f).then(async ({ canceled, filePaths }) => {
       if (!canceled && filePaths.length > 0)
         webContents.send(
           "set-game-settings",
-          JSON.stringify(readFileSync(filePaths[0], "utf8")),
+          JSON.stringify(await fs.readFile(filePaths[0], "utf8")),
         );
     }),
   );
