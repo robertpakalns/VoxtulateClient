@@ -35,7 +35,7 @@ Unofficial Electron client for Voxiom.io, for real Voxtulators
 3. Run the installer
 
 ## ⚙️ Engine
-Voxtulate Client is based on `Electron.js` framework (`Node.js`) with version `10.4.7`. The client also uses the [`@juice-client/node-enject`](https://www.npmjs.com/package/@juice-client/node-enject) workaround on Windows to prevent the bug that freezes any active WebSocket connection when run with the `--disable-frame-rate-limit` flag. More information in [`package.json`](https://github.com/robertpakalns/VoxtulateClient/blob/main/package.json).
+Voxtulate Client is based on `Electron.js` framework (`Node.js`) with version `10.4.7`. More information in [`package.json`](https://github.com/robertpakalns/VoxtulateClient/blob/main/package.json).
 
 ## 🛡️ Client Safety
 This project is open-source. All Voxtulate Client source code is publicly available in the [GitHub repository](https://github.com/robertpakalns/VoxtulateClient). All builds are executed via GitHub Actions. If you have concerns about the safety of your private information while using Voxtulate Client, feel free to inspect the source code. Trust in the client is based on trust in the developer.
@@ -88,6 +88,5 @@ Resource Swapper allows users to replace game resources such as images, models, 
   * Juice Client (irrvlo) for additional features
   * Redline Client (robertpakalns) for UI design
   * EDEX for the client assets
-  * slavcp for enject
 
 by robertpakalns

@@ -18,8 +18,5 @@
     "electron": "^10.4.7",
     "electron-builder": "^26.0.12",
     "vite": "^7.1.5"
-  },
-  "optionalDependencies": {
-    "@juice-client/node-enject": "^1.0.4"
   }
 }

@@ -15,17 +15,15 @@ export default defineConfig({
     },
     rollupOptions: {
       external: [
+        "discord-rpc",
         "electron",
+        "electron-updater",
         "fs",
         "os",
         "path",
-        "@juice-client/node-enject",
-        "discord-rpc",
-        "electron-updater",
       ],
       output: {
         entryFileNames: "[name].js",
-        chunkFileNames: "chunks/[name]-[hash].js",
       },
     },
   },

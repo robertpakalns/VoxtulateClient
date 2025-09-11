@@ -56,7 +56,6 @@ const createMain = (): void => {
   mainWindow = new BrowserWindow({
     title: "Voxtulate Client",
     icon: getIcon(),
-    show: false,
     webPreferences: {
       preload: join(__dirname, "../js-dist/preload.js"),
       webSecurity: true,
@@ -71,25 +70,6 @@ const createMain = (): void => {
   mainWindow.loadURL(domain);
   mainWindow.setFullScreen(config.get("client.fullscreen") as boolean);
   mainWindow.on("page-title-updated", (e) => e.preventDefault());
-
-  mainWindow.once("ready-to-show", async () => {
-    if (process.platform === "win32") {
-      // @ts-ignore
-      // Windows only
-      const { default: enject } = await import("@juice-client/node-enject");
-
-      const handleBuffer = mainWindow!.getNativeWindowHandle();
-      let hwnd;
-
-      if (process.arch === "x64" || process.arch === "arm64")
-        hwnd = Number(handleBuffer.readBigUInt64LE(0));
-      else hwnd = handleBuffer.readUInt32LE(0);
-
-      enject.startHook(hwnd);
-    }
-
-    mainWindow!.show();
-  });
 
   keybinding(mainWindow);
 
