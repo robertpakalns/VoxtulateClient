@@ -58,7 +58,7 @@ const createMain = (): void => {
     icon: getIcon(),
     show: false,
     webPreferences: {
-      preload: join(__dirname, "../preload-dist/voxtulate-client.js"),
+      preload: join(__dirname, "../js-dist/preload.js"),
       webSecurity: true,
       contextIsolation: true,
       nodeIntegration: false,

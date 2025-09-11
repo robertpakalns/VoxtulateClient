@@ -3,10 +3,10 @@
   "version": "2.0.0",
   "description": "Voxtulate Client",
   "author": "robertpakalns",
-  "main": "ts-dist/index.js",
+  "main": "js-dist/main.js",
   "scripts": {
-    "dev": "vite build && tsc && electron .",
-    "build": "vite build && tsc && electron-builder"
+    "dev": "vite build && electron .",
+    "build": "vite build && electron-builder"
   },
   "license": "ISC",
   "dependencies": {
@@ -17,7 +17,6 @@
     "@types/discord-rpc": "^4.0.9",
     "electron": "^10.4.7",
     "electron-builder": "^26.0.12",
-    "typescript": "^5.9.2",
     "vite": "^7.1.5"
   },
   "optionalDependencies": {

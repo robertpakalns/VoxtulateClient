@@ -11,7 +11,7 @@ const host = config.get("client.domain") as string;
 export const getHost = () => (domains.has(host) ? host : "voxiom.io");
 
 // Project root path
-const __root = join(__dirname, "../../../");
+const __root = join(__dirname, "../");
 export const fromRoot = (path: string): string => join(__root, path);
 
 // Dialog windows

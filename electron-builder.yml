@@ -11,7 +11,7 @@ electronLanguages:
 files:
   - "assets/**/*"
   - "!src/**/*" # TypeScript code will not be executed by Node
-  - "ts-dist/**/*"
+  - "js-dist/**/*"
   - "!**/locales/*"
   - "!**/*.pak"
   - "!**/ffmpeg.dll"
