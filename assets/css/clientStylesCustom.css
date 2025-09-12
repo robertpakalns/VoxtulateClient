@@ -1,7 +1,9 @@
 * {
+    font-family: "Roboto", sans-serif;
     text-decoration: none;
 }
 
+/* Remove all ad containers */
 div[id^="voxiom-io"] {
     display: none;
 }
@@ -10,7 +12,6 @@ div[id^="voxiom-io"] {
     display: none;
 }
 
-a[href="https://discord.gg/GBFtRcY"],
 a[href="https://cuberealm.io"],
 .hCYBep,
 .iiRiSL,
@@ -33,7 +34,9 @@ a[href="https://cuberealm.io"],
     max-height: 400px;
 }
 
+/* Background */
 .bNczYf {
+    background: url(voxtulate://?path=assets/bg.webp) !important;
     background-size: cover !important;
     filter: grayscale(100%) blur(5px);
     padding: 10px;
@@ -89,7 +92,8 @@ a[href="https://cuberealm.io"],
 }
 
 .faeaXa {
-    filter: drop-shadow(0 0 3px rgb(var(--inv))) drop-shadow(0 0 3px rgb(var(--inv)))
+    filter: drop-shadow(0 0 3px rgb(var(--inv)))
+        drop-shadow(0 0 3px rgb(var(--inv)));
 }
 
 .faeaXa[style*="rgb(149, 165, 166)"] {
@@ -142,7 +146,11 @@ img[src="/./package/ea55824826de52b7ccc3.png"] {
 }
 
 .cJoQGw {
-    background: radial-gradient(circle, rgba(var(--market), 0.3), rgba(var(--market), 0.1));
+    background: radial-gradient(
+        circle,
+        rgba(var(--market), 0.3),
+        rgba(var(--market), 0.1)
+    );
 }
 
 .cJoQGw[style*="rgb(255, 255, 255)"] {

@@ -59,6 +59,10 @@
     animation: hop ease 0.3s;
 }
 
+.modal ::-webkit-scrollbar {
+    display: none;
+}
+
 .modal h1 {
     font-size: 0.6rem;
     color: gray;

@@ -76,8 +76,6 @@ const createCustomizationSection = async (): Promise<void> => {
     "#enableCrosshair",
   ) as HTMLInputElement;
   const _crosshairURL = cont.querySelector("#crosshairURL") as HTMLInputElement;
-  const fileIconURL = "voxtulate://?path=assets/icons/file.svg";
-  (cont.querySelector("#file-icon") as HTMLImageElement).src = fileIconURL;
   // _enableCrosshair.checked = (await config.get("crosshair.enable")) as boolean;
   _enableCrosshair.addEventListener("change", async (e) => {
     toggleCrosshair();

@@ -1,5 +1,5 @@
 import { createEl, popup } from "../../preload/preloadFunctions.js";
-import settingsJson from "../../../assets/settings.json";
+import settingsJson from "../../../assets/settings.json?raw";
 import { config } from "../../preload/preloadUtils.js";
 import { ipcRenderer } from "electron";
 
@@ -16,7 +16,7 @@ export interface Setting {
   select?: string[];
 }
 
-const data = settingsJson as Setting[];
+const data = JSON.parse(settingsJson) as Setting[];
 
 export const sendNotification = (requires: RequiresType): void => {
   if (requires === "restart")
@@ -105,6 +105,7 @@ export const generateConfigs = async (): Promise<void> => {
   const toggleObject = {
     modalHint: "toggle-menu-modal",
     toggleKDRatio: "toggle-kd-ratio",
+    clientStyles: "toggle-client-styles",
   };
   for (const [id, event] of Object.entries(toggleObject)) {
     document.querySelector(`#${id}`)?.addEventListener("change", (e) => {

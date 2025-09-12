@@ -18,21 +18,13 @@ const enableStyles = async (): Promise<void> => {
   };
 
   // Custom client styles
-  const fontURL = "voxtulate://?path=assets/fonts/Roboto.ttf";
-  const textURL = "voxtulate://?path=assets/text.webp";
-  const bgURL = "voxtulate://?path=assets/bg.webp";
-  const customCSS =
-    clientStylesCustom +
-    `
-    * { font-family: "Roboto", sans-serif }
-    .bNczYf { background: url(${bgURL}) }
-    img[src="/./package/ea55824826de52b7ccc3.png"] { content: url(${textURL}) }`;
+  const customCSS = clientStylesCustom;
 
   // Styles for the client features
   const clientCSS =
     clientStylesMain +
     `
-    @font-face { font-family: "Roboto"; src: url(${fontURL}) format("truetype") }
+
     body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"] { opacity: ${enableConsole ? "0%" : "100%"} }
     .lpfJAq, .lpdfTz { opacity: ${chatOpacity}% }
     .voxiomConsole { opacity: ${enableConsole ? "100%" : "0%"} }

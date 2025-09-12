@@ -59,7 +59,7 @@ const createMain = (): void => {
     webPreferences: {
       preload: join(__dirname, "../js-dist/preload.js"),
       webSecurity: true,
-      contextIsolation: true,
+      contextIsolation: false,
       nodeIntegration: false,
       enableRemoteModule: false,
     },
