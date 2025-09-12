@@ -4,12 +4,12 @@ import {
   creationTime,
   domains,
 } from "../preload/preloadFunctions.js";
+import { config, setupFastCSS } from "./preloadUtils.js";
 import advancedInventory from "./advancedInventory.js";
 import MenuModal from "../modals/menu/script.js";
 import { backToVoxiom } from "./preloadUtils.js";
 import { ipcRenderer, shell } from "electron";
 import enableStyles from "./enableStyles.js";
-import { config } from "./preloadUtils.js";
 
 let accountData: any, playerData: any;
 
@@ -38,7 +38,7 @@ const createModals = async (): Promise<void> => {
 
 document.addEventListener("DOMContentLoaded", async (): Promise<void> => {
   backToVoxiom();
-  enableStyles();
+  await enableStyles();
 
   if (!domains.has(window.location.host)) return;
 
@@ -162,6 +162,7 @@ document.addEventListener("DOMContentLoaded", async (): Promise<void> => {
     shell.openPath(el.href);
   });
 
+  setupFastCSS();
   createModals();
 });
 

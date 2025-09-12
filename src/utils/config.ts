@@ -1,6 +1,6 @@
 import { readFileSync, promises as fs } from "fs";
 import { homedir } from "os";
-import path from "path";
+import { join } from "path";
 
 export interface IConfig {
   client: {
@@ -24,6 +24,11 @@ export interface IConfig {
   crosshair: {
     enable: boolean;
     url: string;
+  };
+  fastCSS: {
+    enable: boolean;
+    url: string;
+    value: string;
   };
   keybinding: {
     enable: boolean;
@@ -62,6 +67,11 @@ export const defaultConfig: IConfig = {
     enable: false,
     url: "",
   },
+  fastCSS: {
+    enable: false,
+    url: "",
+    value: "",
+  },
   keybinding: {
     enable: false,
     content: {
@@ -74,8 +84,8 @@ export const defaultConfig: IConfig = {
   },
 };
 
-export const configDir = path.join(homedir(), "Documents/VoxtulateClient");
-export const configPath = path.join(configDir, "config.json");
+export const configDir = join(homedir(), "Documents/VoxtulateClient");
+export const configPath = join(configDir, "config.json");
 
 const prepareConfig = async (): Promise<void> => {
   await fs.mkdir(configDir, { recursive: true });

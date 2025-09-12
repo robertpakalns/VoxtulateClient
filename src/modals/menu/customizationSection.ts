@@ -71,6 +71,48 @@ const createCustomizationSection = async (): Promise<void> => {
 
   toggleUserScripts();
 
+  // Fast CSS
+  const fastCSSURL = cont.querySelector("#fastCSSURL") as HTMLInputElement;
+  fastCSSURL?.addEventListener("change", (e) =>
+    config.set("fastCSS.url", (e.target as HTMLInputElement).value),
+  );
+  fastCSSURL!.value = (await config.get("fastCSS.url")) as string;
+
+  const fastCSSValue = cont.querySelector(
+    "#fastCSSValue",
+  ) as HTMLTextAreaElement;
+  fastCSSValue?.addEventListener("input", (e) =>
+    config.set("fastCSS.value", (e.target as HTMLInputElement).value),
+  );
+  fastCSSValue!.value = (await config.get("fastCSS.value")) as string;
+
+  const enableFastCSS = cont.querySelector(
+    "#enableFastCSS",
+  ) as HTMLInputElement;
+
+  for (const id of ["enableFastCSS", "fastCSSURL", "fastCSSValue"]) {
+    const eventType = id === "enableFastCSS" ? "change" : "input";
+    cont.querySelector(`#${id}`)?.addEventListener(eventType, () => {
+      ipcRenderer.send(
+        "change-fast-css",
+        enableFastCSS.checked,
+        fastCSSURL.value,
+        fastCSSValue.value,
+      );
+    });
+  }
+
+  const toggleFastCSS = () => {
+    const checked = enableFastCSS?.checked;
+    fastCSSURL.disabled = !checked;
+    fastCSSValue.disabled = !checked;
+    fastCSSURL.classList.toggle("disabled", !checked);
+    fastCSSValue.classList.toggle("disabled", !checked);
+  };
+
+  toggleFastCSS();
+  enableFastCSS.addEventListener("change", toggleFastCSS);
+
   // Custom crosshair
   const _enableCrosshair = cont.querySelector(
     "#enableCrosshair",

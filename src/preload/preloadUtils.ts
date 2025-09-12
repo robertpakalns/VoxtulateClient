@@ -32,3 +32,38 @@ export const backToVoxiom = (): void => {
     document.body.appendChild(_back);
   }
 };
+
+export const setupFastCSS = (): void => {
+  const fastCSSStyles = document.getElementById("fastCSSStyles") as HTMLElement;
+  let fastCSSLink = document.getElementById(
+    "fastCSSLink",
+  ) as HTMLLinkElement | null;
+  console.log(fastCSSLink);
+
+  ipcRenderer.on("change-fast-css", (_, enable, url, value) => {
+    if (!enable) {
+      fastCSSStyles.innerHTML = "";
+      if (fastCSSLink) {
+        fastCSSLink.remove();
+        fastCSSLink = null;
+      }
+      return;
+    }
+
+    fastCSSStyles.innerHTML = value;
+
+    if (url) {
+      if (!fastCSSLink) {
+        fastCSSLink = createEl("link", {
+          id: "fastCSSLink",
+          rel: "stylesheet",
+        }) as HTMLLinkElement;
+        document.head.appendChild(fastCSSLink!);
+      }
+      if (fastCSSLink) fastCSSLink.href = url;
+    } else if (fastCSSLink) {
+      fastCSSLink.remove();
+      fastCSSLink = null;
+    }
+  });
+};

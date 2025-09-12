@@ -159,6 +159,19 @@
     transform: scale(1.1);
 }
 
+.modal textarea {
+    margin-right: 10px;
+    padding: 10px;
+    width: 100% !important;
+    height: 150px;
+    background: transparent;
+    border: 1px solid rgb(50, 50, 50);
+    outline: none;
+    color: white;
+    border-radius: 20px;
+    resize: vertical;
+}
+
 .disabled,
 input:disabled,
 input:disabled,

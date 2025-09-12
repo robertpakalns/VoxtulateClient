@@ -97,5 +97,13 @@
     "type": "checkbox",
     "config": "crosshair.enable",
     "section": "customization"
+  },
+  {
+    "id": "enableFastCSS",
+    "name": "Enable Fast CSS",
+    "description": "Fast CSS will allow you to customize the game via CSS",
+    "type": "checkbox",
+    "config": "fastCSS.enable",
+    "section": "customization"
   }
 ]

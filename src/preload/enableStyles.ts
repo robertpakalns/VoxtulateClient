@@ -23,9 +23,7 @@ const enableStyles = async (): Promise<void> => {
   // Styles for the client features
   const clientCSS =
     clientStylesMain +
-    `
-
-    body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"] { opacity: ${enableConsole ? "0%" : "100%"} }
+    `body > div[style*="background-color: rgba(0, 0, 0, 0.8); display: block"] { opacity: ${enableConsole ? "0%" : "100%"} }
     .lpfJAq, .lpdfTz { opacity: ${chatOpacity}% }
     .voxiomConsole { opacity: ${enableConsole ? "100%" : "0%"} }
     .hint { display: ${(await config.get("interface.modalHint")) ? "block" : "none"} }
@@ -35,15 +33,41 @@ const enableStyles = async (): Promise<void> => {
     textContent: styles ? customCSS : "",
   });
   const clientStyles = createEl("style", { textContent: clientCSS });
-  document.head.append(enableStyles, clientStyles);
 
-  const { enable: crosshairEnable, url } = (await config.get("crosshair")) as {
+  // FastCSS
+  const fastCSSStyles = createEl("style", { id: "fastCSSStyles" });
+  const fastCSSLink = createEl("link", {
+    id: "fastCSSLink",
+    rel: "stylesheet",
+  }) as HTMLAnchorElement;
+
+  const {
+    enable,
+    url: fastCSSURL,
+    value,
+  } = (await config.get("fastCSS")) as {
+    enable: boolean;
+    url: string;
+    value: string;
+  };
+
+  if (enable) {
+    fastCSSStyles.innerHTML = value;
+    fastCSSLink.href = fastCSSURL;
+    document.head.appendChild(fastCSSLink);
+  }
+
+  document.head.append(enableStyles, clientStyles, fastCSSStyles);
+
+  const { enable: crosshairEnable, url: crosshairURL } = (await config.get(
+    "crosshair",
+  )) as {
     enable: boolean;
     url: string;
   };
   const crosshair = createEl(
     "img",
-    { src: crosshairEnable ? url : "" },
+    { src: crosshairEnable ? crosshairURL : "" },
     "voxiomCrosshair",
   ) as HTMLImageElement;
   document.body.prepend(crosshair);

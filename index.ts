@@ -204,6 +204,7 @@ app.on("ready", () => {
     "toggle-menu-modal",
     "toggle-client-styles",
     "client-update",
+    "change-fast-css",
   ])
     ipcMain.on(e, (_, ...a) => webContents.send(e, ...a));
 
