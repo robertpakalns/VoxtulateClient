@@ -1,3 +1,4 @@
+import swapperListJson from "../../assets/swapperList.json?raw";
 import { protocol, WebContents } from "electron";
 import { Config, configDir } from "./config.js";
 import { fromRoot } from "./functions.js";
@@ -14,9 +15,7 @@ const swapper = async (webContents: WebContents): Promise<void> => {
     "matomo.voxiom.io",
     "api.gameanalytics.com",
   ]);
-  const swapperList = JSON.parse(
-    await fs.readFile(fromRoot("assets/swapperList.json"), "utf8"),
-  );
+  const swapperList = JSON.parse(swapperListJson);
 
   const { adblocker, swapper } = config.get("client") as {
     adblocker: string;
@@ -34,7 +33,7 @@ const swapper = async (webContents: WebContents): Promise<void> => {
     const assetName = u.searchParams.get("asset");
     const relPath = u.searchParams.get("path");
 
-    let localPath;
+    let localPath: string | null;
     if (relPath) {
       localPath = fromRoot(relPath);
     } else if (assetName) {

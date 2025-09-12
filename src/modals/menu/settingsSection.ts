@@ -23,9 +23,11 @@ const createSettingsSection = async (): Promise<void> => {
   const _chatOpacity = cont.querySelector("#chatOpacity") as HTMLInputElement;
   _chatOpacity.value =
     ((await config.get("interface.chatOpacity")) as string) ?? "100";
+  _chatOpacity.addEventListener("input", (e) => {
+    ipcRenderer.send("change-opacity", (e.target as HTMLInputElement).value);
+  });
   _chatOpacity.addEventListener("change", (e) => {
     config.set("interface.chatOpacity", (e.target as HTMLInputElement).value);
-    ipcRenderer.send("change-opacity", (e.target as HTMLInputElement).value);
   });
 
   const clickCallbacksObject = {
