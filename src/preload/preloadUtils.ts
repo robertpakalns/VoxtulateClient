@@ -27,7 +27,7 @@ export const backToVoxiom = (): void => {
     const _back = createEl("div", {}, "backToVoxiom", ["Back to Voxiom"]);
     _back.addEventListener(
       "click",
-      () => (window.location.href = `https://${getHostRenderer()}`),
+      async () => (window.location.href = `https://${await getHostRenderer()}`),
     );
     document.body.appendChild(_back);
   }

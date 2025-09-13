@@ -39,6 +39,7 @@ Voxtulate Client is based on `Electron.js` framework (`Node.js`) with version `1
 
 ## 🛡️ Client Safety
 This project is open-source. All Voxtulate Client source code is publicly available in the [GitHub repository](https://github.com/robertpakalns/VoxtulateClient). All builds are executed via GitHub Actions. If you have concerns about the safety of your private information while using Voxtulate Client, feel free to inspect the source code. Trust in the client is based on trust in the developer.
+The client uses `nodeIntegration: false`, `webSecurity: true`, and `enableRemoteModule: false`, which ensures protection against XSS attacks and prevents web content from accessing the user's local file system.
 
 ## 🔗 Deeplink
 Voxtulate Client uses `voxtulate:` protocol to open the client. For example, `voxtulate://?url=path/to/page` opens the client with the page `https://voxiom.io/path/to/page`. [More information](https://github.com/robertpakalns/VoxtulateClient/wiki/Deeplinks).
