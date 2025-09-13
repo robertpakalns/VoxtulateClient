@@ -128,7 +128,7 @@ img[src="/./package/ea55824826de52b7ccc3.png"] {
     }
 }
 
-a[href="https://discord.gg/GBFtRcY"]
-{
-    /* content: url("voxtulate://?path=assets/icons/voxtulate-discord.png"); */
+img[src="/./package/3ad1db34f5eb135eaf13.png"] {
+    width: 199px;
+    content: url("voxtulate://?path=assets/icons/voxtulate-discord.svg");
 }

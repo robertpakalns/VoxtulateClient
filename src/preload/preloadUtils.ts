@@ -1,5 +1,5 @@
 import { createEl, domains } from "../preload/preloadFunctions.js";
-import { ipcRenderer } from "electron";
+import { ipcRenderer, shell } from "electron";
 
 export const config = {
   get: (key: string) => ipcRenderer.invoke("config-get", key),
@@ -66,4 +66,11 @@ export const setupFastCSS = (): void => {
       fastCSSLink = null;
     }
   });
+};
+
+export const handleDiscordLink = (cont: HTMLElement): void => {
+  cont.onclick = (e) => {
+    e.preventDefault();
+    shell.openExternal("https://discord.gg/SEExvCQeNc");
+  };
 };

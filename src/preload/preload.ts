@@ -4,7 +4,7 @@ import {
   creationTime,
   domains,
 } from "../preload/preloadFunctions.js";
-import { config, setupFastCSS } from "./preloadUtils.js";
+import { config, setupFastCSS, handleDiscordLink } from "./preloadUtils.js";
 import advancedInventory from "./advancedInventory.js";
 import MenuModal from "../modals/menu/script.js";
 import { backToVoxiom } from "./preloadUtils.js";
@@ -119,6 +119,12 @@ document.addEventListener("DOMContentLoaded", async (): Promise<void> => {
     // Hint message
     if (!document.getElementById("hintCont"))
       document.querySelector(".ljNuSc")?.appendChild(hintCont);
+
+    // Discord link
+    const discordLink = document.querySelector(
+      'img[src="/./package/3ad1db34f5eb135eaf13.png"]',
+    ) as HTMLElement;
+    if (discordLink) handleDiscordLink(discordLink);
 
     // Player data
     const { pathname } = window.location;
