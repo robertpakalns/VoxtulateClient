@@ -1,4 +1,4 @@
-import { createEl, restartMessage } from "../../preload/preloadFunctions.js";
+import { createEl } from "../../preload/preloadFunctions.js";
 import { config } from "../../preload/preloadUtils.js";
 import { ipcRenderer } from "electron";
 
@@ -217,7 +217,6 @@ const createCustomizationSection = async (): Promise<void> => {
   _enableKeybinding.addEventListener("change", () => {
     const checked = _enableKeybinding.checked;
     ipcRenderer.send("toggle-keybind-enable", checked);
-    restartMessage();
     toggleKeybinding();
   });
 };
