@@ -1,48 +1,76 @@
 import { Config, defaultConfig } from "./config.js";
-import { BrowserWindow } from "electron";
+import { BrowserWindow, ipcMain } from "electron";
 
 const config = new Config();
 
 const keybinding = (mainWindow: BrowserWindow): void => {
   const { webContents } = mainWindow;
-  const keybindings = config.get("keybinding.enable")
-    ? config.get("keybinding.content")
-    : defaultConfig.keybinding.content;
-  const { CloseModal, MenuModal, Reload, Fullscreen, DevTools } =
-    keybindings as {
-      CloseModal: string;
-      MenuModal: string;
-      Reload: string;
-      Fullscreen: string;
-      DevTools: string;
-    };
 
-  const keySet = new Set<string>([MenuModal, Reload, Fullscreen, DevTools]);
+  let enabled = (config.get("keybinding.enable") as boolean) ?? true;
+
+  // An object of keybinds
+  let k = (
+    enabled
+      ? (config.get("keybinding.content") as Record<string, string>)
+      : defaultConfig.keybinding.content
+  ) as {
+    CloseModal: string;
+    MenuModal: string;
+    Reload: string;
+    Fullscreen: string;
+    DevTools: string;
+  };
+
+  const newSet = () =>
+    new Set<string>([k.MenuModal, k.Reload, k.Fullscreen, k.DevTools]);
+
+  let keySet = newSet();
+  let justChanged = new Set<string>();
+
+  ipcMain.on("change-keybind", (_, key: keyof typeof k, value: string) => {
+    k[key] = value;
+    keySet = newSet();
+    justChanged.add(value);
+  });
+
+  ipcMain.on("toggle-keybind-enable", (_, value: boolean) => {
+    enabled = value;
+
+    k = (
+      enabled
+        ? config.get("keybinding.content")
+        : defaultConfig.keybinding.content
+    ) as typeof k;
+
+    keySet = newSet();
+  });
 
   webContents.on("before-input-event", (e, { code, type }) => {
     if (keySet.has(code)) e.preventDefault();
 
-    // Fix of the in-game pause button due to older Electron version
-    if (code !== CloseModal && code === "Escape" && type === "keyUp")
+    if (justChanged.has(code)) {
+      if (type === "keyUp") justChanged.delete(code);
+      return;
+    }
+
+    if (code !== k.CloseModal && code === "Escape" && type === "keyUp")
       return webContents.send("toggle-window", "null");
 
     switch (code) {
-      case CloseModal:
+      case k.CloseModal:
         if (type === "keyUp") webContents.send("toggle-window", "null");
         break;
-      case MenuModal:
+      case k.MenuModal:
         webContents.send("toggle-window", "menuModal");
         break;
-      case Reload:
+      case k.Reload:
         webContents.reload();
         break;
-      case Fullscreen:
+      case k.Fullscreen:
         mainWindow.setFullScreen(!mainWindow.isFullScreen());
         break;
-      case DevTools:
+      case k.DevTools:
         webContents.toggleDevTools();
-        break;
-      default:
         break;
     }
   });

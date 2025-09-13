@@ -38,7 +38,6 @@ export const setupFastCSS = (): void => {
   let fastCSSLink = document.getElementById(
     "fastCSSLink",
   ) as HTMLLinkElement | null;
-  console.log(fastCSSLink);
 
   ipcRenderer.on("change-fast-css", (_, enable, url, value) => {
     if (!enable) {

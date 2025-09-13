@@ -180,6 +180,7 @@ const createCustomizationSection = async (): Promise<void> => {
     _inputChild.addEventListener("keydown", async (e) => {
       e.preventDefault();
       _inputChild.value = e.code;
+      ipcRenderer.send("change-keybind", name, e.code);
       await config.set(`keybinding.content.${name}`, e.code);
     });
 
@@ -214,6 +215,8 @@ const createCustomizationSection = async (): Promise<void> => {
     "keybinding.enable",
   )) as boolean;
   _enableKeybinding.addEventListener("change", () => {
+    const checked = _enableKeybinding.checked;
+    ipcRenderer.send("toggle-keybind-enable", checked);
     restartMessage();
     toggleKeybinding();
   });
