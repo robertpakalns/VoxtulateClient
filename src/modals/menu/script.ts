@@ -1,7 +1,7 @@
 import menuModalString from "../../../assets/html/menu.html?raw";
 import { createEl, popup } from "../../preload/preloadFunctions.js";
 import { generateConfigs } from "./generateConfigs.js";
-import packageJson from "../../../package.json?raw";
+import packageJson from "../../../package.json";
 import { ipcRenderer, shell } from "electron";
 import Modal from "../modal.js";
 
@@ -24,7 +24,7 @@ class MenuModal extends Modal {
     await generateConfigs();
 
     const _version = this.modal!.querySelector("#version") as HTMLElement;
-    _version.textContent = `v${JSON.parse(packageJson).version}`;
+    _version.textContent = `v${packageJson.version}`;
 
     const clientIcon = this.modal!.querySelector(
       "#voxtulateIcon",

@@ -1,4 +1,4 @@
-import swapperListJson from "../../assets/swapperList.json?raw";
+import swapperList from "../../assets/swapperList.json";
 import { protocol, WebContents } from "electron";
 import { Config, configDir } from "./config.js";
 import { fromRoot } from "./functions.js";
@@ -15,7 +15,6 @@ const swapper = async (webContents: WebContents): Promise<void> => {
     "matomo.voxiom.io",
     "api.gameanalytics.com",
   ]);
-  const swapperList = JSON.parse(swapperListJson);
 
   const { adblocker, swapper } = config.get("client") as {
     adblocker: string;
@@ -72,16 +71,6 @@ const swapper = async (webContents: WebContents): Promise<void> => {
       // Blocks sockets
       if (adblocker && pathname.startsWith("/socket.io"))
         return callback({ cancel: true });
-
-      // Replaces the resource (script)
-      // Gets a reference to the skin render function as window.renderSkin
-      // This is a temporary solution for getting the skin render function
-      // Updated: 14/5/2025
-      if (pathname.endsWith("fc18594c8aa8e9402482.js")) {
-        return callback({
-          redirectURL: `voxtulate://path?path=assets/script-0.9.2.0.js`,
-        });
-      }
 
       // Swapper
       if (swapper === "Simple" || swapper === "Extended") {

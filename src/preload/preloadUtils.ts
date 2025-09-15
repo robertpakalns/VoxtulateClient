@@ -73,3 +73,32 @@ export const handleDiscordLink = (cont: HTMLElement): void => {
     shell.openExternal("https://discord.gg/SEExvCQeNc");
   };
 };
+
+// Get a reference to the skin render function as window.renderSkin
+// Credits to doctor8296
+export const getSkinRenderer = (): void => {
+  Object.defineProperty(Object.prototype, "mark", {
+    get() {
+      return this._mark;
+    },
+    set(value) {
+      this._mark =
+        typeof value === "function"
+          ? new Proxy(value, {
+              apply(target, thisArgs, args) {
+                const func = args[0];
+                const f = func + "";
+
+                if (
+                  f.includes("generateSprayModel") &&
+                  f.includes("document['createElement']('canvas')")
+                ) {
+                  window.renderSkin = func;
+                }
+                return Reflect.apply(target, thisArgs, args);
+              },
+            })
+          : value;
+    },
+  });
+};

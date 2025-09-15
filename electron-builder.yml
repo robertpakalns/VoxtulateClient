@@ -10,6 +10,9 @@ electronLanguages:
 
 files:
   - "assets/**/*"
+  # CSS and HTML is bundled inside JS bundles
+  - "!assets/css/**/*"
+  - "!assets/html/**/*"
   - "!src/**/*" # TypeScript code will not be executed by Node
   - "js-dist/**/*"
   - "!**/locales/*"

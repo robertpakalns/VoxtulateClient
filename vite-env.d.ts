@@ -10,7 +10,7 @@ declare module "*.html?raw" {
   export default content;
 }
 
-declare module "*.json?raw" {
-  const content: string;
+declare module "*.json" {
+  const content: any;
   export default content;
 }

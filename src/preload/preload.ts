@@ -5,11 +5,13 @@ import {
   domains,
 } from "../preload/preloadFunctions.js";
 import { config, setupFastCSS, handleDiscordLink } from "./preloadUtils.js";
+import { backToVoxiom, getSkinRenderer } from "./preloadUtils.js";
 import advancedInventory from "./advancedInventory.js";
 import MenuModal from "../modals/menu/script.js";
-import { backToVoxiom } from "./preloadUtils.js";
 import { ipcRenderer, shell } from "electron";
 import enableStyles from "./enableStyles.js";
+
+getSkinRenderer();
 
 let accountData: any, playerData: any;
 

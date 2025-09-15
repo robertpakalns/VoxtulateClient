@@ -1,5 +1,5 @@
 import { createEl, popup } from "../../preload/preloadFunctions.js";
-import settingsJson from "../../../assets/settings.json?raw";
+import settingsJson from "../../../assets/settings.json";
 import { config } from "../../preload/preloadUtils.js";
 import { ipcRenderer } from "electron";
 
@@ -15,8 +15,6 @@ export interface Setting {
   requires?: RequiresType;
   select?: string[];
 }
-
-const data = JSON.parse(settingsJson) as Setting[];
 
 export const sendNotification = (requires: RequiresType): void => {
   if (requires === "restart")
@@ -59,7 +57,7 @@ export const appendConfig = (data: Setting, configCont: HTMLElement): void => {
 };
 
 export const generateConfigs = async (): Promise<void> => {
-  for (const el of data) {
+  for (const el of settingsJson) {
     let configCont;
     if (el.type === "checkbox") {
       configCont = createEl(
