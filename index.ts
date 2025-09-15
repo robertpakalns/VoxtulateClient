@@ -7,10 +7,15 @@ import {
   protocol,
   session,
 } from "electron";
-import { Config, configPath, configDir } from "./src/utils/config.js";
-import { message, confirmAction } from "./src/utils/dialogs.js";
+import {
+  Config,
+  configPath,
+  configDir,
+  defaultConfig,
+} from "./src/utils/config.js";
 import { getIcon, getHost } from "./src/utils/functions.js";
 import { userscripts } from "./src/utils/userScripts.js";
+import { confirmAction } from "./src/utils/dialogs.js";
 import keybinding from "./src/utils/keybinding.js";
 import DiscordRPC from "./src/utils/discord.js";
 import { autoUpdater } from "electron-updater";
@@ -50,6 +55,11 @@ ipcMain.handle(
     await fs.writeFile(join(configDir, "userscripts.json"), content);
     return true;
   },
+);
+ipcMain.handle("get-menu-modal-key", (): string =>
+  (config.get("keybinding.enable") ?? true)
+    ? (config.get("keybinding.content.MenuModal") as string)
+    : defaultConfig.keybinding.content.MenuModal,
 );
 
 const createMain = (): void => {
@@ -133,18 +143,6 @@ app.on("ready", () => {
       : "";
     const finalURL = `${domain}/${cleanPath}${hash}`;
     if (queryPath) mainWindow!.loadURL(finalURL);
-  }
-
-  if (config.get("client.firstJoin")) {
-    setTimeout(
-      () =>
-        message(
-          "Welcome",
-          "Welcome to Voxtulate Client! Press F1 to open menu. Have a good game!",
-        ),
-      3000,
-    );
-    config.set("client.firstJoin", false);
   }
 
   ipcMain.on("join-game", (_, url) => mainWindow!.loadURL(url));

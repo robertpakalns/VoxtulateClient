@@ -1,15 +1,5 @@
-import { dialog, MessageBoxReturnValue } from "electron";
 import { getIcon } from "./functions.js";
-
-export const message = (
-  title: string,
-  message: string,
-): Promise<MessageBoxReturnValue> =>
-  dialog.showMessageBox({
-    icon: getIcon(),
-    title: `Voxtulate Client | ${title}`,
-    message,
-  });
+import { dialog } from "electron";
 
 export const confirmAction = async (
   message: string,

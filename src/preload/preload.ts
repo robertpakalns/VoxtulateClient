@@ -6,6 +6,7 @@ import {
 } from "../preload/preloadFunctions.js";
 import { config, setupFastCSS, handleDiscordLink } from "./preloadUtils.js";
 import { backToVoxiom, getSkinRenderer } from "./preloadUtils.js";
+import modalStyles from "../../assets/css/modalStyles.css?raw";
 import advancedInventory from "./advancedInventory.js";
 import MenuModal from "../modals/menu/script.js";
 import { ipcRenderer, shell } from "electron";
@@ -22,11 +23,8 @@ declare global {
 }
 
 const createModals = async (): Promise<void> => {
-  const modalStyles = createEl("link", {
-    rel: "stylesheet",
-    href: "voxtulate://?path=assets/css/modalStyles.css",
-  });
-  document.head.appendChild(modalStyles);
+  const modalStylesEl = createEl("style", {}, "", [modalStyles]);
+  document.head.appendChild(modalStylesEl);
 
   const menuModal = new MenuModal();
   menuModal.init();
@@ -44,9 +42,8 @@ document.addEventListener("DOMContentLoaded", async (): Promise<void> => {
 
   if (!domains.has(window.location.host)) return;
 
-  const { MenuModal } = (await config.get("keybinding.content")) as {
-    MenuModal: string;
-  };
+  const MenuModalKey = await ipcRenderer.invoke("get-menu-modal-key");
+
   const consoleCont = createEl("div", {
     className: "voxiomConsole voxiomCreate",
   });
@@ -54,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async (): Promise<void> => {
     className: "voxiomBlocks voxiomCreate",
   });
   const hintCont = createEl("div", { id: "hintCont" }, "hint", [
-    `Press ${MenuModal} to open menu`,
+    `Press ${MenuModalKey} to open menu`,
   ]);
   document.body.append(consoleCont, blocksCont);
 
@@ -184,7 +181,7 @@ ipcRenderer.on("get-game-settings", (_, file) =>
     localStorage.getItem("persist:root")!,
   ),
 );
-ipcRenderer.on("toggle-window", (_, modal) => {
+ipcRenderer.on("toggle-window", (_, modal: string) => {
   // Toggles modals on keybinds
   const openedModal = document.querySelector(".modalWrapper.open");
 
@@ -208,4 +205,7 @@ ipcRenderer.on("toggle-window", (_, modal) => {
     document.getElementById(modal)!.classList.toggle("open");
     document.exitPointerLock();
   }
+});
+ipcRenderer.on("new-menu-modal-key", (_, key: string): void => {
+  document.getElementById("hintCont").textContent = `Press ${key} to open menu`;
 });

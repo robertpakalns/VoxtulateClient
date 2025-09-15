@@ -6,7 +6,7 @@ const config = new Config();
 const keybinding = (mainWindow: BrowserWindow): void => {
   const { webContents } = mainWindow;
 
-  let enabled = (config.get("keybinding.enable") as boolean) ?? true;
+  let enabled = config.get("keybinding.enable") ?? true;
 
   // An object of keybinds
   let k = (
@@ -31,6 +31,9 @@ const keybinding = (mainWindow: BrowserWindow): void => {
     k[key] = value;
     keySet = newSet();
     justChanged.add(value);
+
+    if (key === "MenuModal")
+      mainWindow.webContents.send("new-menu-modal-key", value);
   });
 
   ipcMain.on("toggle-keybind-enable", (_, value: boolean) => {
@@ -43,6 +46,8 @@ const keybinding = (mainWindow: BrowserWindow): void => {
     ) as typeof k;
 
     keySet = newSet();
+
+    mainWindow.webContents.send("new-menu-modal-key", k.MenuModal);
   });
 
   webContents.on("before-input-event", (e, { code, type }) => {
