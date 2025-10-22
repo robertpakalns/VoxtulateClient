@@ -14,14 +14,7 @@ export default defineConfig({
       fileName: (format, name) => `${name}.${format}.js`,
     },
     rollupOptions: {
-      external: [
-        "discord-rpc",
-        "electron",
-        "electron-updater",
-        "fs",
-        "os",
-        "path",
-      ],
+      external: ["electron", "electron-updater", "fs", "os", "path", "net"],
       output: {
         entryFileNames: "[name].js",
       },

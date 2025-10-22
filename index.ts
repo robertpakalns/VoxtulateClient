@@ -17,7 +17,7 @@ import { getIcon, getHost } from "./src/utils/functions.js";
 import { userscripts } from "./src/utils/userScripts.js";
 import { confirmAction } from "./src/utils/dialogs.js";
 import keybinding from "./src/utils/keybinding.js";
-import DiscordRPC from "./src/utils/discord.js";
+import DiscordRPC from "./src/utils/drpc.js";
 import { autoUpdater } from "electron-updater";
 import swapper from "./src/utils/swapper.js";
 import { join, normalize } from "path";
