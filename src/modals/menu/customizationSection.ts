@@ -215,8 +215,7 @@ const createCustomizationSection = async (): Promise<void> => {
     "keybinding.enable",
   )) as boolean;
   _enableKeybinding.addEventListener("change", () => {
-    const checked = _enableKeybinding.checked;
-    ipcRenderer.send("toggle-keybind-enable", checked);
+    ipcRenderer.send("toggle-keybind-enable", _enableKeybinding.checked);
     toggleKeybinding();
   });
 };

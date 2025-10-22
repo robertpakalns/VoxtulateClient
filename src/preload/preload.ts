@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", async (): Promise<void> => {
 
   if (!domains.has(window.location.host)) return;
 
-  const MenuModalKey = await ipcRenderer.invoke("get-menu-modal-key");
+  const menuModalKey = await ipcRenderer.invoke("get-menu-modal-key");
 
   const consoleCont = createEl("div", {
     className: "voxiomConsole voxiomCreate",
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async (): Promise<void> => {
     className: "voxiomBlocks voxiomCreate",
   });
   const hintCont = createEl("div", { id: "hintCont" }, "hint", [
-    `Press ${MenuModalKey} to open menu`,
+    `Press ${menuModalKey} to open menu`,
   ]);
   document.body.append(consoleCont, blocksCont);
 

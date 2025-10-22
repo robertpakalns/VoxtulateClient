@@ -325,6 +325,7 @@ class InventoryModal extends Modal {
       await Promise.all(
         exportedData.map(async (el, i) => {
           const img = new Image();
+          img.crossOrigin = "anonymous";
           img.src = data[`${el.type}_${el.seed}`];
           await img.decode();
           const scale = Math.min(size / img.width, size / img.height);
@@ -341,6 +342,7 @@ class InventoryModal extends Modal {
       const iconSize = 15;
       const padding = 3;
       const icon = new Image();
+      icon.crossOrigin = "anonymous";
       icon.src = "voxtulate://?path=assets/icons/tricko-32.png";
 
       icon.onload = () => {

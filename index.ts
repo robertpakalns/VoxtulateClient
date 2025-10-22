@@ -46,13 +46,16 @@ ipcMain.handle(
 );
 ipcMain.handle(
   "read-userscripts-config",
-  async (_): Promise<string> =>
+  async (): Promise<string> =>
     await fs.readFile(join(configDir, "userscripts.json"), "utf8"),
 );
 ipcMain.handle(
   "write-userscripts-config",
   async (_, content: string): Promise<boolean> => {
-    await fs.writeFile(join(configDir, "userscripts.json"), content);
+    await fs.writeFile(
+      join(configDir, "userscripts.json"),
+      JSON.stringify(content, null, 2),
+    );
     return true;
   },
 );
