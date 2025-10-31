@@ -1,7 +1,7 @@
 import { configDir } from "./config.js";
 import { WebContents } from "electron";
 import { promises as fs } from "fs";
-import path from "path";
+import { join } from "path";
 
 const defaultConfig = {
   enable: true,
@@ -18,9 +18,9 @@ const handleObject = (obj: Record<string, boolean>, array: string[]) => {
   for (const key in obj) if (!keySet.has(key)) delete obj[key];
 };
 
-const userScriptsPath = path.join(configDir, "userscripts.json");
-const userScriptsDir = path.join(configDir, "scripts");
-const userStylesDir = path.join(configDir, "styles");
+const userScriptsPath = join(configDir, "userscripts.json");
+const userScriptsDir = join(configDir, "scripts");
+const userStylesDir = join(configDir, "styles");
 
 let userScripts: string[] = [];
 let userStyles: string[] = [];
@@ -88,7 +88,7 @@ const setUserScripts = async (webContents: WebContents): Promise<void> => {
   for (const el of userScripts) {
     if (scripts[el] === false) continue;
 
-    const scriptPath = path.join(userScriptsDir, el);
+    const scriptPath = join(userScriptsDir, el);
     try {
       if (enable) {
         const scriptContent = await fs.readFile(scriptPath, "utf8");
@@ -101,8 +101,7 @@ const setUserScripts = async (webContents: WebContents): Promise<void> => {
 const injectUserStyles = async (webContents: WebContents): Promise<void> => {
   let data;
   try {
-    const raw = await fs.readFile(userScriptsPath, "utf8");
-    data = JSON.parse(raw);
+    data = JSON.parse(await fs.readFile(userScriptsPath, "utf8"));
   } catch {
     data = { ...defaultConfig };
     await fs.writeFile(userScriptsPath, JSON.stringify(defaultConfig, null, 2));
@@ -113,7 +112,7 @@ const injectUserStyles = async (webContents: WebContents): Promise<void> => {
   for (const el of userStyles) {
     if (styles[el] === false) continue;
 
-    const stylePath = path.join(userStylesDir, el);
+    const stylePath = join(userStylesDir, el);
     try {
       if (enable) {
         const styleContent = await fs.readFile(stylePath, "utf8");
@@ -126,6 +125,7 @@ const injectUserStyles = async (webContents: WebContents): Promise<void> => {
 export const userscripts = async (webContents: WebContents): Promise<void> => {
   await getUserScriptsFiles();
   await setUserScripts(webContents);
+  await injectUserStyles(webContents);
 
   webContents.on(
     "did-start-navigation",
@@ -137,7 +137,5 @@ export const userscripts = async (webContents: WebContents): Promise<void> => {
     },
   );
 
-  webContents.on("did-finish-load", async () => {
-    await injectUserStyles(webContents);
-  });
+  webContents.on("did-finish-load", () => injectUserStyles(webContents));
 };
