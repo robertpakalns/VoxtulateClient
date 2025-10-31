@@ -1,6 +1,6 @@
 {
   "name": "voxtulate-client",
-  "version": "2.0.1",
+  "version": "2.0.11",
   "description": "Voxtulate Client",
   "author": "robertpakalns",
   "main": "js-dist/main.js",
@@ -15,6 +15,6 @@
   "devDependencies": {
     "electron": "^10.4.7",
     "electron-builder": "^26.0.12",
-    "vite": "^7.1.11"
+    "vite": "^7.1.12"
   }
 }
