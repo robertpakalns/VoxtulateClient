@@ -4,6 +4,7 @@
 ![GitHub forks](https://img.shields.io/github/forks/robertpakalns/VoxtulateClient)
 ![GitHub last commit](https://img.shields.io/github/last-commit/robertpakalns/VoxtulateClient)
 ![Languages](https://img.shields.io/github/languages/top/robertpakalns/VoxtulateClient)
+![Languages](https://img.shields.io/github/repo-size/robertpakalns/VoxtulateClient)
 
 <h1 style="font-size: 2em; display: flex; align-items: center">
     <img src="https://raw.githubusercontent.com/robertpakalns/VoxtulateClient/main/assets/icons/icon.png" style="height: 1em; margin-right: 5px">
