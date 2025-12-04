@@ -52,10 +52,7 @@ ipcMain.handle(
 ipcMain.handle(
   "write-userscripts-config",
   async (_, content: string): Promise<boolean> => {
-    await fs.writeFile(
-      join(configDir, "userscripts.json"),
-      JSON.stringify(content, null, 2),
-    );
+    await fs.writeFile(join(configDir, "userscripts.json"), content);
     return true;
   },
 );
